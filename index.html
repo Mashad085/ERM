@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-RM — Sistem Rekam Medis Elektronik</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #04090f;
+  --bg2:       #080f18;
+  --bg3:       #0d1824;
+  --bg4:       #122030;
+  --bg5:       #17293d;
+  --border:    #1a3047;
+  --border2:   #234463;
+  --text:      #c8dff5;
+  --text2:     #6b93b5;
+  --text3:     #334f68;
+  --accent:    #3b9eff;
+  --accent-bg: rgba(59,158,255,0.08);
+  --accent-brd:rgba(59,158,255,0.25);
+  --green:     #27c97a;
+  --green-bg:  rgba(39,201,122,0.08);
+  --yellow:    #f5c542;
+  --yellow-bg: rgba(245,197,66,0.08);
+  --red:       #f04f4f;
+  --red-bg:    rgba(240,79,79,0.08);
+  --purple:    #a87eff;
+  --purple-bg: rgba(168,126,255,0.08);
+  --orange:    #ff8c42;
+  --orange-bg: rgba(255,140,66,0.08);
+  --teal:      #22d3ee;
+  --sidebar-w: 228px;
+  --header-h:  54px;
+  --radius:    10px;
+  --radius-sm: 6px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  overflow:hidden;
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ── LOGIN ── */
+#login-screen {
+  position:fixed;inset:0;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;
+  background-image: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59,158,255,0.07) 0%, transparent 70%);
+}
+
+.login-box {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:40px;
+  width:380px;
+  box-shadow: 0 0 0 1px rgba(59,158,255,0.05), 0 40px 80px rgba(0,0,0,0.5);
+}
+
+.login-logo {
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:32px;
+}
+.login-logo-icon {
+  width:42px;height:42px;
+  background:linear-gradient(135deg, var(--accent2,#1b6fd4), var(--accent));
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  box-shadow:0 4px 16px rgba(59,158,255,0.25);
+}
+.login-logo-text {font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
+.login-logo-sub {font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:500;letter-spacing:0.3px}
+.form-group input,.form-group select{
+  width:100%;padding:9px 12px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);font-size:13px;
+  font-family:inherit;outline:none;transition:border-color .2s, box-shadow .2s;
+}
+.form-group input:focus,.form-group select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(59,158,255,0.12);
+}
+.form-group select option{background:var(--bg3)}
+
+.btn-login {
+  width:100%;padding:10px;
+  background:var(--accent);color:#fff;
+  border:none;border-radius:var(--radius-sm);cursor:pointer;
+  font-size:14px;font-weight:600;font-family:inherit;
+  transition:all .2s;
+  box-shadow:0 4px 14px rgba(59,158,255,0.3);
+}
+.btn-login:hover{background:#5aadff;box-shadow:0 4px 20px rgba(59,158,255,0.45);}
+
+.demo-accounts{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.demo-accounts p{font-size:11px;color:var(--text3);margin-bottom:8px}
+.demo-tag{
+  display:inline-block;padding:3px 10px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:20px;font-size:11px;color:var(--text2);
+  cursor:pointer;margin:2px;transition:all .15s;
+}
+.demo-tag:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+
+/* ── APP SHELL ── */
+#app{display:none;height:100vh;flex-direction:column}
+#app.active{display:flex}
+
+/* ── HEADER ── */
+.header {
+  height:var(--header-h);
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 18px;
+  gap:10px;flex-shrink:0;z-index:50;
+}
+.header-brand {
+  display:flex;align-items:center;gap:10px;
+  min-width:var(--sidebar-w);
+  padding-right:12px;
+  border-right:1px solid var(--border);
+  margin-right:6px;
+}
+.header-brand-icon{
+  width:30px;height:30px;
+  background:linear-gradient(135deg,#1b6fd4,var(--accent));
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+.header-brand-name{font-size:16px;font-weight:700;letter-spacing:-0.4px;color:var(--text)}
+.header-brand-version{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-left:2px}
+.header-online{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green)}
+.header-online-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.header-spacer{flex:1}
+
+.header-search {
+  display:flex;align-items:center;gap:7px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:6px 12px;
+  width:220px;transition:border-color .2s, width .3s;
+}
+.header-search:focus-within{border-color:var(--accent);width:280px}
+.header-search input{background:none;border:none;color:var(--text);font-size:12px;outline:none;flex:1;font-family:inherit}
+.header-search .kbd{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:1px 4px}
+.header-search svg{color:var(--text3);flex-shrink:0}
+
+.hdr-btn{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:6px 12px;
+  cursor:pointer;color:var(--text2);font-size:12px;
+  font-family:inherit;display:flex;align-items:center;gap:6px;
+  transition:all .15s;white-space:nowrap;
+}
+.hdr-btn:hover{border-color:var(--border2);color:var(--text)}
+
+.user-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:5px 12px;cursor:pointer;
+  transition:border-color .15s;
+}
+.user-pill:hover{border-color:var(--border2)}
+.avatar{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;letter-spacing:0;
+}
+.user-pill .uname{font-size:12px;font-weight:600}
+.role-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;font-weight:500}
+
+/* ── MAIN LAYOUT ── */
+.main-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;flex-shrink:0;
+  padding:8px 0;
+}
+
+.nav-section{padding:16px 10px 4px}
+.nav-section:first-child{padding-top:8px}
+.nav-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:0.8px;
+  color:var(--text3);font-weight:600;padding:0 8px;margin-bottom:4px;
+  font-family:'DM Mono',monospace;
+}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 10px;border-radius:8px;cursor:pointer;
+  color:var(--text2);font-size:12.5px;font-weight:400;
+  transition:all .15s;margin-bottom:1px;position:relative;
+  user-select:none;
+}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:5px;bottom:5px;
+  width:2.5px;background:var(--accent);border-radius:0 3px 3px 0;
+}
+.nav-item .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{
+  margin-left:auto;font-size:10px;font-weight:700;
+  padding:1px 6px;border-radius:20px;
+  font-family:'DM Mono',monospace;
+}
+.nb-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(240,79,79,.2)}
+.nb-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(39,201,122,.2)}
+.nb-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(245,197,66,.2)}
+.nb-blue{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-brd)}
+
+.sidebar-footer{margin-top:auto;padding:8px 10px 4px;border-top:1px solid var(--border)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:28px;background:var(--bg)}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.page-title{font-size:20px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
+.page-subtitle{font-size:12px;color:var(--text2);margin-top:3px}
+.page-actions{display:flex;gap:8px;align-items:center}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px;
+  transition:border-color .2s;
+}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card .slabel{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:10px;font-family:'DM Mono',monospace}
+.stat-card .svalue{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1}
+.stat-card .ssub{font-size:11px;color:var(--text3);margin-top:5px}
+.stat-card .strend{font-size:11px;margin-top:5px}
+.strend.up{color:var(--green)}.strend.dn{color:var(--red)}
+
+/* ── TABLE ── */
+.table-wrap{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.table-toolbar{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-bottom:1px solid var(--border);
+}
+.tsearch{
+  display:flex;align-items:center;gap:7px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:6px 10px;
+  flex:1;max-width:280px;
+}
+.tsearch input{background:none;border:none;color:var(--text);font-size:12px;outline:none;flex:1;font-family:inherit}
+
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:10px 14px;text-align:left;
+  font-size:10.5px;font-weight:600;text-transform:uppercase;
+  letter-spacing:0.5px;color:var(--text3);
+  background:var(--bg3);border-bottom:1px solid var(--border);
+  font-family:'DM Mono',monospace;white-space:nowrap;
+}
+tbody td{
+  padding:11px 14px;border-bottom:1px solid var(--border);
+  font-size:12.5px;color:var(--text2);vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(255,255,255,0.015)}
+.cell-primary{color:var(--text)!important;font-weight:500}
+.cell-mono{font-family:'DM Mono',monospace;font-size:11px}
+
+/* ── BADGES ── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:20px;
+  font-size:10px;font-weight:600;
+  font-family:'DM Mono',monospace;letter-spacing:0.2px;
+}
+.bg-green{background:var(--green-bg);color:var(--green)}
+.bg-red{background:var(--red-bg);color:var(--red)}
+.bg-yellow{background:var(--yellow-bg);color:var(--yellow)}
+.bg-blue{background:var(--accent-bg);color:var(--accent)}
+.bg-purple{background:var(--purple-bg);color:var(--purple)}
+.bg-orange{background:var(--orange-bg);color:var(--orange)}
+.bg-gray{background:rgba(107,147,181,0.1);color:var(--text2)}
+
+/* ── BUTTONS ── */
+.btn{
+  padding:7px 14px;border-radius:var(--radius-sm);border:1px solid;
+  cursor:pointer;font-size:12px;font-weight:500;font-family:inherit;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:all .15s;white-space:nowrap;
+}
+.btn:hover{opacity:.85}
+.btn-blue{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(59,158,255,.25)}
+.btn-blue:hover{opacity:1;box-shadow:0 4px 14px rgba(59,158,255,.4)}
+.btn-outline{background:transparent;border-color:var(--border2);color:var(--text2)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);opacity:1;background:var(--accent-bg)}
+.btn-red{background:var(--red-bg);border-color:rgba(240,79,79,.25);color:var(--red)}
+.btn-green{background:var(--green-bg);border-color:rgba(39,201,122,.25);color:var(--green)}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:7px}
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ── INFO ROW ── */
+.info-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.info-row:last-child{border-bottom:none}
+.info-row .key{color:var(--text2)}
+.info-row .val{color:var(--text);font-weight:500;text-align:right}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab-btn{
+  padding:9px 16px;background:none;border:none;
+  color:var(--text2);cursor:pointer;font-size:12.5px;font-family:inherit;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;
+}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;backdrop-filter:blur(4px);
+}
+.modal-overlay.hidden{display:none}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;width:620px;max-width:95vw;
+  max-height:85vh;display:flex;flex-direction:column;
+  box-shadow:0 32px 80px rgba(0,0,0,0.6);
+  animation:modalIn .2s ease;
+}
+@keyframes modalIn{from{transform:scale(.96) translateY(8px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-header{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-title{font-size:15px;font-weight:700;letter-spacing:-0.3px}
+.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;transition:all .15s}
+.modal-close:hover{background:var(--bg3);color:var(--text)}
+.modal-body{padding:22px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.4px}
+.field input,.field select,.field textarea{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:8px 11px;color:var(--text);
+  font-size:12.5px;font-family:inherit;outline:none;transition:border-color .2s, box-shadow .2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,158,255,.1);
+}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:var(--bg3)}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;padding-left:26px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:var(--border)}
+.timeline-item{position:relative;margin-bottom:16px}
+.timeline-dot{position:absolute;left:-22px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg2);box-shadow:0 0 0 2px var(--accent-brd)}
+.timeline-date{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px}
+.timeline-content{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
+.timeline-content .ttype{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:3px;font-family:'DM Mono',monospace}
+.timeline-content .tdesc{font-size:12.5px}
+
+/* ── QUEUE ITEM ── */
+.queue-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:13px 16px;margin-bottom:8px;
+  cursor:pointer;transition:border-color .15s;
+}
+.queue-item:hover{border-color:var(--border2)}
+.queue-num{font-size:22px;font-weight:700;color:var(--text3);font-family:'DM Mono',monospace;width:44px}
+.queue-info{flex:1}
+.queue-name{font-size:13px;font-weight:600;color:var(--text)}
+.queue-meta{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ── VITAL BOX ── */
+.vitals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.vital-box{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:14px;
+}
+.vital-box .vname{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:7px}
+.vital-box .vval{font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
+.vital-box .vunit{font-size:10px;color:var(--text3);margin-top:2px}
+.vital-box.normal{border-color:rgba(39,201,122,.25)}
+.vital-box.warn{border-color:rgba(245,197,66,.25)}
+.vital-box.critical{border-color:rgba(240,79,79,.35)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:22px;right:22px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:13px 18px;
+  display:flex;align-items:center;gap:11px;
+  z-index:500;transform:translateY(90px);opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  min-width:280px;max-width:380px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-msg{font-size:13px;flex:1}
+.toast-icon{font-size:16px}
+.toast.success{border-color:rgba(39,201,122,.3)}
+.toast.success .toast-icon{color:var(--green)}
+.toast.error{border-color:rgba(240,79,79,.3)}
+.toast.error .toast-icon{color:var(--red)}
+.toast.info{border-color:var(--accent-brd)}
+.toast.info .toast-icon{color:var(--accent)}
+.toast.warn{border-color:rgba(245,197,66,.3)}
+.toast.warn .toast-icon{color:var(--yellow)}
+
+/* ── ALERT ── */
+.alert{padding:11px 15px;border-radius:var(--radius-sm);font-size:12.5px;display:flex;align-items:flex-start;gap:9px;margin-bottom:14px}
+.alert-red{background:var(--red-bg);border:1px solid rgba(240,79,79,.25);color:var(--red)}
+.alert-yellow{background:var(--yellow-bg);border:1px solid rgba(245,197,66,.25);color:var(--yellow)}
+.alert-green{background:var(--green-bg);border:1px solid rgba(39,201,122,.25);color:var(--green)}
+.alert-blue{background:var(--accent-bg);border:1px solid var(--accent-brd);color:var(--accent)}
+
+/* ── CHART BAR ── */
+.chart-bar-wrap{margin-bottom:12px}
+.chart-bar-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text2);margin-bottom:5px}
+.chart-bar{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+
+/* ── PROGRESS ── */
+.progress{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:var(--accent)}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty .eicon{font-size:36px;margin-bottom:10px;opacity:.5}
+.empty p{font-size:13px}
+
+/* ── IO BAR ── */
+.io-bar{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 16px;
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.io-bar .io-info{flex:1;font-size:12px;color:var(--text2)}
+.io-bar .io-info strong{color:var(--text)}
+
+/* ── BED GRID ── */
+.bed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.bed-card{
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px;text-align:center;cursor:pointer;
+  transition:border-color .15s,transform .15s;
+  background:var(--bg3);
+}
+.bed-card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.bed-card.empty{border-color:rgba(39,201,122,.2);background:rgba(39,201,122,.03)}
+.bed-card.occupied{border-color:rgba(240,79,79,.2);background:rgba(240,79,79,.03)}
+.bed-card.maintenance{border-color:rgba(245,197,66,.2);background:rgba(245,197,66,.03)}
+.bed-icon{font-size:26px;margin-bottom:8px}
+.bed-num{font-size:13px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
+
+/* ── SECTION DIVIDER ── */
+.section-divider{height:1px;background:var(--border);margin:20px 0}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{width:52px}
+  .nav-item span:not(.ni),.nav-label,.sidebar-footer .nav-item span:not(.ni),.nav-badge{display:none}
+  .nav-item{justify-content:center;padding:10px}
+  .content{padding:16px}
+  .header-brand{min-width:52px;padding-right:8px}
+  .header-brand-name,.header-brand-version{display:none}
+}
+
+/* ── GLOW ACCENTS ── */
+.glow-blue{box-shadow:0 0 20px rgba(59,158,255,.15)}
+.glow-green{box-shadow:0 0 20px rgba(39,201,122,.12)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🏥</div>
+      <div>
+        <div class="login-logo-text">E-RM</div>
+        <div class="login-logo-sub">Elektronik Rekam Medis</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="login-user" placeholder="Masukkan username" value="admin">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" value="admin">
+    </div>
+    <div class="form-group">
+      <label>Role / Jabatan</label>
+      <select id="login-role">
+        <option value="admin">System Administrator</option>
+        <option value="doctor">Dokter / Clinician</option>
+        <option value="nurse">Perawat / Nurse</option>
+        <option value="receptionist">Resepsionis</option>
+        <option value="labtech">Lab Technician</option>
+      </select>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Masuk ke Sistem</button>
+    <div class="demo-accounts">
+      <p>Quick login:</p>
+      <span class="demo-tag" onclick="setDemo('admin','admin','admin')">Admin</span>
+      <span class="demo-tag" onclick="setDemo('dr.budi','pass','doctor')">Dokter</span>
+      <span class="demo-tag" onclick="setDemo('ns.sari','pass','nurse')">Perawat</span>
+      <span class="demo-tag" onclick="setDemo('resep','pass','receptionist')">Resepsionis</span>
+      <span class="demo-tag" onclick="setDemo('lab','pass','labtech')">Lab Tech</span>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-brand-icon">🏥</div>
+      <div>
+        <div class="header-brand-name">E-RM</div>
+      </div>
+      <span class="header-brand-version">v1.0</span>
+    </div>
+    <div class="header-online"><span class="header-online-dot"></span>Online</div>
+    <div class="header-spacer"></div>
+    <div class="header-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="global-search" type="text" placeholder="Cari pasien, menu…" onkeyup="globalSearch(this.value)">
+      <span class="kbd">/</span>
+    </div>
+    <button class="hdr-btn" onclick="showToast('info','💾 Export dimulai…'); exportJSON()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+    <label class="hdr-btn" style="cursor:pointer">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import
+      <input type="file" accept=".json" style="display:none" onchange="importJSON(this)">
+    </label>
+    <div class="user-pill" id="user-pill">
+      <div class="avatar" id="user-avatar" style="background:#1b6fd4">A</div>
+      <div class="uname" id="user-name">Admin</div>
+      <span class="role-badge bg-purple" id="user-role-badge">ADMIN</span>
+    </div>
+    <button class="hdr-btn" onclick="logout()" title="Logout">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar
+    </button>
+  </header>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="nav-section">
+        <div class="nav-label">Utama</div>
+        <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+          <span class="ni">🏠</span><span>Dashboard</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Penerimaan</div>
+        <div class="nav-item" onclick="showPage('registration')" data-page="registration">
+          <span class="ni">👤</span><span>Pendaftaran Pasien</span>
+        </div>
+        <div class="nav-item" onclick="showPage('appointments')" data-page="appointments">
+          <span class="ni">📅</span><span>Appointment</span>
+          <span class="nav-badge nb-yellow" id="appt-badge">0</span>
+        </div>
+        <div class="nav-item" onclick="showPage('queue')" data-page="queue">
+          <span class="ni">🚶</span><span>Antrian</span>
+          <span class="nav-badge nb-green" id="queue-badge">0</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Klinis</div>
+        <div class="nav-item" onclick="showPage('chart')" data-page="chart">
+          <span class="ni">📋</span><span>Patient Chart</span>
+        </div>
+        <div class="nav-item" onclick="showPage('vitals')" data-page="vitals">
+          <span class="ni">💓</span><span>Vital Signs</span>
+        </div>
+        <div class="nav-item" onclick="showPage('medications')" data-page="medications">
+          <span class="ni">💊</span><span>Medications</span>
+        </div>
+        <div class="nav-item" onclick="showPage('orders')" data-page="orders">
+          <span class="ni">📝</span><span>Orders</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Laboratorium</div>
+        <div class="nav-item" onclick="showPage('laboratory')" data-page="laboratory">
+          <span class="ni">🔬</span><span>Lab Orders</span>
+          <span class="nav-badge nb-red" id="lab-badge">0</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Rawat Inap</div>
+        <div class="nav-item" onclick="showPage('ward')" data-page="ward">
+          <span class="ni">🏥</span><span>Ward / Bed</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Laporan</div>
+        <div class="nav-item" onclick="showPage('reports')" data-page="reports">
+          <span class="ni">📊</span><span>Reports & Analytics</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Administrasi</div>
+        <div class="nav-item" onclick="showPage('admin')" data-page="admin">
+          <span class="ni">⚙️</span><span>Administration</span>
+        </div>
+        <div class="nav-item" onclick="showPage('users')" data-page="users">
+          <span class="ni">👥</span><span>User Management</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="showPage('settings')" data-page="settings">
+          <span class="ni">🔧</span><span>Implementer Tools</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="content" id="content-area"></main>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Modal</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">ℹ️</span>
+  <span class="toast-msg" id="toast-msg"></span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA STORE
+// ══════════════════════════════════════════════
+let DB = {
+  meta: { version:"1.0", facility:"Puskesmas Sehat Sejahtera", created: new Date().toISOString() },
+  users: [
+    { id:"u1", name:"Dr. Budi Santoso", username:"dr.budi", role:"doctor", specialty:"Umum", status:"active" },
+    { id:"u2", name:"Ns. Sari Dewi", username:"ns.sari", role:"nurse", department:"Poli Umum", status:"active" },
+    { id:"u3", name:"Reza Pradana", username:"resep", role:"receptionist", department:"Loket", status:"active" },
+    { id:"u4", name:"Lab. Ahmad", username:"lab.tech", role:"labtech", department:"Laboratorium", status:"active" },
+    { id:"u5", name:"Administrator", username:"admin", role:"admin", status:"active" }
+  ],
+  patients: [
+    { id:"P001", name:"Andi Wijaya", dob:"1985-03-12", gender:"Laki-laki", nik:"3201234567890001", phone:"081234567890", address:"Jl. Merdeka No.5, Jakarta", blood_type:"O+", status:"active", registered:"2024-01-10", allergy:"Penisilin" },
+    { id:"P002", name:"Siti Rahayu", dob:"1992-07-25", gender:"Perempuan", nik:"3201234567890002", phone:"082345678901", address:"Jl. Sudirman No.12, Bandung", blood_type:"A+", status:"active", registered:"2024-02-14", allergy:"" },
+    { id:"P003", name:"Budi Hartono", dob:"1978-11-30", gender:"Laki-laki", nik:"3201234567890003", phone:"083456789012", address:"Jl. Gatot Subroto No.8, Surabaya", blood_type:"B+", status:"active", registered:"2024-03-05", allergy:"Sulfa" },
+    { id:"P004", name:"Dewi Kusuma", dob:"2001-05-18", gender:"Perempuan", nik:"3201234567890004", phone:"084567890123", address:"Jl. Ahmad Yani No.3, Yogyakarta", blood_type:"AB+", status:"active", registered:"2024-04-20", allergy:"" },
+    { id:"P005", name:"Rudi Setiawan", dob:"1965-09-02", gender:"Laki-laki", nik:"3201234567890005", phone:"085678901234", address:"Jl. Diponegoro No.15, Semarang", blood_type:"O-", status:"active", registered:"2024-05-11", allergy:"Aspirin" },
+    { id:"P006", name:"Fitri Handayani", dob:"1998-12-08", gender:"Perempuan", nik:"3201234567890006", phone:"086789012345", address:"Jl. Pahlawan No.22, Malang", blood_type:"A-", status:"active", registered:"2024-06-03", allergy:"" }
+  ],
+  visits: [
+    { id:"V001", patient_id:"P001", date:"2025-04-20", type:"Poli Umum", doctor:"Dr. Budi Santoso", diagnosis:"Hipertensi Primer", status:"selesai", notes:"Tekanan darah terkontrol, lanjut obat" },
+    { id:"V002", patient_id:"P002", date:"2025-04-22", type:"Poli KIA", doctor:"Dr. Budi Santoso", diagnosis:"ANC Trimester 2", status:"selesai", notes:"Kehamilan normal" },
+    { id:"V003", patient_id:"P003", date:"2025-04-23", type:"Poli Umum", doctor:"Dr. Budi Santoso", diagnosis:"ISPA", status:"selesai", notes:"Batuk pilek 3 hari" },
+    { id:"V004", patient_id:"P004", date:"2025-04-25", type:"Poli Umum", doctor:"Dr. Budi Santoso", diagnosis:"Pending", status:"aktif", notes:"" },
+    { id:"V005", patient_id:"P005", date:"2025-04-25", type:"Poli Dalam", doctor:"Dr. Budi Santoso", diagnosis:"Pending", status:"aktif", notes:"" }
+  ],
+  appointments: [
+    { id:"A001", patient_id:"P001", date:"2025-04-25", time:"08:30", type:"Poli Umum", doctor:"Dr. Budi Santoso", status:"terjadwal" },
+    { id:"A002", patient_id:"P002", date:"2025-04-25", time:"09:00", type:"Poli KIA", doctor:"Dr. Budi Santoso", status:"terjadwal" },
+    { id:"A003", patient_id:"P003", date:"2025-04-26", time:"10:00", type:"Poli Gigi", doctor:"drg. Ani", status:"terjadwal" },
+    { id:"A004", patient_id:"P004", date:"2025-04-25", time:"09:30", type:"Poli Umum", doctor:"Dr. Budi Santoso", status:"hadir" },
+    { id:"A005", patient_id:"P005", date:"2025-04-25", time:"10:15", type:"Poli Dalam", doctor:"Dr. Budi Santoso", status:"terjadwal" }
+  ],
+  queue: [
+    { id:"Q001", patient_id:"P004", number:1, location:"Poli Umum", priority:"normal", status:"menunggu", checked_in:"08:45", wait_min:35 },
+    { id:"Q002", patient_id:"P005", number:2, location:"Poli Dalam", priority:"urgent", status:"menunggu", checked_in:"09:00", wait_min:20 },
+    { id:"Q003", patient_id:"P001", number:3, location:"Poli Umum", priority:"normal", status:"dipanggil", checked_in:"09:15", wait_min:10 }
+  ],
+  vitals: [
+    { id:"VT001", patient_id:"P001", date:"2025-04-25", bp_systolic:140, bp_diastolic:90, heart_rate:78, temperature:36.5, weight:72, height:168, spo2:98, respiratory_rate:18, nurse:"Ns. Sari Dewi" },
+    { id:"VT002", patient_id:"P003", date:"2025-04-23", bp_systolic:120, bp_diastolic:80, heart_rate:82, temperature:37.2, weight:68, height:170, spo2:97, respiratory_rate:20, nurse:"Ns. Sari Dewi" }
+  ],
+  medications: [
+    { id:"M001", patient_id:"P001", drug:"Amlodipine", dose:"5mg", frequency:"1x1", route:"Oral", start:"2025-04-20", end:"2025-05-20", doctor:"Dr. Budi Santoso", status:"aktif" },
+    { id:"M002", patient_id:"P001", drug:"Ramipril", dose:"10mg", frequency:"1x1", route:"Oral", start:"2025-04-20", end:"2025-05-20", doctor:"Dr. Budi Santoso", status:"aktif" },
+    { id:"M003", patient_id:"P003", drug:"Amoxicillin", dose:"500mg", frequency:"3x1", route:"Oral", start:"2025-04-23", end:"2025-04-30", doctor:"Dr. Budi Santoso", status:"aktif" },
+    { id:"M004", patient_id:"P002", drug:"Asam Folat", dose:"1mg", frequency:"1x1", route:"Oral", start:"2025-04-22", end:"2025-07-22", doctor:"Dr. Budi Santoso", status:"aktif" }
+  ],
+  lab_orders: [
+    { id:"L001", patient_id:"P001", test:"Darah Lengkap, Gula Darah, HbA1c", ordered:"2025-04-20", status:"selesai", result:"Normal", doctor:"Dr. Budi Santoso" },
+    { id:"L002", patient_id:"P005", test:"Darah Lengkap, Urinalisis", ordered:"2025-04-25", status:"pending", result:"", doctor:"Dr. Budi Santoso" },
+    { id:"L003", patient_id:"P003", test:"CRP, Leukosit", ordered:"2025-04-23", status:"proses", result:"", doctor:"Dr. Budi Santoso" }
+  ],
+  beds: [
+    { id:"B001", room:"Ruang A", number:"A-01", type:"Kelas III", patient_id:"", status:"kosong" },
+    { id:"B002", room:"Ruang A", number:"A-02", type:"Kelas III", patient_id:"P003", status:"terisi", admitted:"2025-04-23", diagnosis:"ISPA" },
+    { id:"B003", room:"Ruang B", number:"B-01", type:"Kelas II", patient_id:"", status:"kosong" },
+    { id:"B004", room:"Ruang B", number:"B-02", type:"Kelas II", patient_id:"", status:"maintenance" },
+    { id:"B005", room:"VIP", number:"V-01", type:"Kelas I", patient_id:"", status:"kosong" },
+    { id:"B006", room:"ICU", number:"ICU-01", type:"ICU", patient_id:"", status:"kosong" }
+  ],
+  conditions: [
+    { id:"C001", patient_id:"P001", name:"Hipertensi Primer (I10)", onset:"2023-06-01", status:"aktif", severity:"sedang" },
+    { id:"C002", patient_id:"P001", name:"Diabetes Tipe 2 (E11)", onset:"2024-01-15", status:"aktif", severity:"ringan" },
+    { id:"C003", patient_id:"P003", name:"ISPA (J06)", onset:"2025-04-23", status:"aktif", severity:"ringan" }
+  ],
+  programs: [
+    { id:"PR001", name:"Program HIV/AIDS", code:"HIV", coordinator:"Dr. Budi Santoso", active_patients:12, status:"aktif" },
+    { id:"PR002", name:"Program TB/TBC", code:"TB", coordinator:"Dr. Budi Santoso", active_patients:8, status:"aktif" },
+    { id:"PR003", name:"Program ANC/KIA", code:"ANC", coordinator:"Dr. Budi Santoso", active_patients:25, status:"aktif" },
+    { id:"PR004", name:"Program PTM", code:"PTM", coordinator:"Dr. Budi Santoso", active_patients:45, status:"aktif" }
+  ],
+  concept_dict: [
+    { id:"CD001", name:"Hipertensi Primer", code:"I10", system:"ICD-10", category:"Diagnosis" },
+    { id:"CD002", name:"Diabetes Mellitus Tipe 2", code:"E11", system:"ICD-10", category:"Diagnosis" },
+    { id:"CD003", name:"ISPA", code:"J06", system:"ICD-10", category:"Diagnosis" },
+    { id:"CD004", name:"Tekanan Darah", code:"55284-4", system:"LOINC", category:"Vital Sign" },
+    { id:"CD005", name:"Glukosa Darah Puasa", code:"1558-6", system:"LOINC", category:"Lab Test" }
+  ]
+};
+
+let currentUser = null;
+let currentPage = 'dashboard';
+
+const ROLE_MENUS = {
+  admin:        ['dashboard','registration','appointments','queue','chart','vitals','medications','orders','laboratory','ward','reports','admin','users','settings'],
+  doctor:       ['dashboard','chart','vitals','medications','orders','laboratory','ward','reports'],
+  nurse:        ['dashboard','queue','vitals','chart','ward'],
+  receptionist: ['dashboard','registration','appointments','queue'],
+  labtech:      ['dashboard','laboratory']
+};
+const ROLE_COLORS = { admin:'#9b59b6', doctor:'#3b9eff', nurse:'#27c97a', receptionist:'#f5c542', labtech:'#ff8c42' };
+const ROLE_LABELS = { admin:'ADMIN', doctor:'DOKTER', nurse:'PERAWAT', receptionist:'RESEPSIONIS', labtech:'LAB TECH' };
+const ROLE_AVATARS = { admin:'AD', doctor:'DR', nurse:'NS', receptionist:'RP', labtech:'LB' };
+const ROLE_BADGE_CLASS = { admin:'bg-purple', doctor:'bg-blue', nurse:'bg-green', receptionist:'bg-yellow', labtech:'bg-orange' };
+
+function setDemo(u,p,r){
+  document.getElementById('login-user').value=u;
+  document.getElementById('login-pass').value=p;
+  document.getElementById('login-role').value=r;
+}
+
+function doLogin(){
+  const role = document.getElementById('login-role').value;
+  const names = { admin:'Administrator', doctor:'Dr. Budi Santoso', nurse:'Ns. Sari Dewi', receptionist:'Reza Pradana', labtech:'Lab. Ahmad' };
+  currentUser = { role, name: names[role], allowed: ROLE_MENUS[role] };
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.add('active');
+  document.getElementById('user-name').textContent = currentUser.name;
+  document.getElementById('user-avatar').textContent = ROLE_AVATARS[role];
+  document.getElementById('user-avatar').style.background = ROLE_COLORS[role];
+  document.getElementById('user-role-badge').textContent = ROLE_LABELS[role];
+  document.getElementById('user-role-badge').className = 'role-badge badge ' + (ROLE_BADGE_CLASS[role]||'bg-gray');
+  applyNavAccess();
+  updateBadges();
+  showPage('dashboard');
+}
+
+function applyNavAccess(){
+  document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
+    el.style.display = currentUser.allowed.includes(el.dataset.page)?'':'none';
+  });
+}
+
+function logout(){
+  currentUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').classList.remove('active');
+}
+
+// ── NAVIGATION ──
+function showPage(page){
+  if(!currentUser||!currentUser.allowed.includes(page)){showToast('error','❌ Akses ditolak untuk role Anda');return;}
+  currentPage=page;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const nav=document.querySelector(`.nav-item[data-page="${page}"]`);
+  if(nav) nav.classList.add('active');
+  const pages={
+    dashboard:renderDashboard,registration:renderRegistration,appointments:renderAppointments,
+    queue:renderQueue,chart:renderChart,vitals:renderVitals,medications:renderMedications,
+    orders:renderOrders,laboratory:renderLaboratory,ward:renderWard,reports:renderReports,
+    admin:renderAdmin,users:renderUsers,settings:renderSettings
+  };
+  if(pages[page]) pages[page]();
+}
+
+function updateBadges(){
+  document.getElementById('queue-badge').textContent = DB.queue.filter(q=>q.status==='menunggu').length;
+  document.getElementById('appt-badge').textContent = DB.appointments.filter(a=>a.status==='terjadwal').length;
+  document.getElementById('lab-badge').textContent = DB.lab_orders.filter(l=>l.status==='pending').length;
+}
+
+// ── HELPERS ──
+function getPatient(id){ return DB.patients.find(p=>p.id===id)||{}; }
+function age(dob){ if(!dob) return '—'; return Math.floor((Date.now()-new Date(dob))/(365.25*24*3600*1000))+'th'; }
+function fmt(date){ if(!date) return '—'; return new Date(date).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
+function genId(prefix,arr){ return prefix+String(arr.length+1).padStart(3,'0'); }
+function setContent(html){ document.getElementById('content-area').innerHTML=html; }
+
+function openModal(title,body,footer=''){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-footer').innerHTML=footer||'<button class="btn btn-outline" onclick="closeModal()">Tutup</button>';
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.add('hidden'); }
+
+function showToast(type,msg){
+  const t=document.getElementById('toast');
+  const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
+  t.className=`toast ${type}`;
+  document.getElementById('toast-icon').textContent=icons[type]||'ℹ️';
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function globalSearch(val){
+  if(val.length<2) return;
+  const found=DB.patients.filter(p=>p.name.toLowerCase().includes(val.toLowerCase())||p.id.includes(val));
+  if(found.length>0) showToast('info',`🔍 Ditemukan ${found.length} pasien untuk "${val}"`);
+}
+
+function filterTable(input,tableId){
+  const val=input.value.toLowerCase();
+  document.querySelectorAll(`#${tableId} tbody tr`).forEach(row=>{
+    row.style.display=row.textContent.toLowerCase().includes(val)?'':'none';
+  });
+}
+
+// ── EXPORT/IMPORT ──
+function exportJSON(){
+  DB.meta.exported=new Date().toISOString();
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`E-RM_${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('success','💾 Data berhasil diekspor ke JSON');
+}
+function importJSON(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.patients&&data.visits){ DB=data; updateBadges(); showPage(currentPage); showToast('success',`📂 Import berhasil: ${DB.patients.length} pasien`); }
+      else showToast('error','❌ Format JSON tidak valid');
+    } catch { showToast('error','❌ File JSON rusak atau tidak valid'); }
+  };
+  reader.readAsText(file); input.value='';
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: DASHBOARD
+// ══════════════════════════════════════════════
+function renderDashboard(){
+  const activeQueue=DB.queue.filter(q=>q.status==='menunggu').length;
+  const pendingLab=DB.lab_orders.filter(l=>l.status==='pending').length;
+  const todayAppt=DB.appointments.filter(a=>a.date==='2025-04-25').length;
+  const recentVisits=DB.visits.slice(-5).reverse();
+  const urgentQ=DB.queue.filter(q=>q.priority==='urgent');
+
+  setContent(`
+  <div class="page-header">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-subtitle">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})} — ${DB.meta.facility}</div>
+    </div>
+  </div>
+
+  ${urgentQ.length?`<div class="alert alert-red">🚨 <strong>${urgentQ.length} pasien URGENT</strong> di antrian — segera tangani!</div>`:''}
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="slabel">Total Pasien</div>
+      <div class="svalue" style="color:var(--accent)">${DB.patients.length}</div>
+      <div class="ssub">Terdaftar aktif</div>
+    </div>
+    <div class="stat-card">
+      <div class="slabel">Kunjungan Hari Ini</div>
+      <div class="svalue" style="color:var(--green)">${DB.visits.filter(v=>v.date==='2025-04-25').length}</div>
+      <div class="ssub">Dari total ${DB.visits.length} kunjungan</div>
+    </div>
+    <div class="stat-card">
+      <div class="slabel">Antrian Aktif</div>
+      <div class="svalue" style="color:var(--yellow)">${activeQueue}</div>
+      <div class="ssub">Menunggu dipanggil</div>
+    </div>
+    <div class="stat-card">
+      <div class="slabel">Lab Pending</div>
+      <div class="svalue" style="color:var(--red)">${pendingLab}</div>
+      <div class="ssub">Menunggu hasil</div>
+    </div>
+    <div class="stat-card">
+      <div class="slabel">Appointment Hari Ini</div>
+      <div class="svalue" style="color:var(--purple)">${todayAppt}</div>
+      <div class="ssub">Dari ${DB.appointments.length} total</div>
+    </div>
+    <div class="stat-card">
+      <div class="slabel">Bed Terisi</div>
+      <div class="svalue" style="color:var(--orange)">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length}</div>
+      <div class="ssub">Kapasitas rawat inap</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-title">📋 Kunjungan Terbaru</div>
+      ${recentVisits.map(v=>{ const p=getPatient(v.patient_id); return `
+      <div class="info-row">
+        <span class="key">${p.name||'?'} <span class="cell-mono" style="color:var(--text3);font-size:10px">${v.id}</span></span>
+        <span class="val"><span class="badge ${v.status==='selesai'?'bg-green':'bg-yellow'}">${v.status}</span></span>
+      </div>`; }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">🚶 Antrian Aktif</div>
+      ${DB.queue.filter(q=>q.status==='menunggu').map(q=>{ const p=getPatient(q.patient_id); return `
+      <div class="info-row">
+        <span class="key"><strong>#${q.number}</strong> ${p.name||'?'} <span style="color:var(--text3);font-size:11px">${q.location}</span></span>
+        <span class="val"><span class="badge ${q.priority==='urgent'?'bg-red':'bg-gray'}">${q.priority}</span></span>
+      </div>`; }).join('') || '<div style="color:var(--text3);font-size:12px;padding:8px 0">Tidak ada antrian</div>'}
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📅 Appointment Hari Ini</div>
+      ${DB.appointments.filter(a=>a.date==='2025-04-25').map(a=>{ const p=getPatient(a.patient_id); return `
+      <div class="info-row">
+        <span class="key"><span class="badge bg-blue">${a.time}</span> ${p.name||'?'} — ${a.type}</span>
+        <span class="val"><span class="badge ${a.status==='hadir'?'bg-green':'bg-yellow'}">${a.status}</span></span>
+      </div>`; }).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">🏥 Status Bed</div>
+      <div class="info-row"><span class="key">Kosong</span><span class="val"><span class="badge bg-green">${DB.beds.filter(b=>b.status==='kosong').length}</span></span></div>
+      <div class="info-row"><span class="key">Terisi</span><span class="val"><span class="badge bg-red">${DB.beds.filter(b=>b.status==='terisi').length}</span></span></div>
+      <div class="info-row"><span class="key">Maintenance</span><span class="val"><span class="badge bg-yellow">${DB.beds.filter(b=>b.status==='maintenance').length}</span></span></div>
+      <div style="margin-top:12px">
+        <div class="progress"><div class="progress-fill" style="width:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length*100}%;background:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length>0.8?'var(--red)':'var(--green)'}"></div></div>
+      </div>
+    </div>
+  </div>`);
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: REGISTRATION
+// ══════════════════════════════════════════════
+function renderRegistration(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Pendaftaran Pasien</div><div class="page-subtitle">${DB.patients.length} pasien terdaftar</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="openRegModal()">+ Daftarkan Pasien</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <div class="table-toolbar">
+      <div class="tsearch">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Cari nama, ID, NIK…" onkeyup="filterTable(this,'reg-table')">
+      </div>
+    </div>
+    <table id="reg-table">
+      <thead><tr><th>ID</th><th>Nama</th><th>DOB / Usia</th><th>Gender</th><th>NIK</th><th>Goldar</th><th>Alergi</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        ${DB.patients.map(p=>`<tr>
+          <td class="cell-mono">${p.id}</td>
+          <td class="cell-primary">${p.name}</td>
+          <td>${fmt(p.dob)} / ${age(p.dob)}</td>
+          <td>${p.gender}</td>
+          <td class="cell-mono">${p.nik}</td>
+          <td><span class="badge bg-blue">${p.blood_type}</span></td>
+          <td>${p.allergy?`<span class="badge bg-red">⚠ ${p.allergy}</span>`:'—'}</td>
+          <td><span class="badge bg-green">${p.status}</span></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="openEditPatient('${p.id}')">Edit</button>
+            <button class="btn btn-green btn-sm" onclick="addToQueue('${p.id}')">+ Antrian</button>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`);
+}
+
+function openRegModal(){
+  openModal('Daftarkan Pasien Baru',`
+  <div class="form-grid">
+    <div class="field full"><label>Nama Lengkap</label><input type="text" id="rf-name" placeholder="Nama lengkap pasien"></div>
+    <div class="field"><label>Tanggal Lahir</label><input type="date" id="rf-dob"></div>
+    <div class="field"><label>Jenis Kelamin</label><select id="rf-gender"><option>Laki-laki</option><option>Perempuan</option></select></div>
+    <div class="field full"><label>NIK</label><input type="text" id="rf-nik" placeholder="16 digit NIK" maxlength="16"></div>
+    <div class="field"><label>No. HP</label><input type="text" id="rf-phone" placeholder="08xx…"></div>
+    <div class="field"><label>Gol. Darah</label><select id="rf-blood"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+    <div class="field full"><label>Alamat</label><textarea id="rf-address" placeholder="Alamat lengkap" style="min-height:60px"></textarea></div>
+    <div class="field full"><label>Alergi (jika ada)</label><input type="text" id="rf-allergy" placeholder="Penisilin, Sulfa, dll…"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="savePatient()">💾 Simpan</button>`);
+}
+
+function savePatient(){
+  const name=document.getElementById('rf-name').value;
+  if(!name){showToast('error','Nama wajib diisi');return;}
+  const id='P'+String(DB.patients.length+1).padStart(3,'0');
+  DB.patients.push({id,name,dob:document.getElementById('rf-dob').value,gender:document.getElementById('rf-gender').value,nik:document.getElementById('rf-nik').value,phone:document.getElementById('rf-phone').value,blood_type:document.getElementById('rf-blood').value,address:document.getElementById('rf-address').value,allergy:document.getElementById('rf-allergy').value,status:'active',registered:new Date().toISOString().slice(0,10)});
+  closeModal(); renderRegistration();
+  showToast('success',`✅ Pasien ${name} berhasil didaftarkan`);
+}
+
+function openEditPatient(id){
+  const p=getPatient(id);
+  openModal(`Edit Pasien — ${p.name}`,`
+  <div class="form-grid">
+    <div class="field full"><label>Nama Lengkap</label><input type="text" id="ef-name" value="${p.name}"></div>
+    <div class="field"><label>Tanggal Lahir</label><input type="date" id="ef-dob" value="${p.dob}"></div>
+    <div class="field"><label>Jenis Kelamin</label><select id="ef-gender"><option ${p.gender==='Laki-laki'?'selected':''}>Laki-laki</option><option ${p.gender==='Perempuan'?'selected':''}>Perempuan</option></select></div>
+    <div class="field"><label>No. HP</label><input type="text" id="ef-phone" value="${p.phone}"></div>
+    <div class="field"><label>Gol. Darah</label><select id="ef-blood"><option ${p.blood_type==='A+'?'selected':''}>A+</option><option ${p.blood_type==='A-'?'selected':''}>A-</option><option ${p.blood_type==='B+'?'selected':''}>B+</option><option ${p.blood_type==='B-'?'selected':''}>B-</option><option ${p.blood_type==='O+'?'selected':''}>O+</option><option ${p.blood_type==='O-'?'selected':''}>O-</option><option ${p.blood_type==='AB+'?'selected':''}>AB+</option><option ${p.blood_type==='AB-'?'selected':''}>AB-</option></select></div>
+    <div class="field full"><label>Alamat</label><textarea id="ef-address">${p.address}</textarea></div>
+    <div class="field full"><label>Alergi</label><input type="text" id="ef-allergy" value="${p.allergy||''}"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="updatePatient('${id}')">💾 Update</button>`);
+}
+
+function updatePatient(id){
+  const p=DB.patients.find(x=>x.id===id);
+  p.name=document.getElementById('ef-name').value;
+  p.dob=document.getElementById('ef-dob').value;
+  p.gender=document.getElementById('ef-gender').value;
+  p.phone=document.getElementById('ef-phone').value;
+  p.blood_type=document.getElementById('ef-blood').value;
+  p.address=document.getElementById('ef-address').value;
+  p.allergy=document.getElementById('ef-allergy').value;
+  closeModal(); renderRegistration();
+  showToast('success',`✅ Data ${p.name} berhasil diupdate`);
+}
+
+function addToQueue(patientId){
+  const p=getPatient(patientId);
+  const already=DB.queue.find(q=>q.patient_id===patientId&&q.status==='menunggu');
+  if(already){showToast('warn','⚠️ Pasien sudah ada di antrian');return;}
+  const newQ={id:genId('Q',DB.queue),patient_id:patientId,number:DB.queue.length+1,location:'Poli Umum',priority:'normal',status:'menunggu',checked_in:new Date().toTimeString().slice(0,5),wait_min:0};
+  DB.queue.push(newQ); updateBadges();
+  showToast('success',`✅ ${p.name} ditambahkan ke antrian #${newQ.number}`);
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: APPOINTMENTS
+// ══════════════════════════════════════════════
+function renderAppointments(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Appointment</div><div class="page-subtitle">Jadwal perjanjian pasien</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="openApptModal()">+ Jadwal Baru</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchApptTab('all',this)">Semua</button>
+    <button class="tab-btn" onclick="switchApptTab('today',this)">Hari Ini</button>
+    <button class="tab-btn" onclick="switchApptTab('terjadwal',this)">Terjadwal</button>
+    <button class="tab-btn" onclick="switchApptTab('hadir',this)">Hadir</button>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr><th>ID</th><th>Pasien</th><th>Tanggal</th><th>Waktu</th><th>Poli</th><th>Dokter</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody id="appt-tbody">${renderApptRows(DB.appointments)}</tbody>
+    </table>
+  </div>`);
+}
+
+function renderApptRows(data){
+  return data.map(a=>{ const p=getPatient(a.patient_id); return `<tr>
+    <td class="cell-mono">${a.id}</td>
+    <td class="cell-primary">${p.name||'?'}</td>
+    <td>${fmt(a.date)}</td>
+    <td><span class="badge bg-blue">${a.time}</span></td>
+    <td>${a.type}</td>
+    <td>${a.doctor}</td>
+    <td><span class="badge ${a.status==='hadir'?'bg-green':a.status==='terjadwal'?'bg-yellow':'bg-gray'}">${a.status}</span></td>
+    <td style="display:flex;gap:6px">
+      ${a.status==='terjadwal'?`<button class="btn btn-green btn-sm" onclick="markApptArrived('${a.id}')">Hadir</button>`:''}
+      <button class="btn btn-red btn-sm" onclick="cancelAppt('${a.id}')">Batal</button>
+    </td>
+  </tr>`; }).join('');
+}
+
+function switchApptTab(filter,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  let data=DB.appointments;
+  if(filter==='today') data=data.filter(a=>a.date==='2025-04-25');
+  else if(filter!=='all') data=data.filter(a=>a.status===filter);
+  document.getElementById('appt-tbody').innerHTML=renderApptRows(data);
+}
+
+function markApptArrived(id){
+  const a=DB.appointments.find(x=>x.id===id);
+  if(a){a.status='hadir';addToQueue(a.patient_id);renderAppointments();showToast('success','✅ Pasien hadir & ditambahkan ke antrian');}
+}
+function cancelAppt(id){
+  const a=DB.appointments.find(x=>x.id===id);
+  if(a){a.status='dibatalkan';renderAppointments();showToast('info','Appointment dibatalkan');}
+}
+
+function openApptModal(){
+  openModal('Jadwal Appointment Baru',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="af-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name} (${p.id})</option>`).join('')}</select></div>
+    <div class="field"><label>Tanggal</label><input type="date" id="af-date" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div class="field"><label>Waktu</label><input type="time" id="af-time" value="09:00"></div>
+    <div class="field full"><label>Poli / Layanan</label><select id="af-type"><option>Poli Umum</option><option>Poli KIA</option><option>Poli Gigi</option><option>Poli Dalam</option><option>Poli Anak</option><option>Poli Mata</option></select></div>
+    <div class="field full"><label>Dokter</label><input type="text" id="af-doctor" value="Dr. Budi Santoso"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="saveAppt()">💾 Simpan</button>`);
+}
+
+function saveAppt(){
+  DB.appointments.push({id:genId('A',DB.appointments),patient_id:document.getElementById('af-patient').value,date:document.getElementById('af-date').value,time:document.getElementById('af-time').value,type:document.getElementById('af-type').value,doctor:document.getElementById('af-doctor').value,status:'terjadwal'});
+  updateBadges(); closeModal(); renderAppointments();
+  showToast('success','✅ Appointment berhasil dijadwalkan');
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: QUEUE
+// ══════════════════════════════════════════════
+function renderQueue(){
+  const waiting=DB.queue.filter(q=>q.status==='menunggu').sort((a,b)=>({emergency:0,urgent:1,normal:2}[a.priority]||2)-({emergency:0,urgent:1,normal:2}[b.priority]||2));
+  const called=DB.queue.filter(q=>q.status==='dipanggil');
+
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Antrian Pasien</div><div class="page-subtitle">${waiting.length} menunggu · ${called.length} dipanggil</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="callNextQueue()">📢 Panggil Berikutnya</button>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="card-title" style="margin-bottom:12px">🟡 Menunggu (${waiting.length})</div>
+      ${waiting.length?waiting.map(q=>{ const p=getPatient(q.patient_id); return `
+      <div class="queue-item">
+        <div class="queue-num">#${q.number}</div>
+        <div class="queue-info">
+          <div class="queue-name">${p.name||'?'}</div>
+          <div class="queue-meta">${q.location} · Check-in ${q.checked_in}</div>
+        </div>
+        <span class="badge ${q.priority==='urgent'?'bg-red':'bg-gray'}">${q.priority.toUpperCase()}</span>
+        <button class="btn btn-outline btn-sm" onclick="callQueue('${q.id}')">Panggil</button>
+      </div>`; }).join(''):'<div class="empty"><div class="eicon">✅</div><p>Antrian kosong</p></div>'}
+    </div>
+    <div>
+      <div class="card-title" style="margin-bottom:12px">🟢 Dipanggil (${called.length})</div>
+      ${called.map(q=>{ const p=getPatient(q.patient_id); return `
+      <div class="queue-item" style="border-color:rgba(39,201,122,.35)">
+        <div class="queue-num" style="color:var(--green)">#${q.number}</div>
+        <div class="queue-info">
+          <div class="queue-name">${p.name||'?'}</div>
+          <div class="queue-meta">${q.location}</div>
+        </div>
+        <button class="btn btn-green btn-sm" onclick="finishQueue('${q.id}')">Selesai</button>
+      </div>`; }).join('')}
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">📊 Statistik Antrian</div>
+        <div class="info-row"><span class="key">Total hari ini</span><span class="val">${DB.queue.length}</span></div>
+        <div class="info-row"><span class="key">Selesai</span><span class="val">${DB.queue.filter(q=>q.status==='selesai').length}</span></div>
+        <div class="info-row"><span class="key">Menunggu</span><span class="val">${waiting.length}</span></div>
+        <div class="info-row"><span class="key">Urgent</span><span class="val"><span class="badge bg-red">${DB.queue.filter(q=>q.priority==='urgent').length}</span></span></div>
+      </div>
+    </div>
+  </div>`);
+}
+
+function callQueue(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='dipanggil';const p=getPatient(q.patient_id);renderQueue();showToast('info',`📢 Memanggil: ${p.name} — #${q.number}`);} }
+function finishQueue(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='selesai';updateBadges();renderQueue();showToast('success','✅ Pasien selesai ditangani');} }
+function callNextQueue(){ const next=DB.queue.find(q=>q.status==='menunggu'); if(next)callQueue(next.id); else showToast('info','Tidak ada antrian tersisa'); }
+
+// ══════════════════════════════════════════════
+//  PAGE: PATIENT CHART
+// ══════════════════════════════════════════════
+function renderChart(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Patient Chart</div><div class="page-subtitle">Rekam medis elektronik per pasien</div></div>
+  </div>
+  <div class="table-wrap">
+    <div class="table-toolbar">
+      <div class="tsearch">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Cari pasien…" onkeyup="filterTable(this,'chart-table')">
+      </div>
+    </div>
+    <table id="chart-table">
+      <thead><tr><th>ID</th><th>Nama</th><th>Usia/Gender</th><th>Kunjungan Terakhir</th><th>Kondisi Aktif</th><th>Aksi</th></tr></thead>
+      <tbody>
+        ${DB.patients.map(p=>{ const lastV=DB.visits.filter(v=>v.patient_id===p.id).pop(); const conds=DB.conditions.filter(c=>c.patient_id===p.id&&c.status==='aktif'); return `<tr>
+          <td class="cell-mono">${p.id}</td>
+          <td class="cell-primary">${p.name}</td>
+          <td>${age(p.dob)} / ${p.gender}</td>
+          <td>${lastV?fmt(lastV.date):'—'}</td>
+          <td>${conds.length?conds.map(c=>`<span class="badge bg-yellow">${c.name}</span> `).join(''):'<span style="color:var(--text3)">—</span>'}</td>
+          <td><button class="btn btn-blue btn-sm" onclick="openPatientChart('${p.id}')">📋 Buka Chart</button></td>
+        </tr>`; }).join('')}
+      </tbody>
+    </table>
+  </div>`);
+}
+
+function openPatientChart(pid){
+  const p=getPatient(pid);
+  const visits=DB.visits.filter(v=>v.patient_id===pid);
+  const conds=DB.conditions.filter(c=>c.patient_id===pid);
+  const meds=DB.medications.filter(m=>m.patient_id===pid);
+  const labs=DB.lab_orders.filter(l=>l.patient_id===pid);
+  const vitals=DB.vitals.filter(v=>v.patient_id===pid).pop();
+
+  openModal(`📋 Chart — ${p.name}`,`
+  <div class="tabs" style="margin-bottom:16px">
+    <button class="tab-btn active" onclick="chartTab('summary',this)">Summary</button>
+    <button class="tab-btn" onclick="chartTab('visits',this)">Kunjungan</button>
+    <button class="tab-btn" onclick="chartTab('conds',this)">Kondisi</button>
+    <button class="tab-btn" onclick="chartTab('meds',this)">Obat</button>
+    <button class="tab-btn" onclick="chartTab('labs',this)">Lab</button>
+  </div>
+  <div id="ct-summary" class="tab-pane active">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">👤 Identitas</div>
+        <div class="info-row"><span class="key">Nama</span><span class="val">${p.name}</span></div>
+        <div class="info-row"><span class="key">DOB / Usia</span><span class="val">${fmt(p.dob)} / ${age(p.dob)}</span></div>
+        <div class="info-row"><span class="key">NIK</span><span class="val cell-mono" style="font-size:11px">${p.nik}</span></div>
+        <div class="info-row"><span class="key">Gol. Darah</span><span class="val"><span class="badge bg-blue">${p.blood_type}</span></span></div>
+        <div class="info-row"><span class="key">Alergi</span><span class="val">${p.allergy?`<span class="badge bg-red">⚠ ${p.allergy}</span>`:'—'}</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">💓 Vital Terakhir</div>
+        ${vitals?`
+        <div class="info-row"><span class="key">Tek. Darah</span><span class="val">${vitals.bp_systolic}/${vitals.bp_diastolic} mmHg</span></div>
+        <div class="info-row"><span class="key">Nadi</span><span class="val">${vitals.heart_rate} bpm</span></div>
+        <div class="info-row"><span class="key">Suhu</span><span class="val">${vitals.temperature}°C</span></div>
+        <div class="info-row"><span class="key">SpO2</span><span class="val">${vitals.spo2}%</span></div>
+        <div class="info-row"><span class="key">BB / TB</span><span class="val">${vitals.weight}kg / ${vitals.height}cm</span></div>
+        `:'<div style="color:var(--text3);font-size:12px;padding:8px 0">Belum ada data vital</div>'}
+      </div>
+    </div>
+  </div>
+  <div id="ct-visits" class="tab-pane">
+    <div class="timeline">
+      ${visits.length?visits.map(v=>`<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">${fmt(v.date)}</div><div class="timeline-content"><div class="ttype">${v.type}</div><div class="tdesc"><strong>${v.diagnosis}</strong> — ${v.notes||'—'} <span class="badge ${v.status==='selesai'?'bg-green':'bg-yellow'}">${v.status}</span></div></div></div>`).join(''):'<div class="empty"><p>Belum ada riwayat kunjungan</p></div>'}
+    </div>
+  </div>
+  <div id="ct-conds" class="tab-pane">
+    ${conds.length?conds.map(c=>`<div class="card" style="margin-bottom:8px">
+      <div class="info-row"><span class="key">Kondisi</span><span class="val">${c.name}</span></div>
+      <div class="info-row"><span class="key">Onset</span><span class="val">${fmt(c.onset)}</span></div>
+      <div class="info-row"><span class="key">Keparahan</span><span class="val"><span class="badge ${c.severity==='berat'?'bg-red':c.severity==='sedang'?'bg-yellow':'bg-green'}">${c.severity}</span></span></div>
+    </div>`).join(''):'<div class="empty"><p>Belum ada kondisi tercatat</p></div>'}
+  </div>
+  <div id="ct-meds" class="tab-pane">
+    ${meds.length?meds.map(m=>`<div class="card" style="margin-bottom:8px">
+      <div class="info-row"><span class="key">Obat</span><span class="val"><strong>${m.drug}</strong></span></div>
+      <div class="info-row"><span class="key">Dosis / Frek.</span><span class="val">${m.dose} — ${m.frequency}</span></div>
+      <div class="info-row"><span class="key">Rute</span><span class="val">${m.route}</span></div>
+      <div class="info-row"><span class="key">Periode</span><span class="val">${fmt(m.start)} s/d ${fmt(m.end)}</span></div>
+      <div class="info-row"><span class="key">Status</span><span class="val"><span class="badge bg-green">${m.status}</span></span></div>
+    </div>`).join(''):'<div class="empty"><p>Tidak ada obat aktif</p></div>'}
+  </div>
+  <div id="ct-labs" class="tab-pane">
+    ${labs.length?labs.map(l=>`<div class="card" style="margin-bottom:8px">
+      <div class="info-row"><span class="key">Pemeriksaan</span><span class="val">${l.test}</span></div>
+      <div class="info-row"><span class="key">Tanggal Order</span><span class="val">${fmt(l.ordered)}</span></div>
+      <div class="info-row"><span class="key">Status</span><span class="val"><span class="badge ${l.status==='selesai'?'bg-green':l.status==='proses'?'bg-yellow':'bg-gray'}">${l.status}</span></span></div>
+      <div class="info-row"><span class="key">Hasil</span><span class="val">${l.result||'—'}</span></div>
+    </div>`).join(''):'<div class="empty"><p>Belum ada order lab</p></div>'}
+  </div>`);
+}
+
+function chartTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  document.querySelectorAll('[id^="ct-"]').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`ct-${name}`).classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: VITALS
+// ══════════════════════════════════════════════
+function renderVitals(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Vital Signs</div><div class="page-subtitle">Rekam tanda vital pasien</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="openVitalModal()">+ Input Vital</button>
+    </div>
+  </div>
+  ${DB.vitals.map(v=>{ const p=getPatient(v.patient_id); const bmi=(v.weight/((v.height/100)**2)).toFixed(1); return `
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">
+      💓 ${p.name||v.patient_id}
+      <span style="color:var(--text3);font-size:11px;font-weight:400">${fmt(v.date)} · ${v.nurse}</span>
+    </div>
+    <div class="vitals-grid">
+      <div class="vital-box ${v.bp_systolic>=140?'critical':v.bp_systolic>=120?'warn':'normal'}">
+        <div class="vname">Tek. Darah</div>
+        <div class="vval" style="font-size:18px">${v.bp_systolic}/${v.bp_diastolic}</div>
+        <div class="vunit">mmHg</div>
+      </div>
+      <div class="vital-box ${v.heart_rate<60||v.heart_rate>100?'warn':'normal'}">
+        <div class="vname">Nadi</div>
+        <div class="vval">${v.heart_rate}</div>
+        <div class="vunit">bpm</div>
+      </div>
+      <div class="vital-box ${v.temperature>=38?'critical':v.temperature>=37.5?'warn':'normal'}">
+        <div class="vname">Suhu</div>
+        <div class="vval">${v.temperature}</div>
+        <div class="vunit">°C</div>
+      </div>
+      <div class="vital-box ${v.spo2<95?'critical':v.spo2<97?'warn':'normal'}">
+        <div class="vname">SpO2</div>
+        <div class="vval">${v.spo2}</div>
+        <div class="vunit">%</div>
+      </div>
+      <div class="vital-box">
+        <div class="vname">Berat</div>
+        <div class="vval">${v.weight}</div>
+        <div class="vunit">kg</div>
+      </div>
+      <div class="vital-box">
+        <div class="vname">Tinggi</div>
+        <div class="vval">${v.height}</div>
+        <div class="vunit">cm</div>
+      </div>
+      <div class="vital-box ${bmi>=30?'critical':bmi>=25?'warn':'normal'}">
+        <div class="vname">BMI</div>
+        <div class="vval">${bmi}</div>
+        <div class="vunit">${bmi<18.5?'Kurus':bmi<25?'Normal':bmi<30?'Overweight':'Obesitas'}</div>
+      </div>
+      <div class="vital-box ${v.respiratory_rate<12||v.respiratory_rate>20?'warn':'normal'}">
+        <div class="vname">Resp. Rate</div>
+        <div class="vval">${v.respiratory_rate}</div>
+        <div class="vunit">x/mnt</div>
+      </div>
+    </div>
+  </div>`; }).join('')}`);
+}
+
+function openVitalModal(){
+  openModal('Input Vital Signs',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="vf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+    <div class="field"><label>Sistolik (mmHg)</label><input type="number" id="vf-sys" value="120"></div>
+    <div class="field"><label>Diastolik (mmHg)</label><input type="number" id="vf-dia" value="80"></div>
+    <div class="field"><label>Nadi (bpm)</label><input type="number" id="vf-hr" value="80"></div>
+    <div class="field"><label>Suhu (°C)</label><input type="number" id="vf-temp" step="0.1" value="36.5"></div>
+    <div class="field"><label>SpO2 (%)</label><input type="number" id="vf-spo2" value="98"></div>
+    <div class="field"><label>Berat (kg)</label><input type="number" id="vf-weight" step="0.1" value="60"></div>
+    <div class="field"><label>Tinggi (cm)</label><input type="number" id="vf-height" value="165"></div>
+    <div class="field"><label>Resp. Rate (x/mnt)</label><input type="number" id="vf-rr" value="18"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="saveVital()">💾 Simpan</button>`);
+}
+
+function saveVital(){
+  DB.vitals.push({id:genId('VT',DB.vitals),patient_id:document.getElementById('vf-patient').value,date:new Date().toISOString().slice(0,10),bp_systolic:+document.getElementById('vf-sys').value,bp_diastolic:+document.getElementById('vf-dia').value,heart_rate:+document.getElementById('vf-hr').value,temperature:+document.getElementById('vf-temp').value,spo2:+document.getElementById('vf-spo2').value,weight:+document.getElementById('vf-weight').value,height:+document.getElementById('vf-height').value,respiratory_rate:+document.getElementById('vf-rr').value,nurse:currentUser.name});
+  closeModal(); renderVitals();
+  showToast('success','✅ Data vital berhasil disimpan');
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: MEDICATIONS
+// ══════════════════════════════════════════════
+function renderMedications(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Medications</div><div class="page-subtitle">${DB.medications.length} resep aktif</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="openMedModal()">+ Resep Baru</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Pasien</th><th>Obat</th><th>Dosis</th><th>Frekuensi</th><th>Rute</th><th>Periode</th><th>Status</th></tr></thead>
+      <tbody>
+        ${DB.medications.map(m=>{ const p=getPatient(m.patient_id); return `<tr>
+          <td class="cell-mono">${m.id}</td>
+          <td class="cell-primary">${p.name||'?'}</td>
+          <td><strong>${m.drug}</strong></td>
+          <td>${m.dose}</td>
+          <td><span class="badge bg-blue">${m.frequency}</span></td>
+          <td>${m.route}</td>
+          <td style="font-size:11px">${fmt(m.start)} — ${fmt(m.end)}</td>
+          <td><span class="badge ${m.status==='aktif'?'bg-green':'bg-gray'}">${m.status}</span></td>
+        </tr>`; }).join('')}
+      </tbody>
+    </table>
+  </div>`);
+}
+
+function openMedModal(){
+  openModal('Tambah Resep Obat',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="mf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+    <div class="field full"><label>Nama Obat</label><input type="text" id="mf-drug" placeholder="Nama obat"></div>
+    <div class="field"><label>Dosis</label><input type="text" id="mf-dose" placeholder="500mg"></div>
+    <div class="field"><label>Frekuensi</label><select id="mf-freq"><option>1x1</option><option>2x1</option><option>3x1</option><option>4x1</option><option>1x2</option></select></div>
+    <div class="field"><label>Rute</label><select id="mf-route"><option>Oral</option><option>IV</option><option>IM</option><option>SC</option><option>Topikal</option></select></div>
+    <div class="field"><label>Dokter</label><input type="text" id="mf-doc" value="${currentUser.name}"></div>
+    <div class="field"><label>Mulai</label><input type="date" id="mf-start" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div class="field"><label>Selesai</label><input type="date" id="mf-end"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="saveMed()">💾 Simpan</button>`);
+}
+
+function saveMed(){
+  const drug=document.getElementById('mf-drug').value;
+  if(!drug){showToast('error','Nama obat wajib diisi');return;}
+  DB.medications.push({id:genId('M',DB.medications),patient_id:document.getElementById('mf-patient').value,drug,dose:document.getElementById('mf-dose').value,frequency:document.getElementById('mf-freq').value,route:document.getElementById('mf-route').value,doctor:document.getElementById('mf-doc').value,start:document.getElementById('mf-start').value,end:document.getElementById('mf-end').value,status:'aktif'});
+  closeModal(); renderMedications();
+  showToast('success',`✅ Resep ${drug} berhasil ditambahkan`);
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: ORDERS
+// ══════════════════════════════════════════════
+function renderOrders(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Orders</div><div class="page-subtitle">Permintaan pemeriksaan & tindakan</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="openLabOrderModal()">+ Lab Order Baru</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Pasien</th><th>Pemeriksaan</th><th>Tanggal Order</th><th>Dokter</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        ${DB.lab_orders.map(l=>{ const p=getPatient(l.patient_id); return `<tr>
+          <td class="cell-mono">${l.id}</td>
+          <td class="cell-primary">${p.name||'?'}</td>
+          <td>${l.test}</td>
+          <td>${fmt(l.ordered)}</td>
+          <td>${l.doctor}</td>
+          <td><span class="badge ${l.status==='selesai'?'bg-green':l.status==='proses'?'bg-yellow':'bg-gray'}">${l.status}</span></td>
+          <td>${l.status==='pending'?`<button class="btn btn-outline btn-sm" onclick="processOrder('${l.id}')">Proses</button>`:''}</td>
+        </tr>`; }).join('')}
+      </tbody>
+    </table>
+  </div>`);
+}
+
+function processOrder(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses';renderOrders();showToast('info','🔬 Order diproses ke laboratorium');} }
+function openLabOrderModal(){ openModal('Lab Order Baru',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="lf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+    <div class="field full"><label>Pemeriksaan</label><input type="text" id="lf-test" placeholder="Darah Lengkap, Gula Darah, dll…"></div>
+    <div class="field full"><label>Dokter</label><input type="text" id="lf-doc" value="${currentUser.name}"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="saveLabOrder()">💾 Simpan</button>`);
+}
+function saveLabOrder(){
+  const test=document.getElementById('lf-test').value;
+  if(!test){showToast('error','Nama pemeriksaan wajib');return;}
+  DB.lab_orders.push({id:genId('L',DB.lab_orders),patient_id:document.getElementById('lf-patient').value,test,ordered:new Date().toISOString().slice(0,10),doctor:document.getElementById('lf-doc').value,status:'pending',result:''});
+  updateBadges(); closeModal(); renderOrders();
+  showToast('success','✅ Lab order berhasil dibuat');
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: LABORATORY
+// ══════════════════════════════════════════════
+function renderLaboratory(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Laboratorium</div><div class="page-subtitle">${DB.lab_orders.filter(l=>l.status==='pending').length} pending · ${DB.lab_orders.filter(l=>l.status==='proses').length} proses</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchLabTab('all',this)">Semua</button>
+    <button class="tab-btn" onclick="switchLabTab('pending',this)">Pending</button>
+    <button class="tab-btn" onclick="switchLabTab('proses',this)">Proses</button>
+    <button class="tab-btn" onclick="switchLabTab('selesai',this)">Selesai</button>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr><th>ID</th><th>Pasien</th><th>Pemeriksaan</th><th>Tanggal</th><th>Status</th><th>Hasil</th><th>Aksi</th></tr></thead>
+      <tbody id="lab-tbody">${renderLabRows(DB.lab_orders)}</tbody>
+    </table>
+  </div>`);
+}
+
+function renderLabRows(data){
+  return data.map(l=>{ const p=getPatient(l.patient_id); return `<tr>
+    <td class="cell-mono">${l.id}</td>
+    <td class="cell-primary">${p.name||'?'}</td>
+    <td>${l.test}</td>
+    <td>${fmt(l.ordered)}</td>
+    <td><span class="badge ${l.status==='selesai'?'bg-green':l.status==='proses'?'bg-yellow':'bg-gray'}">${l.status}</span></td>
+    <td style="font-size:12px;color:var(--text2)">${l.result||'—'}</td>
+    <td>
+      ${l.status==='proses'?`<button class="btn btn-green btn-sm" onclick="enterLabResult('${l.id}')">Input Hasil</button>`:''}
+      ${l.status==='pending'?`<button class="btn btn-outline btn-sm" onclick="startLab('${l.id}')">Mulai</button>`:''}
+    </td>
+  </tr>`; }).join('');
+}
+
+function switchLabTab(f,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.getElementById('lab-tbody').innerHTML=renderLabRows(f==='all'?DB.lab_orders:DB.lab_orders.filter(l=>l.status===f));
+}
+
+function startLab(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses';updateBadges();renderLaboratory();showToast('info','🔬 Pemeriksaan dimulai');} }
+
+function enterLabResult(id){
+  openModal('Input Hasil Laboratorium',`
+  <div class="field full"><label>Hasil Pemeriksaan</label><textarea id="result-txt" style="min-height:100px" placeholder="Masukkan hasil pemeriksaan…"></textarea></div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="saveLabResult('${id}')">💾 Simpan Hasil</button>`);
+}
+
+function saveLabResult(id){
+  const l=DB.lab_orders.find(x=>x.id===id);
+  if(l){l.result=document.getElementById('result-txt').value;l.status='selesai';closeModal();renderLaboratory();showToast('success','✅ Hasil lab berhasil disimpan');}
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: WARD
+// ══════════════════════════════════════════════
+function renderWard(){
+  const rooms=[...new Set(DB.beds.map(b=>b.room))];
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Ward & Bed Management</div><div class="page-subtitle">${DB.beds.filter(b=>b.status==='terisi').length} terisi · ${DB.beds.filter(b=>b.status==='kosong').length} kosong</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="openAdmitModal()">+ Admit Pasien</button>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="stat-card"><div class="slabel">Tersedia</div><div class="svalue" style="color:var(--green)">${DB.beds.filter(b=>b.status==='kosong').length}</div><div class="ssub">Bed siap pakai</div></div>
+    <div class="stat-card"><div class="slabel">Terisi</div><div class="svalue" style="color:var(--red)">${DB.beds.filter(b=>b.status==='terisi').length}</div><div class="ssub">Pasien rawat inap</div></div>
+  </div>
+  ${rooms.map(room=>{
+    const beds=DB.beds.filter(b=>b.room===room);
+    return `<div class="card" style="margin-bottom:16px">
+      <div class="card-title">🏥 ${room} <span style="color:var(--text3);font-weight:400;font-size:12px">${beds.length} bed</span></div>
+      <div class="bed-grid">
+        ${beds.map(b=>{ const p=b.patient_id?getPatient(b.patient_id):null; return `
+        <div class="bed-card ${b.status==='kosong'?'empty':b.status==='terisi'?'occupied':'maintenance'}">
+          <div class="bed-icon">${b.status==='kosong'?'🛏️':b.status==='terisi'?'🧑‍⚕️':'🔧'}</div>
+          <div class="bed-num">${b.number}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">${b.type}</div>
+          ${p?`<div style="margin-top:8px;font-size:11px"><strong>${p.name}</strong><br><span style="color:var(--text3)">${fmt(b.admitted)}</span><br><span style="color:var(--text2)">${b.diagnosis||'—'}</span></div>
+          <button class="btn btn-red btn-sm" style="margin-top:8px;width:100%" onclick="dischargePatient('${b.id}')">Discharge</button>`:''}
+        </div>`; }).join('')}
+      </div>
+    </div>`;
+  }).join('')}`);
+}
+
+function openAdmitModal(){
+  const emptyBeds=DB.beds.filter(b=>b.status==='kosong');
+  openModal('Admit Pasien',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="wf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+    <div class="field full"><label>Bed</label><select id="wf-bed">${emptyBeds.map(b=>`<option value="${b.id}">${b.number} — ${b.room} (${b.type})</option>`).join('')}</select></div>
+    <div class="field full"><label>Diagnosis Masuk</label><input type="text" id="wf-diag" placeholder="Diagnosis utama"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="admitPatient()">✅ Admit</button>`);
+}
+
+function admitPatient(){
+  const pid=document.getElementById('wf-patient').value;
+  const bid=document.getElementById('wf-bed').value;
+  const bed=DB.beds.find(b=>b.id===bid);
+  if(bed){bed.patient_id=pid;bed.status='terisi';bed.admitted=new Date().toISOString().slice(0,10);bed.diagnosis=document.getElementById('wf-diag').value;closeModal();renderWard();showToast('success',`✅ ${getPatient(pid).name} berhasil di-admit ke ${bed.number}`);}
+}
+
+function dischargePatient(bedId){
+  const b=DB.beds.find(x=>x.id===bedId);
+  if(b){const name=getPatient(b.patient_id).name;b.patient_id='';b.status='kosong';b.admitted='';b.diagnosis='';renderWard();showToast('success',`✅ ${name} berhasil di-discharge`);}
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: REPORTS
+// ══════════════════════════════════════════════
+function renderReports(){
+  const byGender={'Laki-laki':DB.patients.filter(p=>p.gender==='Laki-laki').length,'Perempuan':DB.patients.filter(p=>p.gender==='Perempuan').length};
+  const visitsByType={};
+  DB.visits.forEach(v=>{visitsByType[v.type]=(visitsByType[v.type]||0)+1;});
+  const labDone=DB.lab_orders.filter(l=>l.status==='selesai').length;
+  const labTotal=DB.lab_orders.length;
+
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Reports & Analytics</div><div class="page-subtitle">Statistik fasilitas kesehatan</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="exportJSON()">📥 Export JSON</button>
+    </div>
+  </div>
+  <div class="stat-grid" style="margin-bottom:20px">
+    <div class="stat-card"><div class="slabel">Total Pasien</div><div class="svalue" style="color:var(--accent)">${DB.patients.length}</div><div class="ssub">♂ ${byGender['Laki-laki']} · ♀ ${byGender['Perempuan']}</div></div>
+    <div class="stat-card"><div class="slabel">Total Kunjungan</div><div class="svalue" style="color:var(--green)">${DB.visits.length}</div></div>
+    <div class="stat-card"><div class="slabel">Lab Selesai</div><div class="svalue" style="color:var(--purple)">${labDone}/${labTotal}</div><div class="ssub">${Math.round(labDone/Math.max(labTotal,1)*100)}% completion</div></div>
+    <div class="stat-card"><div class="slabel">Obat Diresepkan</div><div class="svalue" style="color:var(--orange)">${DB.medications.length}</div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-title">📊 Kunjungan per Poli</div>
+      ${Object.entries(visitsByType).map(([k,v])=>`
+      <div class="chart-bar-wrap">
+        <div class="chart-bar-label"><span>${k}</span><span style="color:var(--text);font-weight:600">${v}</span></div>
+        <div class="chart-bar"><div class="chart-bar-fill" style="width:${v/Math.max(DB.visits.length,1)*100}%;background:var(--accent)"></div></div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">📈 Status Lab Orders</div>
+      ${[['Selesai','selesai','bg-green','var(--green)'],['Proses','proses','bg-yellow','var(--yellow)'],['Pending','pending','bg-gray','var(--text3)']].map(([l,s,c,col])=>{
+        const n=DB.lab_orders.filter(x=>x.status===s).length;
+        return `<div class="chart-bar-wrap">
+          <div class="chart-bar-label"><span>${l}</span><span class="badge ${c}">${n}</span></div>
+          <div class="chart-bar"><div class="chart-bar-fill" style="width:${n/Math.max(labTotal,1)*100}%;background:${col}"></div></div>
+        </div>`;
+      }).join('')}
+      <div style="margin-top:18px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px">Kapasitas Rawat Inap</div>
+        <div class="progress" style="height:8px;margin-bottom:6px"><div class="progress-fill" style="width:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length*100}%;background:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length>0.8?'var(--red)':'var(--green)'}"></div></div>
+        <div style="font-size:11px;color:var(--text2)">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length} bed terisi</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 Program Kesehatan</div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>${['Program','Kode','Koordinator','Pasien Aktif','Status'].map(h=>`<th style="padding:8px 12px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${h}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${DB.programs.map(pr=>`<tr>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--border)">${pr.name}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-blue">${pr.code}</span></td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2)">${pr.coordinator}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--border);font-weight:700;color:var(--text)">${pr.active_patients}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-green">${pr.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`);
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: ADMIN
+// ══════════════════════════════════════════════
+function renderAdmin(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Administration</div><div class="page-subtitle">Pengaturan sistem E-RM</div></div>
+  </div>
+  <div class="grid-3" style="margin-bottom:20px">
+    ${[['⚙️','Global Properties','Konfigurasi sistem global','openGlobalProps()'],['📚','Concept Dictionary','Kamus terminologi ICD/LOINC','openConceptDict()'],['🏥','Location Management','Manajemen lokasi & poli','openLocations()'],['🔖','Encounter Types','Jenis kunjungan klinis','openEncounterTypes()'],['📋','Program Management','Program kesehatan aktif','openPrograms()'],['🆔','Identifier Types','Tipe ID pasien NIK/BPJS','openIdentifiers()']].map(([icon,title,desc,fn])=>`
+    <div class="card" style="cursor:pointer;transition:border-color .15s" onclick="${fn}" onmouseenter="this.style.borderColor='var(--border2)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:26px;margin-bottom:10px">${icon}</div>
+      <div style="font-weight:600;margin-bottom:5px">${title}</div>
+      <div style="font-size:11.5px;color:var(--text2)">${desc}</div>
+    </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">📚 Concept Dictionary</div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>${['Kode','Nama','Sistem','Kategori'].map(h=>`<th style="padding:8px 12px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${h}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${DB.concept_dict.map(c=>`<tr>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--border)" class="cell-mono">${c.code}</td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--border)">${c.name}</td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-purple">${c.system}</span></td>
+          <td style="padding:9px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-gray">${c.category}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`);
+}
+
+function openGlobalProps(){
+  openModal('⚙️ Global Properties',`
+  <div class="info-row"><span class="key">Fasilitas</span><span class="val">${DB.meta.facility}</span></div>
+  <div class="info-row"><span class="key">Versi E-RM</span><span class="val">v${DB.meta.version}</span></div>
+  <div class="info-row"><span class="key">Dibuat</span><span class="val">${fmt(DB.meta.created)}</span></div>
+  <div style="margin-top:16px"><div class="field"><label>Nama Fasilitas</label><input type="text" id="gp-facility" value="${DB.meta.facility}"></div></div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="saveGlobalProps()">💾 Simpan</button>`);
+}
+function saveGlobalProps(){ DB.meta.facility=document.getElementById('gp-facility').value; closeModal(); renderAdmin(); showToast('success','✅ Global properties diupdate'); }
+function openConceptDict(){ showToast('info','📚 Concept Dictionary — lihat tabel di bawah'); }
+function openLocations(){ showToast('info','🏥 Location management'); }
+function openEncounterTypes(){ showToast('info','🔖 Encounter Types dikelola via Concept Dictionary'); }
+function openPrograms(){ showPage('reports'); }
+function openIdentifiers(){ showToast('info','🆔 Identifier Types: NIK, No. RM, No. BPJS'); }
+
+// ══════════════════════════════════════════════
+//  PAGE: USERS
+// ══════════════════════════════════════════════
+function renderUsers(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">User Management</div><div class="page-subtitle">${DB.users.length} pengguna terdaftar</div></div>
+    <div class="page-actions">
+      <button class="btn btn-blue" onclick="openAddUserModal()">+ Tambah User</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Nama</th><th>Username</th><th>Role</th><th>Departemen</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        ${DB.users.map(u=>`<tr>
+          <td class="cell-mono">${u.id}</td>
+          <td class="cell-primary">${u.name}</td>
+          <td class="cell-mono">${u.username}</td>
+          <td><span class="badge ${u.role==='admin'?'bg-purple':u.role==='doctor'?'bg-blue':u.role==='nurse'?'bg-green':u.role==='labtech'?'bg-orange':'bg-yellow'}">${ROLE_LABELS[u.role]||u.role}</span></td>
+          <td style="font-size:12px;color:var(--text2)">${u.specialty||u.department||'—'}</td>
+          <td><span class="badge ${u.status==='active'?'bg-green':'bg-red'}">${u.status}</span></td>
+          <td><button class="btn btn-outline btn-sm" onclick="toggleUserStatus('${u.id}')">Toggle Status</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`);
+}
+
+function openAddUserModal(){
+  openModal('Tambah User Baru',`
+  <div class="form-grid">
+    <div class="field full"><label>Nama Lengkap</label><input type="text" id="uf-name" placeholder="Nama lengkap"></div>
+    <div class="field"><label>Username</label><input type="text" id="uf-username" placeholder="username"></div>
+    <div class="field"><label>Role</label><select id="uf-role"><option value="doctor">Dokter</option><option value="nurse">Perawat</option><option value="receptionist">Resepsionis</option><option value="labtech">Lab Tech</option><option value="admin">Admin</option></select></div>
+    <div class="field full"><label>Departemen / Spesialisasi</label><input type="text" id="uf-dept" placeholder="Poli Umum, ICU, dll"></div>
+  </div>`,
+  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
+   <button class="btn btn-blue" onclick="saveUser()">💾 Simpan</button>`);
+}
+
+function saveUser(){
+  const name=document.getElementById('uf-name').value;
+  if(!name){showToast('error','Nama wajib diisi');return;}
+  DB.users.push({id:genId('u',DB.users),name,username:document.getElementById('uf-username').value,role:document.getElementById('uf-role').value,department:document.getElementById('uf-dept').value,status:'active'});
+  closeModal(); renderUsers();
+  showToast('success',`✅ User ${name} berhasil ditambahkan`);
+}
+
+function toggleUserStatus(id){
+  const u=DB.users.find(x=>x.id===id);
+  if(u){u.status=u.status==='active'?'inactive':'active';renderUsers();showToast('info',`User ${u.name}: ${u.status}`);}
+}
+
+// ══════════════════════════════════════════════
+//  PAGE: SETTINGS
+// ══════════════════════════════════════════════
+function renderSettings(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Implementer Tools</div><div class="page-subtitle">Konfigurasi teknis sistem</div></div>
+  </div>
+  <div class="alert alert-yellow">⚠️ Halaman ini hanya untuk Administrator Teknis. Perubahan dapat mempengaruhi seluruh sistem.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔧 Feature Flags</div>
+      ${[['Lab Module','Aktif'],['Inpatient Module','Aktif'],['ANC Module','Aktif'],['TB Module','Aktif'],['Drug Dispensing','Nonaktif']].map(([f,s])=>`
+      <div class="info-row"><span class="key">${f}</span><span class="val"><span class="badge ${s==='Aktif'?'bg-green':'bg-gray'}">${s}</span></span></div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">📦 Database Info</div>
+      <div class="info-row"><span class="key">Pasien</span><span class="val">${DB.patients.length} records</span></div>
+      <div class="info-row"><span class="key">Kunjungan</span><span class="val">${DB.visits.length} records</span></div>
+      <div class="info-row"><span class="key">Lab Orders</span><span class="val">${DB.lab_orders.length} records</span></div>
+      <div class="info-row"><span class="key">Medications</span><span class="val">${DB.medications.length} records</span></div>
+      <div class="info-row"><span class="key">Vitals</span><span class="val">${DB.vitals.length} records</span></div>
+      <div class="info-row"><span class="key">Users</span><span class="val">${DB.users.length} records</span></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">💾 Data Management</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+      <button class="btn btn-blue" onclick="exportJSON()">📥 Export JSON</button>
+      <button class="btn btn-red" onclick="if(confirm('Reset semua data ke default?')){location.reload()}">🗑️ Reset ke Default</button>
+    </div>
+    <div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px">JSON Preview</div>
+      <pre style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:10px;font-family:'DM Mono',monospace;overflow:auto;max-height:200px;color:var(--text2)">${JSON.stringify({meta:DB.meta,patients_count:DB.patients.length,visits_count:DB.visits.length},null,2)}</pre>
+    </div>
+  </div>`);
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault();document.getElementById('global-search').focus();
+  }
+  if(e.key==='Escape') closeModal();
+});
+document.getElementById('modal-overlay').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+</script>
+</body>
+</html>
