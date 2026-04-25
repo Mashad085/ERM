@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#070c14">
+<meta name="theme-color" content="#2563eb">
 <title>E-RM · Rekam Medis Elektronik</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -21,8 +21,8 @@ tailwind.config = {
       },
       colors: {
         surface: {
-          950: '#070c14', 900: '#0c1422', 800: '#111d2e',
-          700: '#172540', 600: '#1e2f4d', 500: '#264573',
+          950: '#e8edf5', 900: '#f0f4f9', 800: '#ffffff',
+          700: '#dce4f0', 600: '#c8d6e8', 500: '#b0c4de',
         },
         brand: { DEFAULT: '#3b9eff', light: '#6db9ff', dark: '#1b6fd4' },
         success: '#27c97a',
@@ -39,10 +39,10 @@ tailwind.config = {
 </script>
 <style>
   * { box-sizing: border-box; }
-  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #070c14; color: #c9e0f8; overflow: hidden; height: 100dvh; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f4f9; color: #1a2b3c; overflow: hidden; height: 100dvh; }
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #264573; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 4px; }
   input, select, textarea { font-family: inherit; }
   input[type=date], input[type=time] { color-scheme: dark; }
 
@@ -52,7 +52,7 @@ tailwind.config = {
 
   /* ── TOAST ── */
   #toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
-    background:#111d2e; border:1px solid #264573; border-radius:12px;
+    background:#ffffff; border:1px solid #d0dcea; border-radius:12px; color:#1a2b3c;
     padding:10px 18px; display:flex; align-items:center; gap:10px;
     font-size:13px; font-weight:500; z-index:9999; min-width:260px; max-width:90vw;
     transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s; opacity:0; }
@@ -63,29 +63,29 @@ tailwind.config = {
   #toast.info    { border-color:#3b9eff44; }
 
   /* ── MODAL ── */
-  #modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px);
+  #modal-overlay { position:fixed; inset:0; background:rgba(15,30,60,.35); backdrop-filter:blur(4px);
     z-index:500; display:flex; align-items:center; justify-content:center; padding:16px; }
-  #modal { background:#0c1422; border:1px solid #1c3050; border-radius:16px;
+  #modal { background:#ffffff; border:1px solid #d0dcea; border-radius:16px;
     width:100%; max-width:640px; max-height:90dvh; display:flex; flex-direction:column;
     box-shadow:0 24px 80px rgba(0,0,0,.6); }
-  #modal-header { padding:18px 20px; border-bottom:1px solid #1c3050; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  #modal-header { padding:18px 20px; border-bottom:1px solid #e2eaf4; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
   #modal-title { font-size:15px; font-weight:700; }
   #modal-body { padding:20px; overflow-y:auto; flex:1; }
-  #modal-footer { padding:14px 20px; border-top:1px solid #1c3050; display:flex; justify-content:flex-end; gap:8px; flex-shrink:0; flex-wrap:wrap; }
+  #modal-footer { padding:14px 20px; border-top:1px solid #e2eaf4; display:flex; justify-content:flex-end; gap:8px; flex-shrink:0; flex-wrap:wrap; }
 
   /* ── FORM ── */
   .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   @media(max-width:480px){ .form-grid { grid-template-columns:1fr; } }
   .field { display:flex; flex-direction:column; gap:5px; }
   .field.full { grid-column:1/-1; }
-  .field label { font-size:11px; font-weight:600; color:#6a94bb; text-transform:uppercase; letter-spacing:.4px; }
+  .field label { font-size:11px; font-weight:600; color:#4a6b8a; text-transform:uppercase; letter-spacing:.4px; }
   .field input, .field select, .field textarea {
-    background:#111d2e; border:1px solid #1c3050; border-radius:8px;
-    color:#c9e0f8; font-size:13px; padding:8px 11px; outline:none;
+    background:#f8fafc; border:1px solid #cdd8e8; border-radius:8px;
+    color:#1a2b3c; font-size:13px; padding:8px 11px; outline:none;
     transition:border-color .15s, box-shadow .15s; width:100%; }
   .field input:focus, .field select:focus, .field textarea:focus {
-    border-color:#3b9eff; box-shadow:0 0 0 3px rgba(59,158,255,.12); }
-  .field select option { background:#111d2e; }
+    border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.1); }
+  .field select option { background:#ffffff; }
 
   /* ── BUTTONS ── */
   .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px;
@@ -93,8 +93,8 @@ tailwind.config = {
     border:none; font-family:inherit; transition:all .15s; white-space:nowrap; }
   .btn-primary { background:#3b9eff; color:#fff; }
   .btn-primary:hover { background:#6db9ff; }
-  .btn-ghost { background:#111d2e; border:1px solid #1c3050; color:#6a94bb; }
-  .btn-ghost:hover { border-color:#264573; color:#c9e0f8; }
+  .btn-ghost { background:#ffffff; border:1px solid #cdd8e8; color:#4a6b8a; }
+  .btn-ghost:hover { border-color:#2563eb; color:#1a2b3c; }
   .btn-success { background:#27c97a; color:#fff; }
   .btn-danger { background:#f04f4f; color:#fff; }
   .btn-sm { padding:4px 10px; font-size:11.5px; border-radius:6px; }
@@ -107,10 +107,10 @@ tailwind.config = {
   .badge-red    { background:rgba(240,79,79,.15);   color:#f04f4f; }
   .badge-purple { background:rgba(168,126,255,.15); color:#a87eff; }
   .badge-orange { background:rgba(255,140,66,.15);  color:#ff8c42; }
-  .badge-gray   { background:rgba(107,147,181,.12); color:#6a94bb; }
+  .badge-gray   { background:rgba(107,147,181,.12); color:#4a6b8a; }
 
   /* ── NAV BADGE ── */
-  .nav-count { background:#264573; color:#c9e0f8; border-radius:20px; font-size:10px;
+  .nav-count { background:#dce6f5; color:#1a2b3c; border-radius:20px; font-size:10px;
     font-weight:700; padding:1px 6px; min-width:18px; text-align:center; font-family:'JetBrains Mono',monospace; }
   .nav-count.red    { background:rgba(240,79,79,.25);   color:#f04f4f; }
   .nav-count.yellow { background:rgba(245,197,66,.25);  color:#f5c542; }
@@ -120,91 +120,91 @@ tailwind.config = {
   /* ── TABLE ── */
   .tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
   .tbl thead th { padding:9px 12px; text-align:left; font-size:10px; text-transform:uppercase;
-    letter-spacing:.5px; color:#6a94bb; border-bottom:1px solid #1c3050; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap; }
-  .tbl tbody tr { border-bottom:1px solid rgba(28,48,80,.6); transition:background .12s; }
-  .tbl tbody tr:hover { background:rgba(59,158,255,.04); }
-  .tbl tbody td { padding:9px 12px; color:#c9e0f8; vertical-align:middle; }
-  .cell-id { font-family:'JetBrains Mono',monospace; font-size:11px; color:#6a94bb; }
+    letter-spacing:.5px; color:#4a6b8a; border-bottom:1px solid #e2eaf4; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap; }
+  .tbl tbody tr { border-bottom:1px solid #e8edf5; transition:background .12s; }
+  .tbl tbody tr:hover { background:rgba(37,99,235,.04); }
+  .tbl tbody td { padding:9px 12px; color:#1a2b3c; vertical-align:middle; }
+  .cell-id { font-family:'JetBrains Mono',monospace; font-size:11px; color:#4a6b8a; }
   .cell-name { font-weight:600; }
 
   /* ── STAT CARD ── */
-  .stat-card { background:#0c1422; border:1px solid #1c3050; border-radius:12px; padding:16px 18px; }
-  .stat-label { font-size:10.5px; color:#6a94bb; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
+  .stat-card { background:#ffffff; border:1px solid #e2eaf4; border-radius:12px; padding:16px 18px; }
+  .stat-label { font-size:10.5px; color:#4a6b8a; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
   .stat-value { font-size:28px; font-weight:800; line-height:1; margin-bottom:4px; }
-  .stat-sub { font-size:11px; color:#6a94bb; }
+  .stat-sub { font-size:11px; color:#4a6b8a; }
 
   /* ── CARD ── */
-  .card { background:#0c1422; border:1px solid #1c3050; border-radius:12px; padding:16px; }
-  .card-title { font-size:12.5px; font-weight:700; color:#c9e0f8; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .card { background:#ffffff; border:1px solid #e2eaf4; border-radius:12px; padding:16px; }
+  .card-title { font-size:12.5px; font-weight:700; color:#1a2b3c; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
 
   /* ── INFO ROW ── */
-  .info-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(28,48,80,.5); font-size:12.5px; }
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #edf2f8; font-size:12.5px; }
   .info-row:last-child { border-bottom:none; }
-  .info-key { color:#6a94bb; font-weight:500; }
-  .info-val { font-weight:600; text-align:right; }
+  .info-key { color:#4a6b8a; font-weight:500; }
+  .info-val { font-weight:600; text-align:right; color:#0f1f35; }
 
   /* ── TABS ── */
-  .tabs { display:flex; gap:2px; border-bottom:1px solid #1c3050; margin-bottom:16px; overflow-x:auto; }
-  .tab-btn { padding:8px 14px; font-size:12px; font-weight:600; color:#6a94bb; background:none; border:none;
+  .tabs { display:flex; gap:2px; border-bottom:1px solid #e2eaf4; margin-bottom:16px; overflow-x:auto; }
+  .tab-btn { padding:8px 14px; font-size:12px; font-weight:600; color:#4a6b8a; background:none; border:none;
     border-bottom:2px solid transparent; cursor:pointer; font-family:inherit; transition:all .15s; white-space:nowrap; }
-  .tab-btn:hover { color:#c9e0f8; }
-  .tab-btn.active { color:#3b9eff; border-bottom-color:#3b9eff; }
+  .tab-btn:hover { color:#1a2b3c; }
+  .tab-btn.active { color:#2563eb; border-bottom-color:#2563eb; }
   .tab-pane { display:none; }
   .tab-pane.active { display:block; }
 
   /* ── VITALS GRID ── */
-  .vital-box { background:#111d2e; border:1px solid #1c3050; border-radius:10px; padding:12px; text-align:center; }
-  .vital-box.crit { border-color:rgba(240,79,79,.4); background:rgba(240,79,79,.06); }
-  .vital-box.warn { border-color:rgba(245,197,66,.4); background:rgba(245,197,66,.06); }
-  .vital-name { font-size:10px; color:#6a94bb; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+  .vital-box { background:#f8fafc; border:1px solid #e2eaf4; border-radius:10px; padding:12px; text-align:center; }
+  .vital-box.crit { border-color:rgba(220,38,38,.3); background:rgba(220,38,38,.05); }
+  .vital-box.warn { border-color:rgba(217,119,6,.3); background:rgba(217,119,6,.05); }
+  .vital-name { font-size:10px; color:#4a6b8a; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
   .vital-val  { font-size:22px; font-weight:800; line-height:1; }
-  .vital-unit { font-size:10px; color:#6a94bb; margin-top:2px; }
+  .vital-unit { font-size:10px; color:#4a6b8a; margin-top:2px; }
 
   /* ── BED CARD ── */
-  .bed-card { border-radius:10px; padding:12px; border:1px solid #1c3050; background:#111d2e; text-align:center; font-size:12px; }
-  .bed-card.occupied { border-color:rgba(240,79,79,.35); background:rgba(240,79,79,.06); }
-  .bed-card.maintenance { border-color:rgba(245,197,66,.35); background:rgba(245,197,66,.06); }
+  .bed-card { border-radius:10px; padding:12px; border:1px solid #e2eaf4; background:#f8fafc; text-align:center; font-size:12px; }
+  .bed-card.occupied { border-color:rgba(220,38,38,.25); background:rgba(220,38,38,.04); }
+  .bed-card.maintenance { border-color:rgba(217,119,6,.25); background:rgba(217,119,6,.04); }
 
   /* ── QUEUE CARD ── */
-  .queue-card { display:flex; align-items:center; gap:12px; background:#111d2e; border:1px solid #1c3050; border-radius:10px; padding:12px 14px; margin-bottom:8px; }
+  .queue-card { display:flex; align-items:center; gap:12px; background:#ffffff; border:1px solid #e2eaf4; border-radius:10px; padding:12px 14px; margin-bottom:8px; }
 
   /* ── TIMELINE ── */
   .timeline { position:relative; padding-left:20px; }
-  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:1px; background:#1c3050; }
+  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:1px; background:#d0dcea; }
   .tl-item { position:relative; margin-bottom:16px; }
-  .tl-dot { position:absolute; left:-17px; top:4px; width:8px; height:8px; border-radius:50%; background:#3b9eff; border:2px solid #070c14; }
-  .tl-date { font-size:10.5px; color:#6a94bb; margin-bottom:4px; font-family:'JetBrains Mono',monospace; }
-  .tl-content { background:#111d2e; border:1px solid #1c3050; border-radius:8px; padding:10px 12px; font-size:12.5px; }
+  .tl-dot { position:absolute; left:-17px; top:4px; width:8px; height:8px; border-radius:50%; background:#3b9eff; border:2px solid #f0f4f9; }
+  .tl-date { font-size:10.5px; color:#4a6b8a; margin-bottom:4px; font-family:'JetBrains Mono',monospace; }
+  .tl-content { background:#f8fafc; border:1px solid #e2eaf4; border-radius:8px; padding:10px 12px; font-size:12.5px; }
 
   /* ── ALERT ── */
   .alert { border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; font-weight:500; border:1px solid; }
-  .alert-red    { background:rgba(240,79,79,.1);  border-color:rgba(240,79,79,.3);  color:#f04f4f; }
-  .alert-yellow { background:rgba(245,197,66,.1); border-color:rgba(245,197,66,.3); color:#f5c542; }
+  .alert-red    { background:#fef2f2; border-color:#fca5a5; color:#dc2626; }
+  .alert-yellow { background:#fffbeb; border-color:#fcd34d; color:#b45309; }
 
   /* ── SOAP BLOCK ── */
-  .soap-block { border-radius:10px; overflow:hidden; border:1px solid #1c3050; margin-bottom:10px; }
+  .soap-block { border-radius:10px; overflow:hidden; border:1px solid #e2eaf4; margin-bottom:10px; }
   .soap-header { padding:8px 14px; font-size:12px; font-weight:700; display:flex; align-items:center; gap:8px; }
-  .soap-body { background:#111d2e; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; }
+  .soap-body { background:#f8fafc; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; }
 
   /* ── PROGRESS ── */
-  .progress { background:#1c3050; border-radius:4px; height:6px; overflow:hidden; }
+  .progress { background:#e2eaf4; border-radius:4px; height:6px; overflow:hidden; }
   .progress-fill { height:100%; border-radius:4px; transition:width .5s; }
 
   /* ── CHART BAR ── */
   .chart-bar-wrap { margin-bottom:10px; }
   .chart-bar-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
-  .chart-bar { background:#1c3050; border-radius:4px; height:8px; overflow:hidden; }
+  .chart-bar { background:#e2eaf4; border-radius:4px; height:8px; overflow:hidden; }
   .chart-bar-fill { height:100%; border-radius:4px; transition:width .6s cubic-bezier(.4,0,.2,1); }
 
   /* ── BOTTOM NAV (mobile) ── */
   #bottom-nav { display:none; }
   @media(max-width:768px){
     #bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0;
-      background:#0c1422; border-top:1px solid #1c3050; z-index:100;
+      background:#ffffff; border-top:1px solid #e2eaf4; z-index:100;
       justify-content:space-around; padding:6px 0 env(safe-area-inset-bottom,6px); }
     .bnav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 8px;
-      font-size:10px; color:#6a94bb; cursor:pointer; border:none; background:none; font-family:inherit; transition:color .15s; flex:1; }
-    .bnav-item.active { color:#3b9eff; }
+      font-size:10px; color:#4a6b8a; cursor:pointer; border:none; background:none; -webkit-tap-highlight-color:transparent; font-family:inherit; transition:color .15s; flex:1; }
+    .bnav-item.active { color:#2563eb; }
     .bnav-icon { font-size:18px; line-height:1; }
     #content-area { padding-bottom:70px !important; }
   }
@@ -217,13 +217,13 @@ tailwind.config = {
   }
 
   /* ── SEARCH ── */
-  .search-box { display:flex; align-items:center; gap:8px; background:#111d2e; border:1px solid #1c3050; border-radius:8px; padding:6px 12px; }
-  .search-box input { background:none; border:none; color:#c9e0f8; font-size:12.5px; outline:none; flex:1; font-family:inherit; }
-  .search-box input::placeholder { color:#334f68; }
+  .search-box { display:flex; align-items:center; gap:8px; background:#f8fafc; border:1px solid #cdd8e8; border-radius:8px; padding:6px 12px; }
+  .search-box input { background:none; border:none; color:#1a2b3c; font-size:12.5px; outline:none; flex:1; font-family:inherit; }
+  .search-box input::placeholder { color:#7a9ab5; }
 
   /* ── LOGIN SCREEN ── */
-  #login-screen { position:fixed; inset:0; background:#070c14; display:flex; align-items:center; justify-content:center; z-index:1000;
-    background-image:radial-gradient(ellipse 70% 60% at 50% -10%, rgba(59,158,255,.09) 0%, transparent 70%); }
+  #login-screen { position:fixed; inset:0; background:#f0f4f9; display:flex; align-items:center; justify-content:center; z-index:1000;
+    background-image:radial-gradient(ellipse 70% 60% at 50% -10%, rgba(37,99,235,.12) 0%, transparent 70%); }
 
   /* ── SCROLLABLE CONTENT ── */
   #content-area { flex:1; overflow-y:auto; padding:20px; }
@@ -231,14 +231,14 @@ tailwind.config = {
 
   /* ── PAGE HEADER ── */
   .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
-  .page-title { font-size:20px; font-weight:800; line-height:1.1; }
-  .page-sub { font-size:12px; color:#6a94bb; margin-top:3px; }
+  .page-title { font-size:20px; font-weight:800; line-height:1.1; color:#0f1f35; }
+  .page-sub { font-size:12px; color:#4a6b8a; margin-top:3px; }
   .page-actions { display:flex; gap:8px; flex-wrap:wrap; }
 
   /* ── MISC ── */
   .hidden { display:none !important; }
-  .divider { height:1px; background:#1c3050; margin:16px 0; }
-  .empty-state { text-align:center; padding:40px 20px; color:#334f68; }
+  .divider { height:1px; background:#e2eaf4; margin:16px 0; }
+  .empty-state { text-align:center; padding:40px 20px; color:#7a9ab5; }
   .empty-icon { font-size:36px; margin-bottom:12px; }
 </style>
 </head>
@@ -246,12 +246,12 @@ tailwind.config = {
 
 <!-- ── LOGIN ── -->
 <div id="login-screen">
-  <div style="background:#0c1422;border:1px solid #1c3050;border-radius:18px;padding:36px;width:100%;max-width:380px;box-shadow:0 40px 80px rgba(0,0,0,.5)">
+  <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:18px;padding:36px;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(37,99,235,.12)">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px">
       <div style="width:44px;height:44px;background:linear-gradient(135deg,#1b6fd4,#3b9eff);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 16px rgba(59,158,255,.3)">🏥</div>
       <div>
-        <div style="font-size:22px;font-weight:800;letter-spacing:-.5px">E-RM</div>
-        <div style="font-size:11px;color:#334f68;font-family:'JetBrains Mono',monospace">Elektronik Rekam Medis</div>
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.5px;color:#0f1f35">E-RM</div>
+        <div style="font-size:11px;color:#7a9ab5;font-family:'JetBrains Mono',monospace">Elektronik Rekam Medis</div>
       </div>
     </div>
     <div class="field" style="margin-bottom:12px"><label>Username</label><input type="text" id="login-user" value="admin" placeholder="Masukkan username"></div>
@@ -267,14 +267,14 @@ tailwind.config = {
       </select>
     </div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px;font-size:14px" onclick="doLogin()">Masuk ke Sistem</button>
-    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #1c3050">
-      <p style="font-size:11px;color:#334f68;margin-bottom:8px">Quick login:</p>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e2eaf4">
+      <p style="font-size:11px;color:#7a9ab5;margin-bottom:8px">Quick login:</p>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <span onclick="setDemo('admin','admin','admin')"     style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Admin</span>
-        <span onclick="setDemo('dr.budi','pass','doctor')"   style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Dokter</span>
-        <span onclick="setDemo('ns.sari','pass','nurse')"    style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Perawat</span>
-        <span onclick="setDemo('resep','pass','receptionist')" style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Resepsionis</span>
-        <span onclick="setDemo('lab','pass','labtech')"      style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Lab Tech</span>
+        <span onclick="setDemo('admin','admin','admin')"     style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Admin</span>
+        <span onclick="setDemo('dr.budi','pass','doctor')"   style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Dokter</span>
+        <span onclick="setDemo('ns.sari','pass','nurse')"    style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Perawat</span>
+        <span onclick="setDemo('resep','pass','receptionist')" style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Resepsionis</span>
+        <span onclick="setDemo('lab','pass','labtech')"      style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Lab Tech</span>
       </div>
     </div>
   </div>
@@ -284,23 +284,23 @@ tailwind.config = {
 <div id="app" class="hidden" style="display:flex;flex-direction:column;height:100dvh">
 
   <!-- HEADER -->
-  <header style="height:52px;background:#0c1422;border-bottom:1px solid #1c3050;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:50">
+  <header style="height:52px;background:#ffffff;border-bottom:1px solid #e2eaf4;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:50">
     <!-- Brand -->
     <button id="sidebar-toggle" onclick="toggleSidebar()" class="btn btn-ghost btn-sm" style="padding:6px 8px;display:none" title="Menu">☰</button>
     <div style="display:flex;align-items:center;gap:8px;min-width:fit-content">
       <div style="width:28px;height:28px;background:linear-gradient(135deg,#1b6fd4,#3b9eff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px">🏥</div>
-      <span style="font-size:16px;font-weight:800;letter-spacing:-.4px" class="hidden sm:inline">E-RM</span>
+      <span style="font-size:16px;font-weight:800;letter-spacing:-.4px;color:#0f1f35" class="hidden sm:inline">E-RM</span>
     </div>
-    <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#27c97a;margin-right:auto">
-      <span class="pulse-dot" style="width:7px;height:7px;background:#27c97a;border-radius:50%;display:inline-block"></span>
+    <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#16a34a;margin-right:auto">
+      <span class="pulse-dot" style="width:7px;height:7px;background:#16a34a;border-radius:50%;display:inline-block"></span>
       <span class="hidden sm:inline">Online</span>
     </div>
 
     <!-- Search -->
     <div class="search-box" style="flex:1;max-width:280px">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#334f68" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a9ab5" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input id="global-search" type="text" placeholder="Cari pasien… (/)" onkeyup="globalSearch(this.value)">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#334f68;background:#070c14;border:1px solid #1c3050;border-radius:3px;padding:1px 4px" class="hidden lg:inline">/</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4a6b8a;background:#e8edf5;border:1px solid #cdd8e8;border-radius:3px;padding:1px 4px" class="hidden lg:inline">/</span>
     </div>
 
     <!-- Actions -->
@@ -315,9 +315,9 @@ tailwind.config = {
     </label>
 
     <!-- User -->
-    <div style="display:flex;align-items:center;gap:8px;background:#111d2e;border:1px solid #1c3050;border-radius:8px;padding:5px 10px">
+    <div style="display:flex;align-items:center;gap:8px;background:#f0f4f9;border:1px solid #e2eaf4;border-radius:8px;padding:5px 10px">
       <div id="user-avatar" style="width:24px;height:24px;border-radius:50%;background:#1b6fd4;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700">AD</div>
-      <span id="user-name" style="font-size:12px;font-weight:600" class="hidden sm:inline">Administrator</span>
+      <span id="user-name" style="font-size:12px;font-weight:600;color:#1a2b3c" class="hidden sm:inline">Administrator</span>
       <span id="user-role-badge" class="badge badge-purple hidden sm:inline">ADMIN</span>
     </div>
     <button class="btn btn-ghost btn-sm" onclick="logout()" title="Keluar">
@@ -329,65 +329,65 @@ tailwind.config = {
   <div style="display:flex;flex:1;overflow:hidden">
 
     <!-- SIDEBAR -->
-    <nav id="sidebar" style="width:220px;background:#0c1422;border-right:1px solid #1c3050;overflow-y:auto;flex-shrink:0;transition:width .2s,transform .2s">
+    <nav id="sidebar" style="width:220px;background:#ffffff;border-right:1px solid #e2eaf4;overflow-y:auto;flex-shrink:0;transition:width .2s,transform .2s">
       <div style="padding:10px 8px">
 
-        <div style="padding:4px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Utama</div>
-        <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div style="padding:4px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Utama</div>
+        <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🏠</span><span class="nav-text">Dashboard</span>
         </div>
 
-        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Penerimaan</div>
-        <div class="nav-item" data-page="registration" onclick="showPage('registration')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Penerimaan</div>
+        <div class="nav-item" data-page="registration" onclick="showPage('registration')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">👤</span><span class="nav-text">Pendaftaran</span>
         </div>
-        <div class="nav-item" data-page="appointments" onclick="showPage('appointments')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="appointments" onclick="showPage('appointments')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">📅</span><span class="nav-text">Appointment</span>
           <span class="nav-count yellow ml-auto" id="appt-badge">0</span>
         </div>
-        <div class="nav-item" data-page="queue" onclick="showPage('queue')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="queue" onclick="showPage('queue')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🚶</span><span class="nav-text">Antrian</span>
           <span class="nav-count green ml-auto" id="queue-badge">0</span>
         </div>
 
-        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Klinis</div>
-        <div class="nav-item" data-page="chart" onclick="showPage('chart')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Klinis</div>
+        <div class="nav-item" data-page="chart" onclick="showPage('chart')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">📋</span><span class="nav-text">Patient Chart</span>
         </div>
-        <div class="nav-item" data-page="vitals" onclick="showPage('vitals')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="vitals" onclick="showPage('vitals')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">💓</span><span class="nav-text">Vital Signs</span>
         </div>
-        <div class="nav-item" data-page="medications" onclick="showPage('medications')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="medications" onclick="showPage('medications')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">💊</span><span class="nav-text">Medications</span>
         </div>
-        <div class="nav-item" data-page="orders" onclick="showPage('orders')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="orders" onclick="showPage('orders')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">📝</span><span class="nav-text">Orders</span>
         </div>
-        <div class="nav-item" data-page="cppt" onclick="showPage('cppt')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="cppt" onclick="showPage('cppt')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🗒️</span><span class="nav-text">CPPT</span>
           <span class="nav-count blue ml-auto" id="cppt-badge">0</span>
         </div>
 
-        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Lab & Rawat Inap</div>
-        <div class="nav-item" data-page="laboratory" onclick="showPage('laboratory')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Lab & Rawat Inap</div>
+        <div class="nav-item" data-page="laboratory" onclick="showPage('laboratory')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🔬</span><span class="nav-text">Lab Orders</span>
           <span class="nav-count red ml-auto" id="lab-badge">0</span>
         </div>
-        <div class="nav-item" data-page="ward" onclick="showPage('ward')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="ward" onclick="showPage('ward')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🏥</span><span class="nav-text">Ward / Bed</span>
         </div>
 
-        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Laporan & Admin</div>
-        <div class="nav-item" data-page="reports" onclick="showPage('reports')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Laporan & Admin</div>
+        <div class="nav-item" data-page="reports" onclick="showPage('reports')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">📊</span><span class="nav-text">Reports</span>
         </div>
-        <div class="nav-item" data-page="admin" onclick="showPage('admin')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="admin" onclick="showPage('admin')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">⚙️</span><span class="nav-text">Administration</span>
         </div>
-        <div class="nav-item" data-page="users" onclick="showPage('users')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="users" onclick="showPage('users')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">👥</span><span class="nav-text">User Mgmt</span>
         </div>
-        <div class="nav-item" data-page="settings" onclick="showPage('settings')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+        <div class="nav-item" data-page="settings" onclick="showPage('settings')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🔧</span><span class="nav-text">Implementer Tools</span>
         </div>
 
@@ -395,7 +395,7 @@ tailwind.config = {
     </nav>
 
     <!-- CONTENT -->
-    <main id="content-area" style="flex:1;overflow-y:auto;padding:20px;background:#070c14"></main>
+    <main id="content-area" style="flex:1;overflow-y:auto;padding:20px;background:#f0f4f9"></main>
   </div>
 
   <!-- BOTTOM NAV (mobile) -->
@@ -413,7 +413,7 @@ tailwind.config = {
   <div id="modal">
     <div id="modal-header">
       <div id="modal-title">Modal</div>
-      <button onclick="closeModal()" style="background:none;border:none;color:#6a94bb;font-size:18px;cursor:pointer;line-height:1;padding:0">✕</button>
+      <button onclick="closeModal()" style="background:none;border:none;color:#4a6b8a;font-size:18px;cursor:pointer;line-height:1;padding:0">✕</button>
     </div>
     <div id="modal-body"></div>
     <div id="modal-footer"></div>
@@ -559,7 +559,7 @@ function toggleSidebar(){
   if(sidebarOpen){
     sidebar.style.display='block'; sidebar.style.position='fixed'; sidebar.style.top='52px';
     sidebar.style.left='0'; sidebar.style.bottom='0'; sidebar.style.width='220px'; sidebar.style.zIndex='200';
-    sidebar.style.boxShadow='4px 0 24px rgba(0,0,0,.5)';
+    sidebar.style.boxShadow='4px 0 24px rgba(37,99,235,.15)';
   } else {
     sidebar.style.display='none'; sidebar.style.position='';
     sidebar.style.boxShadow='';
@@ -611,9 +611,9 @@ function showPage(page){
   // close mobile sidebar
   if(window.innerWidth<=768){ const s=document.getElementById('sidebar'); s.style.display='none'; sidebarOpen=false; }
   // update active nav
-  document.querySelectorAll('.nav-item').forEach(el=>{ el.style.background=''; el.style.color='#6a94bb'; });
+  document.querySelectorAll('.nav-item').forEach(el=>{ el.style.background=''; el.style.color='#4a6b8a'; });
   const nav=document.querySelector(`.nav-item[data-page="${page}"]`);
-  if(nav){ nav.style.background='rgba(59,158,255,.1)'; nav.style.color='#3b9eff'; }
+  if(nav){ nav.style.background='rgba(37,99,235,.1)'; nav.style.color='#2563eb'; }
   // update bottom nav
   document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
   const bnav=document.querySelector(`.bnav-item[data-bnav="${page}"]`);
@@ -636,7 +636,7 @@ function showMoreMenu(){
        ['ward','🏥','Ward/Bed'],['reports','📊','Reports'],['admin','⚙️','Admin'],
        ['users','👥','Users'],['settings','🔧','Tools']
     ].filter(([p])=>currentUser.allowed.includes(p)).map(([p,i,l])=>`
-    <button onclick="closeModal();showPage('${p}')" style="display:flex;align-items:center;gap:10px;background:#111d2e;border:1px solid #1c3050;border-radius:10px;padding:12px;font-size:13px;font-weight:600;color:#c9e0f8;cursor:pointer;font-family:inherit;text-align:left">
+    <button onclick="closeModal();showPage('${p}')" style="display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;padding:12px;font-size:13px;font-weight:600;color:#1a2b3c;cursor:pointer;font-family:inherit;text-align:left">
       <span style="font-size:20px">${i}</span>${l}
     </button>`).join('')}
   </div>`, '');
@@ -709,8 +709,8 @@ function statCard(label,val,color,sub=''){
   return `<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-value" style="color:${color}">${val}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`;
 }
 function tblWrap(id,headers,rows,search=true){
-  return `<div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
-    ${search?`<div style="padding:12px 14px;border-bottom:1px solid #1c3050"><div class="search-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#334f68" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Cari…" onkeyup="filterTbl(this,'${id}')"></div></div>`:''}
+  return `<div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;overflow:hidden">
+    ${search?`<div style="padding:12px 14px;border-bottom:1px solid #e2eaf4"><div class="search-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a9ab5" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Cari…" onkeyup="filterTbl(this,'${id}')"></div></div>`:''}
     <div style="overflow-x:auto"><table class="tbl" id="${id}"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function grid2(a,b){ return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px">${a}${b}</div>`; }
@@ -749,13 +749,13 @@ function renderDashboard(){
     <div class="card">
       <div class="card-title">🚶 Antrian Aktif</div>
       ${DB.queue.filter(q=>q.status==='menunggu').map(q=>`
-      <div class="info-row"><span class="info-key"><strong>#${q.number}</strong> ${P(q.patient_id).name||'?'} <span style="color:#334f68;font-size:11px">${q.location}</span></span><span class="info-val">${b(q.priority==='urgent'?'badge-red':'badge-gray',q.priority)}</span></div>`).join('')||`<div class="empty-state" style="padding:16px"><div>✅</div><p style="font-size:12px">Tidak ada antrian</p></div>`}
+      <div class="info-row"><span class="info-key"><strong>#${q.number}</strong> ${P(q.patient_id).name||'?'} <span style="color:#7a9ab5;font-size:11px">${q.location}</span></span><span class="info-val">${b(q.priority==='urgent'?'badge-red':'badge-gray',q.priority)}</span></div>`).join('')||`<div class="empty-state" style="padding:16px"><div>✅</div><p style="font-size:12px">Tidak ada antrian</p></div>`}
     </div>`)}
   ${grid2(`
     <div class="card">
       <div class="card-title">📅 Appointment Hari Ini</div>
       ${DB.appointments.filter(a=>a.date==='2025-04-25').map(a=>`
-      <div class="info-row"><span class="info-key">${b('badge-blue',a.time)} ${P(a.patient_id).name||'?'} <span style="color:#334f68;font-size:11px">${a.type}</span></span><span class="info-val">${b(a.status==='hadir'?'badge-green':'badge-yellow',a.status)}</span></div>`).join('')}
+      <div class="info-row"><span class="info-key">${b('badge-blue',a.time)} ${P(a.patient_id).name||'?'} <span style="color:#7a9ab5;font-size:11px">${a.type}</span></span><span class="info-val">${b(a.status==='hadir'?'badge-green':'badge-yellow',a.status)}</span></div>`).join('')}
     </div>`,`
     <div class="card">
       <div class="card-title">🏥 Status Bed</div>
@@ -860,7 +860,7 @@ function renderAppointments(){
     <button class="tab-btn" onclick="switchApptTab('terjadwal',this)">Terjadwal</button>
     <button class="tab-btn" onclick="switchApptTab('hadir',this)">Hadir</button>
   </div>
-  <div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
+  <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;overflow:hidden">
     <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>ID</th><th>Pasien</th><th>Tanggal</th><th>Waktu</th><th>Poli</th><th>Dokter</th><th>Status</th><th>Aksi</th></tr></thead>
       <tbody id="appt-tbody">${renderApptRows(DB.appointments)}</tbody></table></div></div>`);
 }
@@ -868,7 +868,7 @@ function renderApptRows(data){
   return data.map(a=>`<tr>
     <td class="cell-id">${a.id}</td><td class="cell-name">${P(a.patient_id).name||'?'}</td>
     <td>${fmt(a.date)}</td><td>${b('badge-blue',a.time)}</td>
-    <td>${a.type}</td><td style="font-size:12px;color:#6a94bb">${a.doctor}</td>
+    <td>${a.type}</td><td style="font-size:12px;color:#4a6b8a">${a.doctor}</td>
     <td>${b(a.status==='hadir'?'badge-green':a.status==='terjadwal'?'badge-yellow':'badge-gray',a.status)}</td>
     <td><div style="display:flex;gap:4px">
       ${a.status==='terjadwal'?`<button class="btn btn-success btn-sm" onclick="markHadir('${a.id}')">Hadir</button>`:''}
@@ -907,22 +907,22 @@ function renderQueue(){
   </div>
   ${grid2(`
     <div>
-      <div style="font-size:12px;font-weight:700;color:#6a94bb;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟡 Menunggu (${waiting.length})</div>
+      <div style="font-size:12px;font-weight:700;color:#4a6b8a;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟡 Menunggu (${waiting.length})</div>
       ${waiting.map(q=>`<div class="queue-card">
-        <div style="width:36px;height:36px;border-radius:8px;background:#172540;border:1px solid #264573;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#3b9eff;flex-shrink:0">#${q.number}</div>
+        <div style="width:36px;height:36px;border-radius:8px;background:#e8f0fd;border:1px solid #b8d0f8;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#3b9eff;flex-shrink:0">#${q.number}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:13px">${P(q.patient_id).name||'?'}</div>
-          <div style="font-size:11px;color:#6a94bb">${q.location} · ${q.checked_in}</div>
+          <div style="font-size:11px;color:#4a6b8a">${q.location} · ${q.checked_in}</div>
         </div>
         ${b(q.priority==='urgent'?'badge-red':'badge-gray',q.priority.toUpperCase())}
         <button class="btn btn-ghost btn-sm" onclick="callQueue('${q.id}')">Panggil</button>
       </div>`).join('')||`<div class="empty-state"><div class="empty-icon">✅</div><p style="font-size:13px">Antrian kosong</p></div>`}
     </div>`,`
     <div>
-      <div style="font-size:12px;font-weight:700;color:#6a94bb;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟢 Dipanggil (${called.length})</div>
-      ${called.map(q=>`<div class="queue-card" style="border-color:rgba(39,201,122,.3)">
-        <div style="width:36px;height:36px;border-radius:8px;background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#27c97a;flex-shrink:0">#${q.number}</div>
-        <div style="flex:1"><div style="font-weight:600;font-size:13px">${P(q.patient_id).name||'?'}</div><div style="font-size:11px;color:#6a94bb">${q.location}</div></div>
+      <div style="font-size:12px;font-weight:700;color:#4a6b8a;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟢 Dipanggil (${called.length})</div>
+      ${called.map(q=>`<div class="queue-card" style="border-color:rgba(22,163,74,.3);background:rgba(22,163,74,.03)">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#27c97a;flex-shrink:0">#${q.number}</div>
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">${P(q.patient_id).name||'?'}</div><div style="font-size:11px;color:#4a6b8a">${q.location}</div></div>
         <button class="btn btn-success btn-sm" onclick="finishQ('${q.id}')">Selesai</button>
       </div>`).join('')}
       <div class="card" style="margin-top:16px">
@@ -948,7 +948,7 @@ function renderChart(){
     DB.patients.map(p=>{ const lv=DB.visits.filter(v=>v.patient_id===p.id).pop(); const conds=DB.conditions.filter(c=>c.patient_id===p.id&&c.status==='aktif'); return `<tr>
       <td class="cell-id">${p.id}</td><td class="cell-name">${p.name}</td>
       <td>${age(p.dob)} / ${p.gender}</td><td>${lv?fmt(lv.date):'—'}</td>
-      <td>${conds.map(c=>b('badge-yellow',c.name)).join(' ')||'<span style="color:#334f68">—</span>'}</td>
+      <td>${conds.map(c=>b('badge-yellow',c.name)).join(' ')||'<span style="color:#7a9ab5">—</span>'}</td>
       <td><button class="btn btn-primary btn-sm" onclick="openChart('${p.id}')">📋 Buka</button></td>
     </tr>`; }).join('')
   )}`);
@@ -976,7 +976,7 @@ function openChart(pid){
       <div class="info-row"><span class="info-key">Suhu</span><span class="info-val">${vit.temperature}°C</span></div>
       <div class="info-row"><span class="info-key">SpO2</span><span class="info-val">${vit.spo2}%</span></div>
       <div class="info-row"><span class="info-key">BB / TB</span><span class="info-val">${vit.weight}kg / ${vit.height}cm</span></div>
-      `:`<div style="color:#334f68;font-size:12px;padding:8px 0">Belum ada data vital</div>`}
+      `:`<div style="color:#7a9ab5;font-size:12px;padding:8px 0">Belum ada data vital</div>`}
     </div>`)}
   </div>
   <div id="ct-vis" class="tab-pane">
@@ -1019,15 +1019,15 @@ function renderVitals(){
   </div>
   ${DB.vitals.map(v=>{ const p=P(v.patient_id); const bmi=(v.weight/((v.height/100)**2)).toFixed(1); return `
   <div class="card" style="margin-bottom:16px">
-    <div class="card-title">💓 ${p.name||v.patient_id} <span style="color:#334f68;font-size:11px;font-weight:400">${fmt(v.date)} · ${v.nurse}</span></div>
+    <div class="card-title">💓 ${p.name||v.patient_id} <span style="color:#7a9ab5;font-size:11px;font-weight:400">${fmt(v.date)} · ${v.nurse}</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px">
-      <div class="vital-box ${v.bp_systolic>=140?'crit':v.bp_systolic>=120?'warn':''}"><div class="vital-name">Tek. Darah</div><div class="vital-val" style="font-size:18px;color:${v.bp_systolic>=140?'#f04f4f':v.bp_systolic>=120?'#f5c542':'#c9e0f8'}">${v.bp_systolic}/${v.bp_diastolic}</div><div class="vital-unit">mmHg</div></div>
-      <div class="vital-box ${v.heart_rate<60||v.heart_rate>100?'warn':''}"><div class="vital-name">Nadi</div><div class="vital-val" style="color:${v.heart_rate<60||v.heart_rate>100?'#f5c542':'#c9e0f8'}">${v.heart_rate}</div><div class="vital-unit">bpm</div></div>
-      <div class="vital-box ${v.temperature>=38?'crit':v.temperature>=37.5?'warn':''}"><div class="vital-name">Suhu</div><div class="vital-val" style="color:${v.temperature>=38?'#f04f4f':v.temperature>=37.5?'#f5c542':'#c9e0f8'}">${v.temperature}</div><div class="vital-unit">°C</div></div>
+      <div class="vital-box ${v.bp_systolic>=140?'crit':v.bp_systolic>=120?'warn':''}"><div class="vital-name">Tek. Darah</div><div class="vital-val" style="font-size:18px;color:${v.bp_systolic>=140?'#f04f4f':v.bp_systolic>=120?'#f5c542':'#1a2b3c'}">${v.bp_systolic}/${v.bp_diastolic}</div><div class="vital-unit">mmHg</div></div>
+      <div class="vital-box ${v.heart_rate<60||v.heart_rate>100?'warn':''}"><div class="vital-name">Nadi</div><div class="vital-val" style="color:${v.heart_rate<60||v.heart_rate>100?'#f5c542':'#1a2b3c'}">${v.heart_rate}</div><div class="vital-unit">bpm</div></div>
+      <div class="vital-box ${v.temperature>=38?'crit':v.temperature>=37.5?'warn':''}"><div class="vital-name">Suhu</div><div class="vital-val" style="color:${v.temperature>=38?'#f04f4f':v.temperature>=37.5?'#f5c542':'#1a2b3c'}">${v.temperature}</div><div class="vital-unit">°C</div></div>
       <div class="vital-box ${v.spo2<95?'crit':v.spo2<97?'warn':''}"><div class="vital-name">SpO2</div><div class="vital-val" style="color:${v.spo2<95?'#f04f4f':v.spo2<97?'#f5c542':'#27c97a'}">${v.spo2}</div><div class="vital-unit">%</div></div>
       <div class="vital-box"><div class="vital-name">Berat</div><div class="vital-val">${v.weight}</div><div class="vital-unit">kg</div></div>
       <div class="vital-box"><div class="vital-name">Tinggi</div><div class="vital-val">${v.height}</div><div class="vital-unit">cm</div></div>
-      <div class="vital-box ${+bmi>=30?'crit':+bmi>=25?'warn':''}"><div class="vital-name">BMI</div><div class="vital-val" style="color:${+bmi>=30?'#f04f4f':+bmi>=25?'#f5c542':'#c9e0f8'}">${bmi}</div><div class="vital-unit">${bmi<18.5?'Kurus':bmi<25?'Normal':bmi<30?'Overweight':'Obesitas'}</div></div>
+      <div class="vital-box ${+bmi>=30?'crit':+bmi>=25?'warn':''}"><div class="vital-name">BMI</div><div class="vital-val" style="color:${+bmi>=30?'#f04f4f':+bmi>=25?'#f5c542':'#1a2b3c'}">${bmi}</div><div class="vital-unit">${bmi<18.5?'Kurus':bmi<25?'Normal':bmi<30?'Overweight':'Obesitas'}</div></div>
       <div class="vital-box"><div class="vital-name">Resp. Rate</div><div class="vital-val">${v.respiratory_rate}</div><div class="vital-unit">x/mnt</div></div>
     </div>
   </div>`; }).join('')}`);
@@ -1103,7 +1103,7 @@ function renderOrders(){
     DB.lab_orders.map(l=>`<tr>
       <td class="cell-id">${l.id}</td><td class="cell-name">${P(l.patient_id).name||'?'}</td>
       <td>${l.test}</td><td>${fmt(l.ordered)}</td>
-      <td style="font-size:11px;color:#6a94bb">${l.doctor}</td>
+      <td style="font-size:11px;color:#4a6b8a">${l.doctor}</td>
       <td>${b(l.status==='selesai'?'badge-green':l.status==='proses'?'badge-yellow':'badge-gray',l.status)}</td>
       <td>${l.status==='pending'?`<button class="btn btn-ghost btn-sm" onclick="processOrder('${l.id}')">Proses</button>`:''}</td>
     </tr>`).join('')
@@ -1139,7 +1139,7 @@ function renderLaboratory(){
     <button class="tab-btn" onclick="switchLabTab('proses',this)">Proses</button>
     <button class="tab-btn" onclick="switchLabTab('selesai',this)">Selesai</button>
   </div>
-  <div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
+  <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;overflow:hidden">
     <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>ID</th><th>Pasien</th><th>Pemeriksaan</th><th>Tanggal</th><th>Status</th><th>Hasil</th><th>Aksi</th></tr></thead>
       <tbody id="lab-tbody">${renderLabRows(DB.lab_orders)}</tbody></table></div></div>`);
 }
@@ -1147,7 +1147,7 @@ function renderLabRows(data){ return data.map(l=>`<tr>
   <td class="cell-id">${l.id}</td><td class="cell-name">${P(l.patient_id).name||'?'}</td>
   <td>${l.test}</td><td>${fmt(l.ordered)}</td>
   <td>${b(l.status==='selesai'?'badge-green':l.status==='proses'?'badge-yellow':'badge-gray',l.status)}</td>
-  <td style="font-size:12px;color:#6a94bb">${l.result||'—'}</td>
+  <td style="font-size:12px;color:#4a6b8a">${l.result||'—'}</td>
   <td><div style="display:flex;gap:4px">
     ${l.status==='proses'?`<button class="btn btn-success btn-sm" onclick="enterResult('${l.id}')">Input Hasil</button>`:''}
     ${l.status==='pending'?`<button class="btn btn-ghost btn-sm" onclick="startLab('${l.id}')">Mulai</button>`:''}
@@ -1173,14 +1173,14 @@ function renderWard(){
   </div>
   ${statGrid([statCard('Tersedia',DB.beds.filter(b=>b.status==='kosong').length,'#27c97a','Bed siap'),statCard('Terisi',DB.beds.filter(b=>b.status==='terisi').length,'#f04f4f','Pasien rawat inap')].join(''))}
   ${rooms.map(room=>{ const beds=DB.beds.filter(b=>b.room===room); return `<div class="card" style="margin-bottom:16px">
-    <div class="card-title">🏥 ${room} <span style="color:#334f68;font-weight:400;font-size:11px">${beds.length} bed</span></div>
+    <div class="card-title">🏥 ${room} <span style="color:#7a9ab5;font-weight:400;font-size:11px">${beds.length} bed</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
       ${beds.map(x=>{ const p=x.patient_id?P(x.patient_id):null; return `
       <div class="bed-card ${x.status==='terisi'?'occupied':x.status==='maintenance'?'maintenance':''}">
         <div style="font-size:22px;margin-bottom:4px">${x.status==='kosong'?'🛏️':x.status==='terisi'?'🧑‍⚕️':'🔧'}</div>
         <div style="font-weight:700;font-size:13px">${x.number}</div>
-        <div style="font-size:10px;color:#334f68;margin-bottom:6px">${x.type}</div>
-        ${p?`<div style="font-size:11px;font-weight:600">${p.name}</div><div style="font-size:10px;color:#6a94bb">${fmt(x.admitted)}</div>
+        <div style="font-size:10px;color:#7a9ab5;margin-bottom:6px">${x.type}</div>
+        ${p?`<div style="font-size:11px;font-weight:600">${p.name}</div><div style="font-size:10px;color:#4a6b8a">${fmt(x.admitted)}</div>
         <button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%" onclick="discharge('${x.id}')">Discharge</button>`:''}
       </div>`; }).join('')}
     </div>
@@ -1214,7 +1214,7 @@ function renderCPPT(){
   <div class="page-header">
     <div><div class="page-title">CPPT</div><div class="page-sub">Catatan Perkembangan Pasien Terintegrasi · ${DB.cppt.length} catatan</div></div>
     <div class="page-actions">
-      <select onchange="filterCPPTProf(this.value)" style="background:#111d2e;border:1px solid #1c3050;border-radius:8px;padding:7px 12px;color:#c9e0f8;font-size:12px;font-family:inherit;outline:none">
+      <select onchange="filterCPPTProf(this.value)" style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;padding:7px 12px;color:#1a2b3c;font-size:12px;font-family:inherit;outline:none">
         <option value="">Semua Profesi</option>
         <option>Dokter</option><option>Perawat</option><option>Bidan</option>
         <option>Farmasi</option><option>Gizi</option><option>Fisioterapi</option>
@@ -1226,17 +1226,17 @@ function renderCPPT(){
   <!-- Mobile card view -->
   <div id="cppt-cards" style="display:none">
     ${DB.cppt.map(c=>{ const p=P(c.patient_id); return `
-    <div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;padding:14px;margin-bottom:12px">
+    <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;padding:14px;margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px">
         <div>
           <div style="font-weight:700;font-size:14px">${p.name||'—'}</div>
-          <div style="font-size:11px;color:#6a94bb;font-family:'JetBrains Mono',monospace">${c.tanggal} · ${c.jam}</div>
+          <div style="font-size:11px;color:#4a6b8a;font-family:'JetBrains Mono',monospace">${c.tanggal} · ${c.jam}</div>
         </div>
         <div style="display:flex;gap:4px;flex-shrink:0">
           ${profBadge(c.profesi)}
         </div>
       </div>
-      ${[['S','#3b9eff','#172540',c.subjektif],['A','#f5c542','#1e2009',c.asesmen],['P','#f04f4f','#1e0909',c.planning]].map(([l,col,bg,val])=>val?`
+      ${[['S','#3b9eff','#eff6ff',c.subjektif],['A','#f5c542','#1e2009',c.asesmen],['P','#f04f4f','#1e0909',c.planning]].map(([l,col,bg,val])=>val?`
       <div style="background:${bg};border-left:2px solid ${col};border-radius:0 6px 6px 0;padding:6px 10px;margin-bottom:6px;font-size:12px">
         <span style="color:${col};font-weight:700;margin-right:6px">${l}</span>${val}
       </div>`:'')}
@@ -1249,9 +1249,9 @@ function renderCPPT(){
   </div>
 
   <!-- Desktop table view -->
-  <div id="cppt-tbl-wrap" style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
-    <div style="padding:12px 14px;border-bottom:1px solid #1c3050">
-      <div class="search-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#334f68" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <div id="cppt-tbl-wrap" style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;overflow:hidden">
+    <div style="padding:12px 14px;border-bottom:1px solid #e2eaf4">
+      <div class="search-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7a9ab5" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" placeholder="Cari pasien atau catatan…" onkeyup="filterTbl(this,'cppt-tbl')"></div>
     </div>
     <div style="overflow-x:auto">
@@ -1259,14 +1259,14 @@ function renderCPPT(){
         <thead><tr><th>Tgl/Jam</th><th>Pasien</th><th>Profesi</th><th>S — Subjektif</th><th>O — Objektif</th><th>A — Asesmen</th><th>P — Planning</th><th>TTD</th><th>Aksi</th></tr></thead>
         <tbody id="cppt-tbody">
           ${DB.cppt.map(c=>{ const p=P(c.patient_id); return `<tr>
-            <td style="white-space:nowrap" class="cell-id">${c.tanggal}<br><span style="color:#334f68">${c.jam}</span></td>
+            <td style="white-space:nowrap" class="cell-id">${c.tanggal}<br><span style="color:#7a9ab5">${c.jam}</span></td>
             <td><div class="cell-name">${p.name||'—'}</div><div class="cell-id">${c.patient_id}</div></td>
             <td>${profBadge(c.profesi)}</td>
-            <td style="max-width:150px;font-size:12px;color:#6a94bb">${(c.subjektif||'—').slice(0,80)}${c.subjektif&&c.subjektif.length>80?'…':''}</td>
-            <td style="max-width:150px;font-size:12px;color:#6a94bb">${(c.objektif||'—').slice(0,80)}${c.objektif&&c.objektif.length>80?'…':''}</td>
+            <td style="max-width:150px;font-size:12px;color:#4a6b8a">${(c.subjektif||'—').slice(0,80)}${c.subjektif&&c.subjektif.length>80?'…':''}</td>
+            <td style="max-width:150px;font-size:12px;color:#4a6b8a">${(c.objektif||'—').slice(0,80)}${c.objektif&&c.objektif.length>80?'…':''}</td>
             <td style="max-width:130px;font-size:12px"><strong>${(c.asesmen||'—').slice(0,60)}${c.asesmen&&c.asesmen.length>60?'…':''}</strong></td>
-            <td style="max-width:130px;font-size:12px;color:#6a94bb">${(c.planning||'—').slice(0,60)}${c.planning&&c.planning.length>60?'…':''}</td>
-            <td style="font-size:11px;color:#6a94bb">${c.ttd||'—'}</td>
+            <td style="max-width:130px;font-size:12px;color:#4a6b8a">${(c.planning||'—').slice(0,60)}${c.planning&&c.planning.length>60?'…':''}</td>
+            <td style="font-size:11px;color:#4a6b8a">${c.ttd||'—'}</td>
             <td><div style="display:flex;gap:4px">
               <button class="btn btn-primary btn-sm" onclick="openCPPTDetail('${c.id}')">🔍</button>
               <button class="btn btn-ghost btn-sm" onclick="openCPPTModal('${c.id}')">✏️</button>
@@ -1297,18 +1297,18 @@ function openCPPTModal(editId){
   const now=new Date(), today=now.toISOString().slice(0,10), time=now.toTimeString().slice(0,5);
   const soapSection = (letter, color, title, sub, fieldId, val) => `
   <div class="soap-block" style="margin-bottom:10px">
-    <div class="soap-header" style="background:${color}22;border-bottom:1px solid ${color}44">
+    <div class="soap-header" style="background:${color}15;border-bottom:1px solid ${color}30">
       <span style="background:${color};color:${letter==='A'?'#000':'#fff'};width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${letter}</span>
       <span style="font-weight:700;font-size:12.5px">${title}</span>
-      <span style="color:#6a94bb;font-weight:400;font-size:11px">${sub}</span>
+      <span style="color:#4a6b8a;font-weight:400;font-size:11px">${sub}</span>
     </div>
     <div style="padding:12px">
-      <textarea id="${fieldId}" rows="3" placeholder="${sub}…" style="width:100%;background:#111d2e;border:1px solid #1c3050;border-radius:8px;color:#c9e0f8;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='${color}';this.style.boxShadow='0 0 0 3px ${color}22'" onblur="this.style.borderColor='#1c3050';this.style.boxShadow=''">${val||''}</textarea>
+      <textarea id="${fieldId}" rows="3" placeholder="${sub}…" style="width:100%;background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;color:#1a2b3c;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='${color}';this.style.boxShadow='0 0 0 3px ${color}22'" onblur="this.style.borderColor='#e2eaf4';this.style.boxShadow=''">${val||''}</textarea>
     </div>
   </div>`;
   openModal((isEdit?'✏️ Edit':'📝 Tambah')+' Catatan CPPT',`
-  <div style="background:#111d2e;border:1px solid #1c3050;border-radius:10px;padding:14px;margin-bottom:14px">
-    <div style="font-size:10px;color:#334f68;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Identitas Pencatat</div>
+  <div style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="font-size:10px;color:#7a9ab5;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Identitas Pencatat</div>
     <div class="form-grid">
       <div class="field"><label>Pasien</label><select id="cf-patient">${DB.patients.map(p=>`<option value="${p.id}" ${c&&c.patient_id===p.id?'selected':''}>${p.name} (${p.id})</option>`).join('')}</select></div>
       <div class="field"><label>Profesi</label><select id="cf-profesi">${['Dokter','Perawat','Bidan','Farmasi','Gizi','Fisioterapi'].map(pr=>`<option ${c&&c.profesi===pr?'selected':''}>${pr}</option>`).join('')}</select></div>
@@ -1320,9 +1320,9 @@ function openCPPTModal(editId){
   ${soapSection('O','#27c97a','Objektif','Pemeriksaan fisik & penunjang','cf-o',c?c.objektif:'')}
   ${soapSection('A','#f5c542','Asesmen','Diagnosis / masalah keperawatan','cf-a',c?c.asesmen:'')}
   ${soapSection('P','#f04f4f','Planning','Rencana tindak lanjut, terapi, edukasi','cf-p',c?c.planning:'')}
-  <div style="background:#111d2e;border:1px solid #1c3050;border-radius:10px;padding:14px;margin-top:10px">
+  <div style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;padding:14px;margin-top:10px">
     <div class="form-grid">
-      <div class="field full"><label>Instruksi Khusus</label><textarea id="cf-ins" rows="2" placeholder="Instruksi untuk shift berikutnya…" style="width:100%;background:#0c1422;border:1px solid #1c3050;border-radius:8px;color:#c9e0f8;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none">${c?c.instruksi||'':''}</textarea></div>
+      <div class="field full"><label>Instruksi Khusus</label><textarea id="cf-ins" rows="2" placeholder="Instruksi untuk shift berikutnya…" style="width:100%;background:#ffffff;border:1px solid #e2eaf4;border-radius:8px;color:#1a2b3c;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none">${c?c.instruksi||'':''}</textarea></div>
       <div class="field"><label>Nama / TTD Petugas</label><input id="cf-ttd" placeholder="Nama lengkap & gelar" value="${c?c.ttd:currentUser?currentUser.name:''}"></div>
     </div>
   </div>`,
@@ -1343,16 +1343,16 @@ function openCPPTDetail(id){
   const p=P(c.patient_id);
   const profBadge = pr => `<span class="badge ${pr==='Dokter'?'badge-blue':pr==='Perawat'?'badge-green':pr==='Bidan'?'badge-purple':'badge-orange'}">${pr}</span>`;
   openModal(`🔍 Detail CPPT — ${p.name}`,`
-  <div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px 14px;background:#111d2e;border:1px solid #1c3050;border-radius:10px;margin-bottom:14px">
-    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Pasien</div><div style="font-weight:700">${p.name}</div><div class="cell-id">${c.patient_id}</div></div>
-    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Profesi</div>${profBadge(c.profesi)}</div>
-    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Tgl/Jam</div><div style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">${c.tanggal} · ${c.jam}</div></div>
-    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Petugas</div><div style="font-weight:700">${c.ttd||'—'}</div></div>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px 14px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;margin-bottom:14px">
+    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Pasien</div><div style="font-weight:700">${p.name}</div><div class="cell-id">${c.patient_id}</div></div>
+    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Profesi</div>${profBadge(c.profesi)}</div>
+    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Tgl/Jam</div><div style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">${c.tanggal} · ${c.jam}</div></div>
+    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Petugas</div><div style="font-weight:700">${c.ttd||'—'}</div></div>
   </div>
   ${[['S — Subjektif','#3b9eff',c.subjektif],['O — Objektif','#27c97a',c.objektif],['A — Asesmen','#f5c542',c.asesmen],['P — Planning','#f04f4f',c.planning]].map(([lbl,col,val])=>`
   <div class="soap-block" style="margin-bottom:8px">
     <div class="soap-header" style="background:${col}22;border-bottom:1px solid ${col}44;color:${col}">${lbl}</div>
-    <div class="soap-body">${val||`<span style="color:#334f68">—</span>`}</div>
+    <div class="soap-body">${val||`<span style="color:#7a9ab5">—</span>`}</div>
   </div>`).join('')}
   ${c.instruksi?`<div class="soap-block"><div class="soap-header" style="background:#22d3ee22;border-bottom:1px solid #22d3ee44;color:#22d3ee">📌 Instruksi Khusus</div><div class="soap-body">${c.instruksi}</div></div>`:''}`,
   `<button class="btn btn-ghost" onclick="closeModal()">Tutup</button><button class="btn btn-primary" onclick="closeModal();openCPPTModal('${c.id}')">✏️ Edit</button>`);
@@ -1387,15 +1387,15 @@ function renderReports(){
     </div>`,`
     <div class="card">
       <div class="card-title">🔬 Status Lab</div>
-      ${[['Selesai','selesai','#27c97a'],['Proses','proses','#f5c542'],['Pending','pending','#334f68']].map(([l,s,col])=>{ const n=DB.lab_orders.filter(x=>x.status===s).length; return `<div class="chart-bar-wrap"><div class="chart-bar-label"><span>${l}</span><span style="font-weight:700">${n}</span></div><div class="chart-bar"><div class="chart-bar-fill" style="width:${n/Math.max(labTotal,1)*100}%;background:${col}"></div></div></div>`; }).join('')}
+      ${[['Selesai','selesai','#27c97a'],['Proses','proses','#f5c542'],['Pending','pending','#7a9ab5']].map(([l,s,col])=>{ const n=DB.lab_orders.filter(x=>x.status===s).length; return `<div class="chart-bar-wrap"><div class="chart-bar-label"><span>${l}</span><span style="font-weight:700">${n}</span></div><div class="chart-bar"><div class="chart-bar-fill" style="width:${n/Math.max(labTotal,1)*100}%;background:${col}"></div></div></div>`; }).join('')}
       <div class="divider"></div>
-      <div style="font-size:11px;color:#334f68;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Kapasitas Rawat Inap</div>
+      <div style="font-size:11px;color:#7a9ab5;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Kapasitas Rawat Inap</div>
       <div class="progress" style="height:8px;margin-bottom:6px"><div class="progress-fill" style="width:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length*100}%;background:#f04f4f"></div></div>
-      <div style="font-size:11px;color:#6a94bb">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length} bed terisi</div>
+      <div style="font-size:11px;color:#4a6b8a">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length} bed terisi</div>
     </div>`)}
   <div class="card">
     <div class="card-title">📋 Program Kesehatan</div>
-    ${tblWrap('prog-tbl',['Program','Kode','Koordinator','Pasien Aktif','Status'],DB.programs.map(pr=>`<tr><td>${pr.name}</td><td>${b('badge-blue',pr.code)}</td><td style="color:#6a94bb;font-size:12px">${pr.coordinator}</td><td style="font-weight:700">${pr.active_patients}</td><td>${b('badge-green',pr.status)}</td></tr>`).join(''),false)}
+    ${tblWrap('prog-tbl',['Program','Kode','Koordinator','Pasien Aktif','Status'],DB.programs.map(pr=>`<tr><td>${pr.name}</td><td>${b('badge-blue',pr.code)}</td><td style="color:#4a6b8a;font-size:12px">${pr.coordinator}</td><td style="font-weight:700">${pr.active_patients}</td><td>${b('badge-green',pr.status)}</td></tr>`).join(''),false)}
   </div>`);
 }
 
@@ -1407,10 +1407,10 @@ function renderAdmin(){
   <div class="page-header"><div><div class="page-title">Administration</div><div class="page-sub">Pengaturan sistem E-RM</div></div></div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">
     ${[['⚙️','Global Properties','Konfigurasi sistem','openGlobalProps()'],['📚','Concept Dictionary','Kamus ICD/LOINC',''],['🏥','Location','Manajemen lokasi',''],['📋','Programs','Program kesehatan','openPrograms()']].map(([icon,t,d,fn])=>`
-    <div class="card" style="cursor:pointer;text-align:center" ${fn?`onclick="${fn}"`:''}  onmouseenter="this.style.borderColor='#264573'" onmouseleave="this.style.borderColor='#1c3050'">
+    <div class="card" style="cursor:pointer;text-align:center" ${fn?`onclick="${fn}"`:''}  onmouseenter="this.style.borderColor='#2563eb'" onmouseleave="this.style.borderColor='#e2eaf4'">
       <div style="font-size:28px;margin-bottom:8px">${icon}</div>
       <div style="font-weight:700;font-size:13px;margin-bottom:4px">${t}</div>
-      <div style="font-size:11px;color:#6a94bb">${d}</div>
+      <div style="font-size:11px;color:#4a6b8a">${d}</div>
     </div>`).join('')}
   </div>
   <div class="card">
@@ -1439,7 +1439,7 @@ function renderUsers(){
       <td class="cell-id">${u.id}</td><td class="cell-name">${u.name}</td>
       <td class="cell-id">${u.username}</td>
       <td>${b(ROLE_BADGE[u.role]||'badge-gray',ROLE_LABELS[u.role]||u.role)}</td>
-      <td style="font-size:12px;color:#6a94bb">${u.specialty||u.department||'—'}</td>
+      <td style="font-size:12px;color:#4a6b8a">${u.specialty||u.department||'—'}</td>
       <td>${b(u.status==='active'?'badge-green':'badge-red',u.status)}</td>
       <td><button class="btn btn-ghost btn-sm" onclick="toggleUser('${u.id}')">Toggle</button></td>
     </tr>`).join('')
@@ -1485,7 +1485,7 @@ function renderSettings(){
       <label class="btn btn-ghost" style="cursor:pointer">📂 Import JSON<input type="file" accept=".json" class="hidden" onchange="importJSON(this)"></label>
       <button class="btn btn-danger" onclick="if(confirm('Reset semua data?'))location.reload()">🗑️ Reset</button>
     </div>
-    <pre style="background:#111d2e;border:1px solid #1c3050;border-radius:8px;padding:12px;font-size:10.5px;font-family:'JetBrains Mono',monospace;overflow:auto;max-height:180px;color:#6a94bb">${JSON.stringify({meta:DB.meta,pasien:DB.patients.length,kunjungan:DB.visits.length,cppt:DB.cppt.length},null,2)}</pre>
+    <pre style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;padding:12px;font-size:10.5px;font-family:'JetBrains Mono',monospace;overflow:auto;max-height:180px;color:#4a6b8a">${JSON.stringify({meta:DB.meta,pasien:DB.patients.length,kunjungan:DB.visits.length,cppt:DB.cppt.length},null,2)}</pre>
   </div>`);
 }
 
