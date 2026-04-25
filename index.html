@@ -1,541 +1,262 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>E-RM — Sistem Rekam Medis Elektronik</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#070c14">
+<title>E-RM · Rekam Medis Elektronik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Plus Jakarta Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      colors: {
+        surface: {
+          950: '#070c14', 900: '#0c1422', 800: '#111d2e',
+          700: '#172540', 600: '#1e2f4d', 500: '#264573',
+        },
+        brand: { DEFAULT: '#3b9eff', light: '#6db9ff', dark: '#1b6fd4' },
+        success: '#27c97a',
+        warn: '#f5c542',
+        danger: '#f04f4f',
+        violet: '#a87eff',
+        teal: '#22d3ee',
+        orange: '#ff8c42',
+      },
+      screens: { xs: '480px' }
+    }
+  }
+}
+</script>
 <style>
-:root {
-  --bg:        #04090f;
-  --bg2:       #080f18;
-  --bg3:       #0d1824;
-  --bg4:       #122030;
-  --bg5:       #17293d;
-  --border:    #1a3047;
-  --border2:   #234463;
-  --text:      #c8dff5;
-  --text2:     #6b93b5;
-  --text3:     #334f68;
-  --accent:    #3b9eff;
-  --accent-bg: rgba(59,158,255,0.08);
-  --accent-brd:rgba(59,158,255,0.25);
-  --green:     #27c97a;
-  --green-bg:  rgba(39,201,122,0.08);
-  --yellow:    #f5c542;
-  --yellow-bg: rgba(245,197,66,0.08);
-  --red:       #f04f4f;
-  --red-bg:    rgba(240,79,79,0.08);
-  --purple:    #a87eff;
-  --purple-bg: rgba(168,126,255,0.08);
-  --orange:    #ff8c42;
-  --orange-bg: rgba(255,140,66,0.08);
-  --teal:      #22d3ee;
-  --sidebar-w: 228px;
-  --header-h:  54px;
-  --radius:    10px;
-  --radius-sm: 6px;
-}
+  * { box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #070c14; color: #c9e0f8; overflow: hidden; height: 100dvh; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #264573; border-radius: 4px; }
+  input, select, textarea { font-family: inherit; }
+  input[type=date], input[type=time] { color-scheme: dark; }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+  /* ── PULSE DOT ── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .pulse-dot { animation: pulse 2s infinite; }
 
-body {
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  height:100vh;
-  overflow:hidden;
-  font-size:13px;
-  line-height:1.5;
-}
+  /* ── TOAST ── */
+  #toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:#111d2e; border:1px solid #264573; border-radius:12px;
+    padding:10px 18px; display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:500; z-index:9999; min-width:260px; max-width:90vw;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s; opacity:0; }
+  #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+  #toast.success { border-color:#27c97a44; }
+  #toast.error   { border-color:#f04f4f44; }
+  #toast.warn    { border-color:#f5c54244; }
+  #toast.info    { border-color:#3b9eff44; }
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+  /* ── MODAL ── */
+  #modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px);
+    z-index:500; display:flex; align-items:center; justify-content:center; padding:16px; }
+  #modal { background:#0c1422; border:1px solid #1c3050; border-radius:16px;
+    width:100%; max-width:640px; max-height:90dvh; display:flex; flex-direction:column;
+    box-shadow:0 24px 80px rgba(0,0,0,.6); }
+  #modal-header { padding:18px 20px; border-bottom:1px solid #1c3050; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  #modal-title { font-size:15px; font-weight:700; }
+  #modal-body { padding:20px; overflow-y:auto; flex:1; }
+  #modal-footer { padding:14px 20px; border-top:1px solid #1c3050; display:flex; justify-content:flex-end; gap:8px; flex-shrink:0; flex-wrap:wrap; }
 
-/* ── LOGIN ── */
-#login-screen {
-  position:fixed;inset:0;
-  background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  z-index:999;
-  background-image: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59,158,255,0.07) 0%, transparent 70%);
-}
+  /* ── FORM ── */
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media(max-width:480px){ .form-grid { grid-template-columns:1fr; } }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field.full { grid-column:1/-1; }
+  .field label { font-size:11px; font-weight:600; color:#6a94bb; text-transform:uppercase; letter-spacing:.4px; }
+  .field input, .field select, .field textarea {
+    background:#111d2e; border:1px solid #1c3050; border-radius:8px;
+    color:#c9e0f8; font-size:13px; padding:8px 11px; outline:none;
+    transition:border-color .15s, box-shadow .15s; width:100%; }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color:#3b9eff; box-shadow:0 0 0 3px rgba(59,158,255,.12); }
+  .field select option { background:#111d2e; }
 
-.login-box {
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:40px;
-  width:380px;
-  box-shadow: 0 0 0 1px rgba(59,158,255,0.05), 0 40px 80px rgba(0,0,0,0.5);
-}
+  /* ── BUTTONS ── */
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px;
+    border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer;
+    border:none; font-family:inherit; transition:all .15s; white-space:nowrap; }
+  .btn-primary { background:#3b9eff; color:#fff; }
+  .btn-primary:hover { background:#6db9ff; }
+  .btn-ghost { background:#111d2e; border:1px solid #1c3050; color:#6a94bb; }
+  .btn-ghost:hover { border-color:#264573; color:#c9e0f8; }
+  .btn-success { background:#27c97a; color:#fff; }
+  .btn-danger { background:#f04f4f; color:#fff; }
+  .btn-sm { padding:4px 10px; font-size:11.5px; border-radius:6px; }
 
-.login-logo {
-  display:flex;align-items:center;gap:12px;
-  margin-bottom:32px;
-}
-.login-logo-icon {
-  width:42px;height:42px;
-  background:linear-gradient(135deg, var(--accent2,#1b6fd4), var(--accent));
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;
-  box-shadow:0 4px 16px rgba(59,158,255,0.25);
-}
-.login-logo-text {font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
-.login-logo-sub {font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+  /* ── BADGES ── */
+  .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:20px; font-size:10.5px; font-weight:600; font-family:'JetBrains Mono',monospace; }
+  .badge-blue   { background:rgba(59,158,255,.15); color:#6db9ff; }
+  .badge-green  { background:rgba(39,201,122,.15); color:#27c97a; }
+  .badge-yellow { background:rgba(245,197,66,.15);  color:#f5c542; }
+  .badge-red    { background:rgba(240,79,79,.15);   color:#f04f4f; }
+  .badge-purple { background:rgba(168,126,255,.15); color:#a87eff; }
+  .badge-orange { background:rgba(255,140,66,.15);  color:#ff8c42; }
+  .badge-gray   { background:rgba(107,147,181,.12); color:#6a94bb; }
 
-.form-group{margin-bottom:14px}
-.form-group label{display:block;font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:500;letter-spacing:0.3px}
-.form-group input,.form-group select{
-  width:100%;padding:9px 12px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--radius-sm);color:var(--text);font-size:13px;
-  font-family:inherit;outline:none;transition:border-color .2s, box-shadow .2s;
-}
-.form-group input:focus,.form-group select:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(59,158,255,0.12);
-}
-.form-group select option{background:var(--bg3)}
+  /* ── NAV BADGE ── */
+  .nav-count { background:#264573; color:#c9e0f8; border-radius:20px; font-size:10px;
+    font-weight:700; padding:1px 6px; min-width:18px; text-align:center; font-family:'JetBrains Mono',monospace; }
+  .nav-count.red    { background:rgba(240,79,79,.25);   color:#f04f4f; }
+  .nav-count.yellow { background:rgba(245,197,66,.25);  color:#f5c542; }
+  .nav-count.green  { background:rgba(39,201,122,.25);  color:#27c97a; }
+  .nav-count.blue   { background:rgba(59,158,255,.25);  color:#6db9ff; }
 
-.btn-login {
-  width:100%;padding:10px;
-  background:var(--accent);color:#fff;
-  border:none;border-radius:var(--radius-sm);cursor:pointer;
-  font-size:14px;font-weight:600;font-family:inherit;
-  transition:all .2s;
-  box-shadow:0 4px 14px rgba(59,158,255,0.3);
-}
-.btn-login:hover{background:#5aadff;box-shadow:0 4px 20px rgba(59,158,255,0.45);}
+  /* ── TABLE ── */
+  .tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .tbl thead th { padding:9px 12px; text-align:left; font-size:10px; text-transform:uppercase;
+    letter-spacing:.5px; color:#6a94bb; border-bottom:1px solid #1c3050; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap; }
+  .tbl tbody tr { border-bottom:1px solid rgba(28,48,80,.6); transition:background .12s; }
+  .tbl tbody tr:hover { background:rgba(59,158,255,.04); }
+  .tbl tbody td { padding:9px 12px; color:#c9e0f8; vertical-align:middle; }
+  .cell-id { font-family:'JetBrains Mono',monospace; font-size:11px; color:#6a94bb; }
+  .cell-name { font-weight:600; }
 
-.demo-accounts{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.demo-accounts p{font-size:11px;color:var(--text3);margin-bottom:8px}
-.demo-tag{
-  display:inline-block;padding:3px 10px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:20px;font-size:11px;color:var(--text2);
-  cursor:pointer;margin:2px;transition:all .15s;
-}
-.demo-tag:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+  /* ── STAT CARD ── */
+  .stat-card { background:#0c1422; border:1px solid #1c3050; border-radius:12px; padding:16px 18px; }
+  .stat-label { font-size:10.5px; color:#6a94bb; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
+  .stat-value { font-size:28px; font-weight:800; line-height:1; margin-bottom:4px; }
+  .stat-sub { font-size:11px; color:#6a94bb; }
 
-/* ── APP SHELL ── */
-#app{display:none;height:100vh;flex-direction:column}
-#app.active{display:flex}
+  /* ── CARD ── */
+  .card { background:#0c1422; border:1px solid #1c3050; border-radius:12px; padding:16px; }
+  .card-title { font-size:12.5px; font-weight:700; color:#c9e0f8; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
 
-/* ── HEADER ── */
-.header {
-  height:var(--header-h);
-  background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 18px;
-  gap:10px;flex-shrink:0;z-index:50;
-}
-.header-brand {
-  display:flex;align-items:center;gap:10px;
-  min-width:var(--sidebar-w);
-  padding-right:12px;
-  border-right:1px solid var(--border);
-  margin-right:6px;
-}
-.header-brand-icon{
-  width:30px;height:30px;
-  background:linear-gradient(135deg,#1b6fd4,var(--accent));
-  border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;
-}
-.header-brand-name{font-size:16px;font-weight:700;letter-spacing:-0.4px;color:var(--text)}
-.header-brand-version{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-left:2px}
-.header-online{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green)}
-.header-online-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  /* ── INFO ROW ── */
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(28,48,80,.5); font-size:12.5px; }
+  .info-row:last-child { border-bottom:none; }
+  .info-key { color:#6a94bb; font-weight:500; }
+  .info-val { font-weight:600; text-align:right; }
 
-.header-spacer{flex:1}
+  /* ── TABS ── */
+  .tabs { display:flex; gap:2px; border-bottom:1px solid #1c3050; margin-bottom:16px; overflow-x:auto; }
+  .tab-btn { padding:8px 14px; font-size:12px; font-weight:600; color:#6a94bb; background:none; border:none;
+    border-bottom:2px solid transparent; cursor:pointer; font-family:inherit; transition:all .15s; white-space:nowrap; }
+  .tab-btn:hover { color:#c9e0f8; }
+  .tab-btn.active { color:#3b9eff; border-bottom-color:#3b9eff; }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; }
 
-.header-search {
-  display:flex;align-items:center;gap:7px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:6px 12px;
-  width:220px;transition:border-color .2s, width .3s;
-}
-.header-search:focus-within{border-color:var(--accent);width:280px}
-.header-search input{background:none;border:none;color:var(--text);font-size:12px;outline:none;flex:1;font-family:inherit}
-.header-search .kbd{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:1px 4px}
-.header-search svg{color:var(--text3);flex-shrink:0}
+  /* ── VITALS GRID ── */
+  .vital-box { background:#111d2e; border:1px solid #1c3050; border-radius:10px; padding:12px; text-align:center; }
+  .vital-box.crit { border-color:rgba(240,79,79,.4); background:rgba(240,79,79,.06); }
+  .vital-box.warn { border-color:rgba(245,197,66,.4); background:rgba(245,197,66,.06); }
+  .vital-name { font-size:10px; color:#6a94bb; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+  .vital-val  { font-size:22px; font-weight:800; line-height:1; }
+  .vital-unit { font-size:10px; color:#6a94bb; margin-top:2px; }
 
-.hdr-btn{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:6px 12px;
-  cursor:pointer;color:var(--text2);font-size:12px;
-  font-family:inherit;display:flex;align-items:center;gap:6px;
-  transition:all .15s;white-space:nowrap;
-}
-.hdr-btn:hover{border-color:var(--border2);color:var(--text)}
+  /* ── BED CARD ── */
+  .bed-card { border-radius:10px; padding:12px; border:1px solid #1c3050; background:#111d2e; text-align:center; font-size:12px; }
+  .bed-card.occupied { border-color:rgba(240,79,79,.35); background:rgba(240,79,79,.06); }
+  .bed-card.maintenance { border-color:rgba(245,197,66,.35); background:rgba(245,197,66,.06); }
 
-.user-pill{
-  display:flex;align-items:center;gap:8px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:5px 12px;cursor:pointer;
-  transition:border-color .15s;
-}
-.user-pill:hover{border-color:var(--border2)}
-.avatar{
-  width:26px;height:26px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:700;letter-spacing:0;
-}
-.user-pill .uname{font-size:12px;font-weight:600}
-.role-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-family:'DM Mono',monospace;font-weight:500}
+  /* ── QUEUE CARD ── */
+  .queue-card { display:flex; align-items:center; gap:12px; background:#111d2e; border:1px solid #1c3050; border-radius:10px; padding:12px 14px; margin-bottom:8px; }
 
-/* ── MAIN LAYOUT ── */
-.main-layout{display:flex;flex:1;overflow:hidden}
+  /* ── TIMELINE ── */
+  .timeline { position:relative; padding-left:20px; }
+  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:1px; background:#1c3050; }
+  .tl-item { position:relative; margin-bottom:16px; }
+  .tl-dot { position:absolute; left:-17px; top:4px; width:8px; height:8px; border-radius:50%; background:#3b9eff; border:2px solid #070c14; }
+  .tl-date { font-size:10.5px; color:#6a94bb; margin-bottom:4px; font-family:'JetBrains Mono',monospace; }
+  .tl-content { background:#111d2e; border:1px solid #1c3050; border-radius:8px; padding:10px 12px; font-size:12.5px; }
 
-/* ── SIDEBAR ── */
-.sidebar{
-  width:var(--sidebar-w);
-  background:var(--bg2);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  overflow-y:auto;flex-shrink:0;
-  padding:8px 0;
-}
+  /* ── ALERT ── */
+  .alert { border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; font-weight:500; border:1px solid; }
+  .alert-red    { background:rgba(240,79,79,.1);  border-color:rgba(240,79,79,.3);  color:#f04f4f; }
+  .alert-yellow { background:rgba(245,197,66,.1); border-color:rgba(245,197,66,.3); color:#f5c542; }
 
-.nav-section{padding:16px 10px 4px}
-.nav-section:first-child{padding-top:8px}
-.nav-label{
-  font-size:10px;text-transform:uppercase;letter-spacing:0.8px;
-  color:var(--text3);font-weight:600;padding:0 8px;margin-bottom:4px;
-  font-family:'DM Mono',monospace;
-}
-.nav-item{
-  display:flex;align-items:center;gap:9px;
-  padding:7px 10px;border-radius:8px;cursor:pointer;
-  color:var(--text2);font-size:12.5px;font-weight:400;
-  transition:all .15s;margin-bottom:1px;position:relative;
-  user-select:none;
-}
-.nav-item:hover{background:var(--bg3);color:var(--text)}
-.nav-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600}
-.nav-item.active::before{
-  content:'';position:absolute;left:0;top:5px;bottom:5px;
-  width:2.5px;background:var(--accent);border-radius:0 3px 3px 0;
-}
-.nav-item .ni{font-size:15px;width:20px;text-align:center;flex-shrink:0}
-.nav-badge{
-  margin-left:auto;font-size:10px;font-weight:700;
-  padding:1px 6px;border-radius:20px;
-  font-family:'DM Mono',monospace;
-}
-.nb-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(240,79,79,.2)}
-.nb-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(39,201,122,.2)}
-.nb-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(245,197,66,.2)}
-.nb-blue{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-brd)}
+  /* ── SOAP BLOCK ── */
+  .soap-block { border-radius:10px; overflow:hidden; border:1px solid #1c3050; margin-bottom:10px; }
+  .soap-header { padding:8px 14px; font-size:12px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .soap-body { background:#111d2e; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; }
 
-.sidebar-footer{margin-top:auto;padding:8px 10px 4px;border-top:1px solid var(--border)}
+  /* ── PROGRESS ── */
+  .progress { background:#1c3050; border-radius:4px; height:6px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:4px; transition:width .5s; }
 
-/* ── CONTENT ── */
-.content{flex:1;overflow-y:auto;padding:28px;background:var(--bg)}
+  /* ── CHART BAR ── */
+  .chart-bar-wrap { margin-bottom:10px; }
+  .chart-bar-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
+  .chart-bar { background:#1c3050; border-radius:4px; height:8px; overflow:hidden; }
+  .chart-bar-fill { height:100%; border-radius:4px; transition:width .6s cubic-bezier(.4,0,.2,1); }
 
-/* ── PAGE HEADER ── */
-.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
-.page-title{font-size:20px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
-.page-subtitle{font-size:12px;color:var(--text2);margin-top:3px}
-.page-actions{display:flex;gap:8px;align-items:center}
+  /* ── BOTTOM NAV (mobile) ── */
+  #bottom-nav { display:none; }
+  @media(max-width:768px){
+    #bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0;
+      background:#0c1422; border-top:1px solid #1c3050; z-index:100;
+      justify-content:space-around; padding:6px 0 env(safe-area-inset-bottom,6px); }
+    .bnav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 8px;
+      font-size:10px; color:#6a94bb; cursor:pointer; border:none; background:none; font-family:inherit; transition:color .15s; flex:1; }
+    .bnav-item.active { color:#3b9eff; }
+    .bnav-icon { font-size:18px; line-height:1; }
+    #content-area { padding-bottom:70px !important; }
+  }
 
-/* ── STAT CARDS ── */
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;margin-bottom:24px}
-.stat-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);padding:18px;
-  transition:border-color .2s;
-}
-.stat-card:hover{border-color:var(--border2)}
-.stat-card .slabel{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:10px;font-family:'DM Mono',monospace}
-.stat-card .svalue{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1}
-.stat-card .ssub{font-size:11px;color:var(--text3);margin-top:5px}
-.stat-card .strend{font-size:11px;margin-top:5px}
-.strend.up{color:var(--green)}.strend.dn{color:var(--red)}
+  /* ── SIDEBAR COLLAPSED on tablet ── */
+  @media(max-width:1024px) and (min-width:769px){
+    #sidebar { width:56px !important; }
+    .nav-label, .nav-text, .nav-count, #sidebar-footer-text { display:none !important; }
+    .nav-item { justify-content:center !important; padding:10px !important; }
+  }
 
-/* ── TABLE ── */
-.table-wrap{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);overflow:hidden;
-}
-.table-toolbar{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 16px;border-bottom:1px solid var(--border);
-}
-.tsearch{
-  display:flex;align-items:center;gap:7px;
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:6px 10px;
-  flex:1;max-width:280px;
-}
-.tsearch input{background:none;border:none;color:var(--text);font-size:12px;outline:none;flex:1;font-family:inherit}
+  /* ── SEARCH ── */
+  .search-box { display:flex; align-items:center; gap:8px; background:#111d2e; border:1px solid #1c3050; border-radius:8px; padding:6px 12px; }
+  .search-box input { background:none; border:none; color:#c9e0f8; font-size:12.5px; outline:none; flex:1; font-family:inherit; }
+  .search-box input::placeholder { color:#334f68; }
 
-table{width:100%;border-collapse:collapse}
-thead th{
-  padding:10px 14px;text-align:left;
-  font-size:10.5px;font-weight:600;text-transform:uppercase;
-  letter-spacing:0.5px;color:var(--text3);
-  background:var(--bg3);border-bottom:1px solid var(--border);
-  font-family:'DM Mono',monospace;white-space:nowrap;
-}
-tbody td{
-  padding:11px 14px;border-bottom:1px solid var(--border);
-  font-size:12.5px;color:var(--text2);vertical-align:middle;
-}
-tbody tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:rgba(255,255,255,0.015)}
-.cell-primary{color:var(--text)!important;font-weight:500}
-.cell-mono{font-family:'DM Mono',monospace;font-size:11px}
+  /* ── LOGIN SCREEN ── */
+  #login-screen { position:fixed; inset:0; background:#070c14; display:flex; align-items:center; justify-content:center; z-index:1000;
+    background-image:radial-gradient(ellipse 70% 60% at 50% -10%, rgba(59,158,255,.09) 0%, transparent 70%); }
 
-/* ── BADGES ── */
-.badge{
-  display:inline-flex;align-items:center;gap:4px;
-  padding:2px 8px;border-radius:20px;
-  font-size:10px;font-weight:600;
-  font-family:'DM Mono',monospace;letter-spacing:0.2px;
-}
-.bg-green{background:var(--green-bg);color:var(--green)}
-.bg-red{background:var(--red-bg);color:var(--red)}
-.bg-yellow{background:var(--yellow-bg);color:var(--yellow)}
-.bg-blue{background:var(--accent-bg);color:var(--accent)}
-.bg-purple{background:var(--purple-bg);color:var(--purple)}
-.bg-orange{background:var(--orange-bg);color:var(--orange)}
-.bg-gray{background:rgba(107,147,181,0.1);color:var(--text2)}
+  /* ── SCROLLABLE CONTENT ── */
+  #content-area { flex:1; overflow-y:auto; padding:20px; }
+  @media(max-width:640px){ #content-area { padding:14px; } }
 
-/* ── BUTTONS ── */
-.btn{
-  padding:7px 14px;border-radius:var(--radius-sm);border:1px solid;
-  cursor:pointer;font-size:12px;font-weight:500;font-family:inherit;
-  display:inline-flex;align-items:center;gap:6px;
-  transition:all .15s;white-space:nowrap;
-}
-.btn:hover{opacity:.85}
-.btn-blue{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(59,158,255,.25)}
-.btn-blue:hover{opacity:1;box-shadow:0 4px 14px rgba(59,158,255,.4)}
-.btn-outline{background:transparent;border-color:var(--border2);color:var(--text2)}
-.btn-outline:hover{border-color:var(--accent);color:var(--accent);opacity:1;background:var(--accent-bg)}
-.btn-red{background:var(--red-bg);border-color:rgba(240,79,79,.25);color:var(--red)}
-.btn-green{background:var(--green-bg);border-color:rgba(39,201,122,.25);color:var(--green)}
-.btn-sm{padding:4px 10px;font-size:11px}
+  /* ── PAGE HEADER ── */
+  .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .page-title { font-size:20px; font-weight:800; line-height:1.1; }
+  .page-sub { font-size:12px; color:#6a94bb; margin-top:3px; }
+  .page-actions { display:flex; gap:8px; flex-wrap:wrap; }
 
-/* ── CARD ── */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
-.card-title{font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:7px}
-.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* ── GRID ── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-
-/* ── INFO ROW ── */
-.info-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px;
-}
-.info-row:last-child{border-bottom:none}
-.info-row .key{color:var(--text2)}
-.info-row .val{color:var(--text);font-weight:500;text-align:right}
-
-/* ── TABS ── */
-.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:20px}
-.tab-btn{
-  padding:9px 16px;background:none;border:none;
-  color:var(--text2);cursor:pointer;font-size:12.5px;font-family:inherit;
-  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;
-}
-.tab-btn:hover{color:var(--text)}
-.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
-.tab-pane{display:none}
-.tab-pane.active{display:block}
-
-/* ── MODAL ── */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.7);
-  display:flex;align-items:center;justify-content:center;
-  z-index:200;backdrop-filter:blur(4px);
-}
-.modal-overlay.hidden{display:none}
-.modal{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:14px;width:620px;max-width:95vw;
-  max-height:85vh;display:flex;flex-direction:column;
-  box-shadow:0 32px 80px rgba(0,0,0,0.6);
-  animation:modalIn .2s ease;
-}
-@keyframes modalIn{from{transform:scale(.96) translateY(8px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-.modal-header{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-title{font-size:15px;font-weight:700;letter-spacing:-0.3px}
-.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;transition:all .15s}
-.modal-close:hover{background:var(--bg3);color:var(--text)}
-.modal-body{padding:22px;overflow-y:auto;flex:1}
-.modal-footer{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
-
-/* ── FORM ── */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.field{display:flex;flex-direction:column;gap:5px}
-.field.full{grid-column:1/-1}
-.field label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.4px}
-.field input,.field select,.field textarea{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:8px 11px;color:var(--text);
-  font-size:12.5px;font-family:inherit;outline:none;transition:border-color .2s, box-shadow .2s;
-}
-.field input:focus,.field select:focus,.field textarea:focus{
-  border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,158,255,.1);
-}
-.field textarea{resize:vertical;min-height:80px}
-.field select option{background:var(--bg3)}
-
-/* ── TIMELINE ── */
-.timeline{position:relative;padding-left:26px}
-.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:var(--border)}
-.timeline-item{position:relative;margin-bottom:16px}
-.timeline-dot{position:absolute;left:-22px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg2);box-shadow:0 0 0 2px var(--accent-brd)}
-.timeline-date{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px}
-.timeline-content{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
-.timeline-content .ttype{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:3px;font-family:'DM Mono',monospace}
-.timeline-content .tdesc{font-size:12.5px}
-
-/* ── QUEUE ITEM ── */
-.queue-item{
-  display:flex;align-items:center;gap:12px;
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);padding:13px 16px;margin-bottom:8px;
-  cursor:pointer;transition:border-color .15s;
-}
-.queue-item:hover{border-color:var(--border2)}
-.queue-num{font-size:22px;font-weight:700;color:var(--text3);font-family:'DM Mono',monospace;width:44px}
-.queue-info{flex:1}
-.queue-name{font-size:13px;font-weight:600;color:var(--text)}
-.queue-meta{font-size:11px;color:var(--text2);margin-top:2px}
-
-/* ── VITAL BOX ── */
-.vitals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.vital-box{
-  background:var(--bg3);border:1px solid var(--border);
-  border-radius:10px;padding:14px;
-}
-.vital-box .vname{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:7px}
-.vital-box .vval{font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
-.vital-box .vunit{font-size:10px;color:var(--text3);margin-top:2px}
-.vital-box.normal{border-color:rgba(39,201,122,.25)}
-.vital-box.warn{border-color:rgba(245,197,66,.25)}
-.vital-box.critical{border-color:rgba(240,79,79,.35)}
-
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:22px;right:22px;
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);padding:13px 18px;
-  display:flex;align-items:center;gap:11px;
-  z-index:500;transform:translateY(90px);opacity:0;
-  transition:all .3s cubic-bezier(.34,1.56,.64,1);
-  min-width:280px;max-width:380px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.4);
-}
-.toast.show{transform:translateY(0);opacity:1}
-.toast-msg{font-size:13px;flex:1}
-.toast-icon{font-size:16px}
-.toast.success{border-color:rgba(39,201,122,.3)}
-.toast.success .toast-icon{color:var(--green)}
-.toast.error{border-color:rgba(240,79,79,.3)}
-.toast.error .toast-icon{color:var(--red)}
-.toast.info{border-color:var(--accent-brd)}
-.toast.info .toast-icon{color:var(--accent)}
-.toast.warn{border-color:rgba(245,197,66,.3)}
-.toast.warn .toast-icon{color:var(--yellow)}
-
-/* ── ALERT ── */
-.alert{padding:11px 15px;border-radius:var(--radius-sm);font-size:12.5px;display:flex;align-items:flex-start;gap:9px;margin-bottom:14px}
-.alert-red{background:var(--red-bg);border:1px solid rgba(240,79,79,.25);color:var(--red)}
-.alert-yellow{background:var(--yellow-bg);border:1px solid rgba(245,197,66,.25);color:var(--yellow)}
-.alert-green{background:var(--green-bg);border:1px solid rgba(39,201,122,.25);color:var(--green)}
-.alert-blue{background:var(--accent-bg);border:1px solid var(--accent-brd);color:var(--accent)}
-
-/* ── CHART BAR ── */
-.chart-bar-wrap{margin-bottom:12px}
-.chart-bar-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text2);margin-bottom:5px}
-.chart-bar{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
-.chart-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
-
-/* ── PROGRESS ── */
-.progress{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.progress-fill{height:100%;border-radius:3px;background:var(--accent)}
-
-/* ── EMPTY ── */
-.empty{text-align:center;padding:60px 20px;color:var(--text3)}
-.empty .eicon{font-size:36px;margin-bottom:10px;opacity:.5}
-.empty p{font-size:13px}
-
-/* ── IO BAR ── */
-.io-bar{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--radius);padding:12px 16px;
-  display:flex;align-items:center;gap:10px;margin-bottom:20px;
-}
-.io-bar .io-info{flex:1;font-size:12px;color:var(--text2)}
-.io-bar .io-info strong{color:var(--text)}
-
-/* ── BED GRID ── */
-.bed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
-.bed-card{
-  border:1px solid var(--border);border-radius:10px;
-  padding:14px;text-align:center;cursor:pointer;
-  transition:border-color .15s,transform .15s;
-  background:var(--bg3);
-}
-.bed-card:hover{transform:translateY(-2px);border-color:var(--border2)}
-.bed-card.empty{border-color:rgba(39,201,122,.2);background:rgba(39,201,122,.03)}
-.bed-card.occupied{border-color:rgba(240,79,79,.2);background:rgba(240,79,79,.03)}
-.bed-card.maintenance{border-color:rgba(245,197,66,.2);background:rgba(245,197,66,.03)}
-.bed-icon{font-size:26px;margin-bottom:8px}
-.bed-num{font-size:13px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
-
-/* ── SECTION DIVIDER ── */
-.section-divider{height:1px;background:var(--border);margin:20px 0}
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .sidebar{width:52px}
-  .nav-item span:not(.ni),.nav-label,.sidebar-footer .nav-item span:not(.ni),.nav-badge{display:none}
-  .nav-item{justify-content:center;padding:10px}
-  .content{padding:16px}
-  .header-brand{min-width:52px;padding-right:8px}
-  .header-brand-name,.header-brand-version{display:none}
-}
-
-/* ── GLOW ACCENTS ── */
-.glow-blue{box-shadow:0 0 20px rgba(59,158,255,.15)}
-.glow-green{box-shadow:0 0 20px rgba(39,201,122,.12)}
+  /* ── MISC ── */
+  .hidden { display:none !important; }
+  .divider { height:1px; background:#1c3050; margin:16px 0; }
+  .empty-state { text-align:center; padding:40px 20px; color:#334f68; }
+  .empty-icon { font-size:36px; margin-bottom:12px; }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ── LOGIN ── -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="login-logo-icon">🏥</div>
+  <div style="background:#0c1422;border:1px solid #1c3050;border-radius:18px;padding:36px;width:100%;max-width:380px;box-shadow:0 40px 80px rgba(0,0,0,.5)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px">
+      <div style="width:44px;height:44px;background:linear-gradient(135deg,#1b6fd4,#3b9eff);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 16px rgba(59,158,255,.3)">🏥</div>
       <div>
-        <div class="login-logo-text">E-RM</div>
-        <div class="login-logo-sub">Elektronik Rekam Medis</div>
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.5px">E-RM</div>
+        <div style="font-size:11px;color:#334f68;font-family:'JetBrains Mono',monospace">Elektronik Rekam Medis</div>
       </div>
     </div>
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" id="login-user" placeholder="Masukkan username" value="admin">
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="••••••••" value="admin">
-    </div>
-    <div class="form-group">
+    <div class="field" style="margin-bottom:12px"><label>Username</label><input type="text" id="login-user" value="admin" placeholder="Masukkan username"></div>
+    <div class="field" style="margin-bottom:12px"><label>Password</label><input type="password" id="login-pass" value="admin" placeholder="••••••••"></div>
+    <div class="field" style="margin-bottom:18px">
       <label>Role / Jabatan</label>
       <select id="login-role">
         <option value="admin">System Administrator</option>
@@ -545,158 +266,169 @@ tbody tr:hover td{background:rgba(255,255,255,0.015)}
         <option value="labtech">Lab Technician</option>
       </select>
     </div>
-    <button class="btn-login" onclick="doLogin()">Masuk ke Sistem</button>
-    <div class="demo-accounts">
-      <p>Quick login:</p>
-      <span class="demo-tag" onclick="setDemo('admin','admin','admin')">Admin</span>
-      <span class="demo-tag" onclick="setDemo('dr.budi','pass','doctor')">Dokter</span>
-      <span class="demo-tag" onclick="setDemo('ns.sari','pass','nurse')">Perawat</span>
-      <span class="demo-tag" onclick="setDemo('resep','pass','receptionist')">Resepsionis</span>
-      <span class="demo-tag" onclick="setDemo('lab','pass','labtech')">Lab Tech</span>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px;font-size:14px" onclick="doLogin()">Masuk ke Sistem</button>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #1c3050">
+      <p style="font-size:11px;color:#334f68;margin-bottom:8px">Quick login:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span onclick="setDemo('admin','admin','admin')"     style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Admin</span>
+        <span onclick="setDemo('dr.budi','pass','doctor')"   style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Dokter</span>
+        <span onclick="setDemo('ns.sari','pass','nurse')"    style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Perawat</span>
+        <span onclick="setDemo('resep','pass','receptionist')" style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Resepsionis</span>
+        <span onclick="setDemo('lab','pass','labtech')"      style="cursor:pointer;padding:3px 10px;background:#111d2e;border:1px solid #1c3050;border-radius:20px;font-size:11px;color:#6a94bb;transition:all .15s" onmouseenter="this.style.borderColor='#3b9eff';this.style.color='#3b9eff'" onmouseleave="this.style.borderColor='#1c3050';this.style.color='#6a94bb'">Lab Tech</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app">
-  <!-- Header -->
-  <header class="header">
-    <div class="header-brand">
-      <div class="header-brand-icon">🏥</div>
-      <div>
-        <div class="header-brand-name">E-RM</div>
-      </div>
-      <span class="header-brand-version">v1.0</span>
+<!-- ── APP SHELL ── -->
+<div id="app" class="hidden" style="display:flex;flex-direction:column;height:100dvh">
+
+  <!-- HEADER -->
+  <header style="height:52px;background:#0c1422;border-bottom:1px solid #1c3050;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:50">
+    <!-- Brand -->
+    <button id="sidebar-toggle" onclick="toggleSidebar()" class="btn btn-ghost btn-sm" style="padding:6px 8px;display:none" title="Menu">☰</button>
+    <div style="display:flex;align-items:center;gap:8px;min-width:fit-content">
+      <div style="width:28px;height:28px;background:linear-gradient(135deg,#1b6fd4,#3b9eff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px">🏥</div>
+      <span style="font-size:16px;font-weight:800;letter-spacing:-.4px" class="hidden sm:inline">E-RM</span>
     </div>
-    <div class="header-online"><span class="header-online-dot"></span>Online</div>
-    <div class="header-spacer"></div>
-    <div class="header-search">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="global-search" type="text" placeholder="Cari pasien, menu…" onkeyup="globalSearch(this.value)">
-      <span class="kbd">/</span>
+    <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#27c97a;margin-right:auto">
+      <span class="pulse-dot" style="width:7px;height:7px;background:#27c97a;border-radius:50%;display:inline-block"></span>
+      <span class="hidden sm:inline">Online</span>
     </div>
-    <button class="hdr-btn" onclick="showToast('info','💾 Export dimulai…'); exportJSON()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+
+    <!-- Search -->
+    <div class="search-box" style="flex:1;max-width:280px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#334f68" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="global-search" type="text" placeholder="Cari pasien… (/)" onkeyup="globalSearch(this.value)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#334f68;background:#070c14;border:1px solid #1c3050;border-radius:3px;padding:1px 4px" class="hidden lg:inline">/</span>
+    </div>
+
+    <!-- Actions -->
+    <button class="btn btn-ghost btn-sm hidden md:flex" onclick="exportJSON()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export
     </button>
-    <label class="hdr-btn" style="cursor:pointer">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <label class="btn btn-ghost btn-sm hidden md:flex" style="cursor:pointer">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       Import
-      <input type="file" accept=".json" style="display:none" onchange="importJSON(this)">
+      <input type="file" accept=".json" class="hidden" onchange="importJSON(this)">
     </label>
-    <div class="user-pill" id="user-pill">
-      <div class="avatar" id="user-avatar" style="background:#1b6fd4">A</div>
-      <div class="uname" id="user-name">Admin</div>
-      <span class="role-badge bg-purple" id="user-role-badge">ADMIN</span>
+
+    <!-- User -->
+    <div style="display:flex;align-items:center;gap:8px;background:#111d2e;border:1px solid #1c3050;border-radius:8px;padding:5px 10px">
+      <div id="user-avatar" style="width:24px;height:24px;border-radius:50%;background:#1b6fd4;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700">AD</div>
+      <span id="user-name" style="font-size:12px;font-weight:600" class="hidden sm:inline">Administrator</span>
+      <span id="user-role-badge" class="badge badge-purple hidden sm:inline">ADMIN</span>
     </div>
-    <button class="hdr-btn" onclick="logout()" title="Logout">
+    <button class="btn btn-ghost btn-sm" onclick="logout()" title="Keluar">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Keluar
     </button>
   </header>
 
-  <div class="main-layout">
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-      <div class="nav-section">
-        <div class="nav-label">Utama</div>
-        <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
-          <span class="ni">🏠</span><span>Dashboard</span>
+  <!-- BODY: SIDEBAR + CONTENT -->
+  <div style="display:flex;flex:1;overflow:hidden">
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar" style="width:220px;background:#0c1422;border-right:1px solid #1c3050;overflow-y:auto;flex-shrink:0;transition:width .2s,transform .2s">
+      <div style="padding:10px 8px">
+
+        <div style="padding:4px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Utama</div>
+        <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">🏠</span><span class="nav-text">Dashboard</span>
         </div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-label">Penerimaan</div>
-        <div class="nav-item" onclick="showPage('registration')" data-page="registration">
-          <span class="ni">👤</span><span>Pendaftaran Pasien</span>
+
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Penerimaan</div>
+        <div class="nav-item" data-page="registration" onclick="showPage('registration')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">👤</span><span class="nav-text">Pendaftaran</span>
         </div>
-        <div class="nav-item" onclick="showPage('appointments')" data-page="appointments">
-          <span class="ni">📅</span><span>Appointment</span>
-          <span class="nav-badge nb-yellow" id="appt-badge">0</span>
+        <div class="nav-item" data-page="appointments" onclick="showPage('appointments')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">📅</span><span class="nav-text">Appointment</span>
+          <span class="nav-count yellow ml-auto" id="appt-badge">0</span>
         </div>
-        <div class="nav-item" onclick="showPage('queue')" data-page="queue">
-          <span class="ni">🚶</span><span>Antrian</span>
-          <span class="nav-badge nb-green" id="queue-badge">0</span>
+        <div class="nav-item" data-page="queue" onclick="showPage('queue')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">🚶</span><span class="nav-text">Antrian</span>
+          <span class="nav-count green ml-auto" id="queue-badge">0</span>
         </div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-label">Klinis</div>
-        <div class="nav-item" onclick="showPage('chart')" data-page="chart">
-          <span class="ni">📋</span><span>Patient Chart</span>
+
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Klinis</div>
+        <div class="nav-item" data-page="chart" onclick="showPage('chart')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">📋</span><span class="nav-text">Patient Chart</span>
         </div>
-        <div class="nav-item" onclick="showPage('vitals')" data-page="vitals">
-          <span class="ni">💓</span><span>Vital Signs</span>
+        <div class="nav-item" data-page="vitals" onclick="showPage('vitals')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">💓</span><span class="nav-text">Vital Signs</span>
         </div>
-        <div class="nav-item" onclick="showPage('medications')" data-page="medications">
-          <span class="ni">💊</span><span>Medications</span>
+        <div class="nav-item" data-page="medications" onclick="showPage('medications')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">💊</span><span class="nav-text">Medications</span>
         </div>
-        <div class="nav-item" onclick="showPage('orders')" data-page="orders">
-          <span class="ni">📝</span><span>Orders</span>
+        <div class="nav-item" data-page="orders" onclick="showPage('orders')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">📝</span><span class="nav-text">Orders</span>
         </div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-label">Laboratorium</div>
-        <div class="nav-item" onclick="showPage('laboratory')" data-page="laboratory">
-          <span class="ni">🔬</span><span>Lab Orders</span>
-          <span class="nav-badge nb-red" id="lab-badge">0</span>
+        <div class="nav-item" data-page="cppt" onclick="showPage('cppt')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">🗒️</span><span class="nav-text">CPPT</span>
+          <span class="nav-count blue ml-auto" id="cppt-badge">0</span>
         </div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-label">Rawat Inap</div>
-        <div class="nav-item" onclick="showPage('ward')" data-page="ward">
-          <span class="ni">🏥</span><span>Ward / Bed</span>
+
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Lab & Rawat Inap</div>
+        <div class="nav-item" data-page="laboratory" onclick="showPage('laboratory')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">🔬</span><span class="nav-text">Lab Orders</span>
+          <span class="nav-count red ml-auto" id="lab-badge">0</span>
         </div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-label">Laporan</div>
-        <div class="nav-item" onclick="showPage('reports')" data-page="reports">
-          <span class="ni">📊</span><span>Reports & Analytics</span>
+        <div class="nav-item" data-page="ward" onclick="showPage('ward')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">🏥</span><span class="nav-text">Ward / Bed</span>
         </div>
-      </div>
-      <div class="nav-section">
-        <div class="nav-label">Administrasi</div>
-        <div class="nav-item" onclick="showPage('admin')" data-page="admin">
-          <span class="ni">⚙️</span><span>Administration</span>
+
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#334f68;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Laporan & Admin</div>
+        <div class="nav-item" data-page="reports" onclick="showPage('reports')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">📊</span><span class="nav-text">Reports</span>
         </div>
-        <div class="nav-item" onclick="showPage('users')" data-page="users">
-          <span class="ni">👥</span><span>User Management</span>
+        <div class="nav-item" data-page="admin" onclick="showPage('admin')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">⚙️</span><span class="nav-text">Administration</span>
         </div>
-      </div>
-      <div class="sidebar-footer">
-        <div class="nav-item" onclick="showPage('settings')" data-page="settings">
-          <span class="ni">🔧</span><span>Implementer Tools</span>
+        <div class="nav-item" data-page="users" onclick="showPage('users')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">👥</span><span class="nav-text">User Mgmt</span>
         </div>
+        <div class="nav-item" data-page="settings" onclick="showPage('settings')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#6a94bb;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px;text-align:center">🔧</span><span class="nav-text">Implementer Tools</span>
+        </div>
+
       </div>
     </nav>
 
-    <!-- Content -->
-    <main class="content" id="content-area"></main>
+    <!-- CONTENT -->
+    <main id="content-area" style="flex:1;overflow-y:auto;padding:20px;background:#070c14"></main>
   </div>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav id="bottom-nav">
+    <button class="bnav-item active" onclick="showPage('dashboard')" data-bnav="dashboard"><span class="bnav-icon">🏠</span>Home</button>
+    <button class="bnav-item" onclick="showPage('queue')" data-bnav="queue"><span class="bnav-icon">🚶</span>Antrian</button>
+    <button class="bnav-item" onclick="showPage('chart')" data-bnav="chart"><span class="bnav-icon">📋</span>Chart</button>
+    <button class="bnav-item" onclick="showPage('cppt')" data-bnav="cppt"><span class="bnav-icon">🗒️</span>CPPT</button>
+    <button class="bnav-item" onclick="showMoreMenu()" data-bnav="more"><span class="bnav-icon">⋯</span>Lainnya</button>
+  </nav>
 </div>
 
-<!-- Modal -->
-<div class="modal-overlay hidden" id="modal-overlay">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-title">Modal</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+<!-- MODAL -->
+<div id="modal-overlay" class="hidden" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <div id="modal-header">
+      <div id="modal-title">Modal</div>
+      <button onclick="closeModal()" style="background:none;border:none;color:#6a94bb;font-size:18px;cursor:pointer;line-height:1;padding:0">✕</button>
     </div>
-    <div class="modal-body" id="modal-body"></div>
-    <div class="modal-footer" id="modal-footer"></div>
+    <div id="modal-body"></div>
+    <div id="modal-footer"></div>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast">
-  <span class="toast-icon" id="toast-icon">ℹ️</span>
-  <span class="toast-msg" id="toast-msg"></span>
-</div>
+<!-- TOAST -->
+<div id="toast"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div>
 
 <script>
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
 //  DATA STORE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
 let DB = {
-  meta: { version:"1.0", facility:"Puskesmas Sehat Sejahtera", created: new Date().toISOString() },
+  meta: { version:"2.0", facility:"Puskesmas Sehat Sejahtera", created: new Date().toISOString() },
   users: [
     { id:"u1", name:"Dr. Budi Santoso", username:"dr.budi", role:"doctor", specialty:"Umum", status:"active" },
     { id:"u2", name:"Ns. Sari Dewi", username:"ns.sari", role:"nurse", department:"Poli Umum", status:"active" },
@@ -771,6 +503,26 @@ let DB = {
     { id:"CD003", name:"ISPA", code:"J06", system:"ICD-10", category:"Diagnosis" },
     { id:"CD004", name:"Tekanan Darah", code:"55284-4", system:"LOINC", category:"Vital Sign" },
     { id:"CD005", name:"Glukosa Darah Puasa", code:"1558-6", system:"LOINC", category:"Lab Test" }
+  ],
+  cppt: [
+    { id:"CPPT001", patient_id:"P001", tanggal:"2025-04-25", jam:"08:30", profesi:"Dokter", petugas:"Dr. Budi Santoso",
+      subjektif:"Pasien mengeluh kepala pusing sejak kemarin, tidak ada nyeri dada, tidak sesak nafas.",
+      objektif:"TD: 150/95 mmHg, Nadi: 80x/mnt, Suhu: 36.5°C, SpO2: 98%. Tidak ada edema.",
+      asesmen:"Hipertensi Primer tidak terkontrol (I10). Kepatuhan minum obat kurang.",
+      planning:"Edukasi kepatuhan minum obat. Lanjut Amlodipine 5mg 1x1. Kontrol 1 minggu.",
+      instruksi:"Monitor TD 2x sehari. Diit rendah garam.", ttd:"Dr. Budi Santoso" },
+    { id:"CPPT002", patient_id:"P001", tanggal:"2025-04-25", jam:"09:00", profesi:"Perawat", petugas:"Ns. Sari Dewi",
+      subjektif:"Pasien mengatakan sudah lebih tenang setelah dijelaskan dokter.",
+      objektif:"TD: 148/92 mmHg (post edukasi). Pasien kooperatif.",
+      asesmen:"Risiko ketidakpatuhan pengobatan.",
+      planning:"Edukasi manajemen hipertensi dan gaya hidup sehat sudah dilakukan.",
+      instruksi:"Berikan leaflet hipertensi. Pasien dipersilakan pulang.", ttd:"Ns. Sari Dewi" },
+    { id:"CPPT003", patient_id:"P003", tanggal:"2025-04-23", jam:"10:15", profesi:"Dokter", petugas:"Dr. Budi Santoso",
+      subjektif:"Batuk pilek 3 hari, demam ringan, tidak ada sesak nafas.",
+      objektif:"Suhu: 37.2°C, Nadi: 82x/mnt, RR: 20x/mnt. Faring hiperemis.",
+      asesmen:"ISPA (J06) — Rhinofaringitis akut.",
+      planning:"Amoxicillin 500mg 3x1 selama 5 hari. Paracetamol 500mg k/p.",
+      instruksi:"Kontrol bila tidak membaik dalam 3 hari.", ttd:"Dr. Budi Santoso" }
   ]
 };
 
@@ -778,16 +530,42 @@ let currentUser = null;
 let currentPage = 'dashboard';
 
 const ROLE_MENUS = {
-  admin:        ['dashboard','registration','appointments','queue','chart','vitals','medications','orders','laboratory','ward','reports','admin','users','settings'],
-  doctor:       ['dashboard','chart','vitals','medications','orders','laboratory','ward','reports'],
-  nurse:        ['dashboard','queue','vitals','chart','ward'],
+  admin:        ['dashboard','registration','appointments','queue','chart','vitals','medications','orders','laboratory','ward','cppt','reports','admin','users','settings'],
+  doctor:       ['dashboard','chart','vitals','medications','orders','laboratory','ward','cppt','reports'],
+  nurse:        ['dashboard','queue','vitals','chart','ward','cppt'],
   receptionist: ['dashboard','registration','appointments','queue'],
   labtech:      ['dashboard','laboratory']
 };
-const ROLE_COLORS = { admin:'#9b59b6', doctor:'#3b9eff', nurse:'#27c97a', receptionist:'#f5c542', labtech:'#ff8c42' };
-const ROLE_LABELS = { admin:'ADMIN', doctor:'DOKTER', nurse:'PERAWAT', receptionist:'RESEPSIONIS', labtech:'LAB TECH' };
+const ROLE_COLORS = { admin:'#a87eff', doctor:'#3b9eff', nurse:'#27c97a', receptionist:'#f5c542', labtech:'#ff8c42' };
+const ROLE_LABELS = { admin:'ADMIN', doctor:'DOKTER', nurse:'PERAWAT', receptionist:'RESEPSIO', labtech:'LAB TECH' };
 const ROLE_AVATARS = { admin:'AD', doctor:'DR', nurse:'NS', receptionist:'RP', labtech:'LB' };
-const ROLE_BADGE_CLASS = { admin:'bg-purple', doctor:'bg-blue', nurse:'bg-green', receptionist:'bg-yellow', labtech:'bg-orange' };
+const ROLE_BADGE = { admin:'badge-purple', doctor:'badge-blue', nurse:'badge-green', receptionist:'badge-yellow', labtech:'badge-orange' };
+
+// ── RESPONSIVE: show/hide sidebar toggle on mobile ──
+function checkMobile(){
+  const isMobile = window.innerWidth <= 768;
+  const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+  const toggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+  if(toggle) toggle.style.display = isMobile ? 'flex' : 'none';
+  if(isMobile) { sidebar.style.display='none'; sidebar.style.transform=''; }
+  else if(isTablet) { sidebar.style.display=''; sidebar.style.width='56px'; }
+  else { sidebar.style.display=''; sidebar.style.width='220px'; }
+}
+let sidebarOpen = false;
+function toggleSidebar(){
+  const sidebar = document.getElementById('sidebar');
+  sidebarOpen = !sidebarOpen;
+  if(sidebarOpen){
+    sidebar.style.display='block'; sidebar.style.position='fixed'; sidebar.style.top='52px';
+    sidebar.style.left='0'; sidebar.style.bottom='0'; sidebar.style.width='220px'; sidebar.style.zIndex='200';
+    sidebar.style.boxShadow='4px 0 24px rgba(0,0,0,.5)';
+  } else {
+    sidebar.style.display='none'; sidebar.style.position='';
+    sidebar.style.boxShadow='';
+  }
+}
+window.addEventListener('resize', checkMobile);
 
 function setDemo(u,p,r){
   document.getElementById('login-user').value=u;
@@ -800,62 +578,89 @@ function doLogin(){
   const names = { admin:'Administrator', doctor:'Dr. Budi Santoso', nurse:'Ns. Sari Dewi', receptionist:'Reza Pradana', labtech:'Lab. Ahmad' };
   currentUser = { role, name: names[role], allowed: ROLE_MENUS[role] };
   document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').classList.add('active');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('app').style.display='flex';
   document.getElementById('user-name').textContent = currentUser.name;
   document.getElementById('user-avatar').textContent = ROLE_AVATARS[role];
   document.getElementById('user-avatar').style.background = ROLE_COLORS[role];
   document.getElementById('user-role-badge').textContent = ROLE_LABELS[role];
-  document.getElementById('user-role-badge').className = 'role-badge badge ' + (ROLE_BADGE_CLASS[role]||'bg-gray');
+  document.getElementById('user-role-badge').className = 'badge ' + ROLE_BADGE[role];
   applyNavAccess();
   updateBadges();
+  checkMobile();
   showPage('dashboard');
 }
 
 function applyNavAccess(){
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
-    el.style.display = currentUser.allowed.includes(el.dataset.page)?'':'none';
+    el.style.display = currentUser.allowed.includes(el.dataset.page) ? '' : 'none';
   });
 }
 
 function logout(){
   currentUser=null;
   document.getElementById('login-screen').style.display='flex';
-  document.getElementById('app').classList.remove('active');
+  document.getElementById('app').classList.add('hidden');
+  sidebarOpen=false;
 }
 
 // ── NAVIGATION ──
 function showPage(page){
-  if(!currentUser||!currentUser.allowed.includes(page)){showToast('error','❌ Akses ditolak untuk role Anda');return;}
+  if(!currentUser||!currentUser.allowed.includes(page)){ showToast('error','❌ Akses ditolak untuk role Anda'); return; }
   currentPage=page;
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  // close mobile sidebar
+  if(window.innerWidth<=768){ const s=document.getElementById('sidebar'); s.style.display='none'; sidebarOpen=false; }
+  // update active nav
+  document.querySelectorAll('.nav-item').forEach(el=>{ el.style.background=''; el.style.color='#6a94bb'; });
   const nav=document.querySelector(`.nav-item[data-page="${page}"]`);
-  if(nav) nav.classList.add('active');
+  if(nav){ nav.style.background='rgba(59,158,255,.1)'; nav.style.color='#3b9eff'; }
+  // update bottom nav
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  const bnav=document.querySelector(`.bnav-item[data-bnav="${page}"]`);
+  if(bnav) bnav.classList.add('active');
+
   const pages={
-    dashboard:renderDashboard,registration:renderRegistration,appointments:renderAppointments,
-    queue:renderQueue,chart:renderChart,vitals:renderVitals,medications:renderMedications,
-    orders:renderOrders,laboratory:renderLaboratory,ward:renderWard,reports:renderReports,
-    admin:renderAdmin,users:renderUsers,settings:renderSettings
+    dashboard:renderDashboard, registration:renderRegistration, appointments:renderAppointments,
+    queue:renderQueue, chart:renderChart, vitals:renderVitals, medications:renderMedications,
+    orders:renderOrders, laboratory:renderLaboratory, ward:renderWard, cppt:renderCPPT,
+    reports:renderReports, admin:renderAdmin, users:renderUsers, settings:renderSettings
   };
   if(pages[page]) pages[page]();
+}
+
+function showMoreMenu(){
+  openModal('Menu Lainnya', `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    ${[['registration','👤','Pendaftaran'],['appointments','📅','Appointment'],['vitals','💓','Vital Signs'],
+       ['medications','💊','Medications'],['orders','📝','Orders'],['laboratory','🔬','Lab Orders'],
+       ['ward','🏥','Ward/Bed'],['reports','📊','Reports'],['admin','⚙️','Admin'],
+       ['users','👥','Users'],['settings','🔧','Tools']
+    ].filter(([p])=>currentUser.allowed.includes(p)).map(([p,i,l])=>`
+    <button onclick="closeModal();showPage('${p}')" style="display:flex;align-items:center;gap:10px;background:#111d2e;border:1px solid #1c3050;border-radius:10px;padding:12px;font-size:13px;font-weight:600;color:#c9e0f8;cursor:pointer;font-family:inherit;text-align:left">
+      <span style="font-size:20px">${i}</span>${l}
+    </button>`).join('')}
+  </div>`, '');
 }
 
 function updateBadges(){
   document.getElementById('queue-badge').textContent = DB.queue.filter(q=>q.status==='menunggu').length;
   document.getElementById('appt-badge').textContent = DB.appointments.filter(a=>a.status==='terjadwal').length;
   document.getElementById('lab-badge').textContent = DB.lab_orders.filter(l=>l.status==='pending').length;
+  document.getElementById('cppt-badge').textContent = DB.cppt ? DB.cppt.length : 0;
 }
 
 // ── HELPERS ──
-function getPatient(id){ return DB.patients.find(p=>p.id===id)||{}; }
+function P(id){ return DB.patients.find(p=>p.id===id)||{}; }
 function age(dob){ if(!dob) return '—'; return Math.floor((Date.now()-new Date(dob))/(365.25*24*3600*1000))+'th'; }
-function fmt(date){ if(!date) return '—'; return new Date(date).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmt(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
 function genId(prefix,arr){ return prefix+String(arr.length+1).padStart(3,'0'); }
 function setContent(html){ document.getElementById('content-area').innerHTML=html; }
+function b(cls,txt){ return `<span class="badge ${cls}">${txt}</span>`; }
 
-function openModal(title,body,footer=''){
+function openModal(title,body,footer){
   document.getElementById('modal-title').textContent=title;
   document.getElementById('modal-body').innerHTML=body;
-  document.getElementById('modal-footer').innerHTML=footer||'<button class="btn btn-outline" onclick="closeModal()">Tutup</button>';
+  document.getElementById('modal-footer').innerHTML = footer!==undefined ? footer : `<button class="btn btn-ghost" onclick="closeModal()">Tutup</button>`;
   document.getElementById('modal-overlay').classList.remove('hidden');
 }
 function closeModal(){ document.getElementById('modal-overlay').classList.add('hidden'); }
@@ -863,7 +668,7 @@ function closeModal(){ document.getElementById('modal-overlay').classList.add('h
 function showToast(type,msg){
   const t=document.getElementById('toast');
   const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
-  t.className=`toast ${type}`;
+  t.className = type;
   document.getElementById('toast-icon').textContent=icons[type]||'ℹ️';
   document.getElementById('toast-msg').textContent=msg;
   t.classList.add('show');
@@ -873,245 +678,181 @@ function showToast(type,msg){
 function globalSearch(val){
   if(val.length<2) return;
   const found=DB.patients.filter(p=>p.name.toLowerCase().includes(val.toLowerCase())||p.id.includes(val));
-  if(found.length>0) showToast('info',`🔍 Ditemukan ${found.length} pasien untuk "${val}"`);
+  if(found.length) showToast('info',`🔍 ${found.length} pasien ditemukan untuk "${val}"`);
 }
 
-function filterTable(input,tableId){
-  const val=input.value.toLowerCase();
-  document.querySelectorAll(`#${tableId} tbody tr`).forEach(row=>{
-    row.style.display=row.textContent.toLowerCase().includes(val)?'':'none';
-  });
+function filterTbl(input,id){
+  const v=input.value.toLowerCase();
+  document.querySelectorAll(`#${id} tbody tr`).forEach(r=>{ r.style.display=r.textContent.toLowerCase().includes(v)?'':'none'; });
 }
 
-// ── EXPORT/IMPORT ──
 function exportJSON(){
-  DB.meta.exported=new Date().toISOString();
   const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download=`E-RM_${new Date().toISOString().slice(0,10)}.json`;
-  a.click(); URL.revokeObjectURL(url);
-  showToast('success','💾 Data berhasil diekspor ke JSON');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`E-RM_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  showToast('success','💾 Data berhasil diekspor');
 }
 function importJSON(input){
   const file=input.files[0]; if(!file) return;
   const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(data.patients&&data.visits){ DB=data; updateBadges(); showPage(currentPage); showToast('success',`📂 Import berhasil: ${DB.patients.length} pasien`); }
-      else showToast('error','❌ Format JSON tidak valid');
-    } catch { showToast('error','❌ File JSON rusak atau tidak valid'); }
-  };
+  reader.onload=e=>{ try{
+    const data=JSON.parse(e.target.result);
+    if(data.patients){ DB=data; if(!DB.cppt) DB.cppt=[]; updateBadges(); showPage(currentPage); showToast('success',`📂 Import berhasil`); }
+    else showToast('error','❌ Format JSON tidak valid');
+  } catch{ showToast('error','❌ File JSON rusak'); } };
   reader.readAsText(file); input.value='';
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: DASHBOARD
-// ══════════════════════════════════════════════
+// ── PAGE CONTENT HELPERS ──
+function statGrid(cards){ return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px">${cards}</div>`; }
+function statCard(label,val,color,sub=''){
+  return `<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-value" style="color:${color}">${val}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`;
+}
+function tblWrap(id,headers,rows,search=true){
+  return `<div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
+    ${search?`<div style="padding:12px 14px;border-bottom:1px solid #1c3050"><div class="search-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#334f68" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Cari…" onkeyup="filterTbl(this,'${id}')"></div></div>`:''}
+    <div style="overflow-x:auto"><table class="tbl" id="${id}"><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function grid2(a,b){ return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px">${a}${b}</div>`; }
+
+// ══════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════
 function renderDashboard(){
-  const activeQueue=DB.queue.filter(q=>q.status==='menunggu').length;
-  const pendingLab=DB.lab_orders.filter(l=>l.status==='pending').length;
+  const activeQ=DB.queue.filter(q=>q.status==='menunggu').length;
+  const pendLab=DB.lab_orders.filter(l=>l.status==='pending').length;
   const todayAppt=DB.appointments.filter(a=>a.date==='2025-04-25').length;
-  const recentVisits=DB.visits.slice(-5).reverse();
   const urgentQ=DB.queue.filter(q=>q.priority==='urgent');
+  const recentV=DB.visits.slice(-5).reverse();
 
   setContent(`
   <div class="page-header">
     <div>
       <div class="page-title">Dashboard</div>
-      <div class="page-subtitle">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})} — ${DB.meta.facility}</div>
+      <div class="page-sub">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})} · ${DB.meta.facility}</div>
     </div>
   </div>
-
   ${urgentQ.length?`<div class="alert alert-red">🚨 <strong>${urgentQ.length} pasien URGENT</strong> di antrian — segera tangani!</div>`:''}
-
-  <div class="stat-grid">
-    <div class="stat-card">
-      <div class="slabel">Total Pasien</div>
-      <div class="svalue" style="color:var(--accent)">${DB.patients.length}</div>
-      <div class="ssub">Terdaftar aktif</div>
-    </div>
-    <div class="stat-card">
-      <div class="slabel">Kunjungan Hari Ini</div>
-      <div class="svalue" style="color:var(--green)">${DB.visits.filter(v=>v.date==='2025-04-25').length}</div>
-      <div class="ssub">Dari total ${DB.visits.length} kunjungan</div>
-    </div>
-    <div class="stat-card">
-      <div class="slabel">Antrian Aktif</div>
-      <div class="svalue" style="color:var(--yellow)">${activeQueue}</div>
-      <div class="ssub">Menunggu dipanggil</div>
-    </div>
-    <div class="stat-card">
-      <div class="slabel">Lab Pending</div>
-      <div class="svalue" style="color:var(--red)">${pendingLab}</div>
-      <div class="ssub">Menunggu hasil</div>
-    </div>
-    <div class="stat-card">
-      <div class="slabel">Appointment Hari Ini</div>
-      <div class="svalue" style="color:var(--purple)">${todayAppt}</div>
-      <div class="ssub">Dari ${DB.appointments.length} total</div>
-    </div>
-    <div class="stat-card">
-      <div class="slabel">Bed Terisi</div>
-      <div class="svalue" style="color:var(--orange)">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length}</div>
-      <div class="ssub">Kapasitas rawat inap</div>
-    </div>
-  </div>
-
-  <div class="grid-2" style="margin-bottom:20px">
+  ${statGrid([
+    statCard('Total Pasien', DB.patients.length, '#3b9eff', 'Terdaftar aktif'),
+    statCard('Kunjungan Hari Ini', DB.visits.filter(v=>v.date==='2025-04-25').length, '#27c97a', `Dari total ${DB.visits.length}`),
+    statCard('Antrian Aktif', activeQ, '#f5c542', 'Menunggu dipanggil'),
+    statCard('Lab Pending', pendLab, '#f04f4f', 'Menunggu hasil'),
+    statCard('Appointment', todayAppt, '#a87eff', 'Hari ini'),
+    statCard('Bed Terisi', `${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length}`, '#ff8c42', 'Rawat inap'),
+  ].join(''))}
+  ${grid2(`
     <div class="card">
       <div class="card-title">📋 Kunjungan Terbaru</div>
-      ${recentVisits.map(v=>{ const p=getPatient(v.patient_id); return `
-      <div class="info-row">
-        <span class="key">${p.name||'?'} <span class="cell-mono" style="color:var(--text3);font-size:10px">${v.id}</span></span>
-        <span class="val"><span class="badge ${v.status==='selesai'?'bg-green':'bg-yellow'}">${v.status}</span></span>
-      </div>`; }).join('')}
-    </div>
+      ${recentV.map(v=>`<div class="info-row"><span class="info-key">${P(v.patient_id).name||'?'}</span><span class="info-val">${b(v.status==='selesai'?'badge-green':'badge-yellow',v.status)}</span></div>`).join('')}
+    </div>`,`
     <div class="card">
       <div class="card-title">🚶 Antrian Aktif</div>
-      ${DB.queue.filter(q=>q.status==='menunggu').map(q=>{ const p=getPatient(q.patient_id); return `
-      <div class="info-row">
-        <span class="key"><strong>#${q.number}</strong> ${p.name||'?'} <span style="color:var(--text3);font-size:11px">${q.location}</span></span>
-        <span class="val"><span class="badge ${q.priority==='urgent'?'bg-red':'bg-gray'}">${q.priority}</span></span>
-      </div>`; }).join('') || '<div style="color:var(--text3);font-size:12px;padding:8px 0">Tidak ada antrian</div>'}
-    </div>
-  </div>
-
-  <div class="grid-2">
+      ${DB.queue.filter(q=>q.status==='menunggu').map(q=>`
+      <div class="info-row"><span class="info-key"><strong>#${q.number}</strong> ${P(q.patient_id).name||'?'} <span style="color:#334f68;font-size:11px">${q.location}</span></span><span class="info-val">${b(q.priority==='urgent'?'badge-red':'badge-gray',q.priority)}</span></div>`).join('')||`<div class="empty-state" style="padding:16px"><div>✅</div><p style="font-size:12px">Tidak ada antrian</p></div>`}
+    </div>`)}
+  ${grid2(`
     <div class="card">
       <div class="card-title">📅 Appointment Hari Ini</div>
-      ${DB.appointments.filter(a=>a.date==='2025-04-25').map(a=>{ const p=getPatient(a.patient_id); return `
-      <div class="info-row">
-        <span class="key"><span class="badge bg-blue">${a.time}</span> ${p.name||'?'} — ${a.type}</span>
-        <span class="val"><span class="badge ${a.status==='hadir'?'bg-green':'bg-yellow'}">${a.status}</span></span>
-      </div>`; }).join('')}
-    </div>
+      ${DB.appointments.filter(a=>a.date==='2025-04-25').map(a=>`
+      <div class="info-row"><span class="info-key">${b('badge-blue',a.time)} ${P(a.patient_id).name||'?'} <span style="color:#334f68;font-size:11px">${a.type}</span></span><span class="info-val">${b(a.status==='hadir'?'badge-green':'badge-yellow',a.status)}</span></div>`).join('')}
+    </div>`,`
     <div class="card">
       <div class="card-title">🏥 Status Bed</div>
-      <div class="info-row"><span class="key">Kosong</span><span class="val"><span class="badge bg-green">${DB.beds.filter(b=>b.status==='kosong').length}</span></span></div>
-      <div class="info-row"><span class="key">Terisi</span><span class="val"><span class="badge bg-red">${DB.beds.filter(b=>b.status==='terisi').length}</span></span></div>
-      <div class="info-row"><span class="key">Maintenance</span><span class="val"><span class="badge bg-yellow">${DB.beds.filter(b=>b.status==='maintenance').length}</span></span></div>
-      <div style="margin-top:12px">
-        <div class="progress"><div class="progress-fill" style="width:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length*100}%;background:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length>0.8?'var(--red)':'var(--green)'}"></div></div>
-      </div>
-    </div>
-  </div>`);
+      <div class="info-row"><span class="info-key">Kosong</span><span class="info-val">${b('badge-green',DB.beds.filter(b=>b.status==='kosong').length)}</span></div>
+      <div class="info-row"><span class="info-key">Terisi</span><span class="info-val">${b('badge-red',DB.beds.filter(b=>b.status==='terisi').length)}</span></div>
+      <div class="info-row"><span class="info-key">Maintenance</span><span class="info-val">${b('badge-yellow',DB.beds.filter(b=>b.status==='maintenance').length)}</span></div>
+      <div style="margin-top:12px"><div class="progress"><div class="progress-fill" style="width:${DB.beds.filter(x=>x.status==='terisi').length/DB.beds.length*100}%;background:#f04f4f"></div></div></div>
+    </div>`)}
+  `);
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: REGISTRATION
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  REGISTRATION
+// ══════════════════════════════════════
 function renderRegistration(){
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Pendaftaran Pasien</div><div class="page-subtitle">${DB.patients.length} pasien terdaftar</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="openRegModal()">+ Daftarkan Pasien</button>
-    </div>
+    <div><div class="page-title">Pendaftaran Pasien</div><div class="page-sub">${DB.patients.length} pasien terdaftar</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openRegModal()">+ Daftarkan Pasien</button></div>
   </div>
-  <div class="table-wrap">
-    <div class="table-toolbar">
-      <div class="tsearch">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" placeholder="Cari nama, ID, NIK…" onkeyup="filterTable(this,'reg-table')">
-      </div>
-    </div>
-    <table id="reg-table">
-      <thead><tr><th>ID</th><th>Nama</th><th>DOB / Usia</th><th>Gender</th><th>NIK</th><th>Goldar</th><th>Alergi</th><th>Status</th><th>Aksi</th></tr></thead>
-      <tbody>
-        ${DB.patients.map(p=>`<tr>
-          <td class="cell-mono">${p.id}</td>
-          <td class="cell-primary">${p.name}</td>
-          <td>${fmt(p.dob)} / ${age(p.dob)}</td>
-          <td>${p.gender}</td>
-          <td class="cell-mono">${p.nik}</td>
-          <td><span class="badge bg-blue">${p.blood_type}</span></td>
-          <td>${p.allergy?`<span class="badge bg-red">⚠ ${p.allergy}</span>`:'—'}</td>
-          <td><span class="badge bg-green">${p.status}</span></td>
-          <td style="display:flex;gap:6px">
-            <button class="btn btn-outline btn-sm" onclick="openEditPatient('${p.id}')">Edit</button>
-            <button class="btn btn-green btn-sm" onclick="addToQueue('${p.id}')">+ Antrian</button>
-          </td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-  </div>`);
+  ${tblWrap('reg-tbl',['ID','Nama','Usia/Gender','NIK','Goldar','Alergi','Status','Aksi'],
+    DB.patients.map(p=>`<tr>
+      <td class="cell-id">${p.id}</td>
+      <td class="cell-name">${p.name}</td>
+      <td>${age(p.dob)} / ${p.gender}</td>
+      <td class="cell-id">${p.nik}</td>
+      <td>${b('badge-blue',p.blood_type)}</td>
+      <td>${p.allergy?b('badge-red','⚠ '+p.allergy):'—'}</td>
+      <td>${b('badge-green',p.status)}</td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn btn-ghost btn-sm" onclick="openEditPasien('${p.id}')">Edit</button>
+        <button class="btn btn-success btn-sm" onclick="addToQueue('${p.id}')">+ Antrian</button>
+      </div></td>
+    </tr>`).join('')
+  )}`);
 }
 
 function openRegModal(){
   openModal('Daftarkan Pasien Baru',`
   <div class="form-grid">
-    <div class="field full"><label>Nama Lengkap</label><input type="text" id="rf-name" placeholder="Nama lengkap pasien"></div>
+    <div class="field full"><label>Nama Lengkap</label><input id="rf-name" placeholder="Nama lengkap pasien"></div>
     <div class="field"><label>Tanggal Lahir</label><input type="date" id="rf-dob"></div>
     <div class="field"><label>Jenis Kelamin</label><select id="rf-gender"><option>Laki-laki</option><option>Perempuan</option></select></div>
-    <div class="field full"><label>NIK</label><input type="text" id="rf-nik" placeholder="16 digit NIK" maxlength="16"></div>
-    <div class="field"><label>No. HP</label><input type="text" id="rf-phone" placeholder="08xx…"></div>
+    <div class="field full"><label>NIK</label><input id="rf-nik" placeholder="16 digit NIK" maxlength="16"></div>
+    <div class="field"><label>No. HP</label><input id="rf-phone" placeholder="08xx…"></div>
     <div class="field"><label>Gol. Darah</label><select id="rf-blood"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
-    <div class="field full"><label>Alamat</label><textarea id="rf-address" placeholder="Alamat lengkap" style="min-height:60px"></textarea></div>
-    <div class="field full"><label>Alergi (jika ada)</label><input type="text" id="rf-allergy" placeholder="Penisilin, Sulfa, dll…"></div>
+    <div class="field full"><label>Alamat</label><textarea id="rf-addr" placeholder="Alamat lengkap" style="min-height:60px"></textarea></div>
+    <div class="field full"><label>Alergi (jika ada)</label><input id="rf-allergy" placeholder="Penisilin, Sulfa, dll…"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="savePatient()">💾 Simpan</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+   <button class="btn btn-primary" onclick="savePasien()">💾 Simpan</button>`);
 }
-
-function savePatient(){
+function savePasien(){
   const name=document.getElementById('rf-name').value;
   if(!name){showToast('error','Nama wajib diisi');return;}
   const id='P'+String(DB.patients.length+1).padStart(3,'0');
-  DB.patients.push({id,name,dob:document.getElementById('rf-dob').value,gender:document.getElementById('rf-gender').value,nik:document.getElementById('rf-nik').value,phone:document.getElementById('rf-phone').value,blood_type:document.getElementById('rf-blood').value,address:document.getElementById('rf-address').value,allergy:document.getElementById('rf-allergy').value,status:'active',registered:new Date().toISOString().slice(0,10)});
-  closeModal(); renderRegistration();
-  showToast('success',`✅ Pasien ${name} berhasil didaftarkan`);
+  DB.patients.push({id,name,dob:document.getElementById('rf-dob').value,gender:document.getElementById('rf-gender').value,nik:document.getElementById('rf-nik').value,phone:document.getElementById('rf-phone').value,blood_type:document.getElementById('rf-blood').value,address:document.getElementById('rf-addr').value,allergy:document.getElementById('rf-allergy').value,status:'active',registered:new Date().toISOString().slice(0,10)});
+  closeModal();renderRegistration();showToast('success',`✅ Pasien ${name} berhasil didaftarkan`);
 }
-
-function openEditPatient(id){
-  const p=getPatient(id);
-  openModal(`Edit Pasien — ${p.name}`,`
+function openEditPasien(id){
+  const p=P(id);
+  openModal(`Edit — ${p.name}`,`
   <div class="form-grid">
-    <div class="field full"><label>Nama Lengkap</label><input type="text" id="ef-name" value="${p.name}"></div>
+    <div class="field full"><label>Nama</label><input id="ef-name" value="${p.name}"></div>
     <div class="field"><label>Tanggal Lahir</label><input type="date" id="ef-dob" value="${p.dob}"></div>
     <div class="field"><label>Jenis Kelamin</label><select id="ef-gender"><option ${p.gender==='Laki-laki'?'selected':''}>Laki-laki</option><option ${p.gender==='Perempuan'?'selected':''}>Perempuan</option></select></div>
-    <div class="field"><label>No. HP</label><input type="text" id="ef-phone" value="${p.phone}"></div>
-    <div class="field"><label>Gol. Darah</label><select id="ef-blood"><option ${p.blood_type==='A+'?'selected':''}>A+</option><option ${p.blood_type==='A-'?'selected':''}>A-</option><option ${p.blood_type==='B+'?'selected':''}>B+</option><option ${p.blood_type==='B-'?'selected':''}>B-</option><option ${p.blood_type==='O+'?'selected':''}>O+</option><option ${p.blood_type==='O-'?'selected':''}>O-</option><option ${p.blood_type==='AB+'?'selected':''}>AB+</option><option ${p.blood_type==='AB-'?'selected':''}>AB-</option></select></div>
-    <div class="field full"><label>Alamat</label><textarea id="ef-address">${p.address}</textarea></div>
-    <div class="field full"><label>Alergi</label><input type="text" id="ef-allergy" value="${p.allergy||''}"></div>
+    <div class="field"><label>No. HP</label><input id="ef-phone" value="${p.phone}"></div>
+    <div class="field"><label>Gol. Darah</label><select id="ef-blood">${['A+','A-','B+','B-','O+','O-','AB+','AB-'].map(x=>`<option ${p.blood_type===x?'selected':''}>${x}</option>`).join('')}</select></div>
+    <div class="field full"><label>Alamat</label><textarea id="ef-addr">${p.address}</textarea></div>
+    <div class="field full"><label>Alergi</label><input id="ef-allergy" value="${p.allergy||''}"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="updatePatient('${id}')">💾 Update</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+   <button class="btn btn-primary" onclick="updatePasien('${id}')">💾 Update</button>`);
 }
-
-function updatePatient(id){
+function updatePasien(id){
   const p=DB.patients.find(x=>x.id===id);
-  p.name=document.getElementById('ef-name').value;
-  p.dob=document.getElementById('ef-dob').value;
-  p.gender=document.getElementById('ef-gender').value;
-  p.phone=document.getElementById('ef-phone').value;
-  p.blood_type=document.getElementById('ef-blood').value;
-  p.address=document.getElementById('ef-address').value;
+  p.name=document.getElementById('ef-name').value; p.dob=document.getElementById('ef-dob').value;
+  p.gender=document.getElementById('ef-gender').value; p.phone=document.getElementById('ef-phone').value;
+  p.blood_type=document.getElementById('ef-blood').value; p.address=document.getElementById('ef-addr').value;
   p.allergy=document.getElementById('ef-allergy').value;
-  closeModal(); renderRegistration();
-  showToast('success',`✅ Data ${p.name} berhasil diupdate`);
+  closeModal();renderRegistration();showToast('success',`✅ Data ${p.name} diupdate`);
 }
-
 function addToQueue(patientId){
-  const p=getPatient(patientId);
-  const already=DB.queue.find(q=>q.patient_id===patientId&&q.status==='menunggu');
-  if(already){showToast('warn','⚠️ Pasien sudah ada di antrian');return;}
-  const newQ={id:genId('Q',DB.queue),patient_id:patientId,number:DB.queue.length+1,location:'Poli Umum',priority:'normal',status:'menunggu',checked_in:new Date().toTimeString().slice(0,5),wait_min:0};
-  DB.queue.push(newQ); updateBadges();
-  showToast('success',`✅ ${p.name} ditambahkan ke antrian #${newQ.number}`);
+  const p=P(patientId);
+  if(DB.queue.find(q=>q.patient_id===patientId&&q.status==='menunggu')){showToast('warn','⚠️ Pasien sudah ada di antrian');return;}
+  const nq={id:genId('Q',DB.queue),patient_id:patientId,number:DB.queue.length+1,location:'Poli Umum',priority:'normal',status:'menunggu',checked_in:new Date().toTimeString().slice(0,5),wait_min:0};
+  DB.queue.push(nq);updateBadges();showToast('success',`✅ ${p.name} ditambahkan ke antrian #${nq.number}`);
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: APPOINTMENTS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  APPOINTMENTS
+// ══════════════════════════════════════
 function renderAppointments(){
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Appointment</div><div class="page-subtitle">Jadwal perjanjian pasien</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="openApptModal()">+ Jadwal Baru</button>
-    </div>
+    <div><div class="page-title">Appointment</div><div class="page-sub">Jadwal perjanjian pasien</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openApptModal()">+ Jadwal Baru</button></div>
   </div>
   <div class="tabs">
     <button class="tab-btn active" onclick="switchApptTab('all',this)">Semua</button>
@@ -1119,287 +860,178 @@ function renderAppointments(){
     <button class="tab-btn" onclick="switchApptTab('terjadwal',this)">Terjadwal</button>
     <button class="tab-btn" onclick="switchApptTab('hadir',this)">Hadir</button>
   </div>
-  <div class="table-wrap">
-    <table><thead><tr><th>ID</th><th>Pasien</th><th>Tanggal</th><th>Waktu</th><th>Poli</th><th>Dokter</th><th>Status</th><th>Aksi</th></tr></thead>
-      <tbody id="appt-tbody">${renderApptRows(DB.appointments)}</tbody>
-    </table>
-  </div>`);
+  <div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>ID</th><th>Pasien</th><th>Tanggal</th><th>Waktu</th><th>Poli</th><th>Dokter</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody id="appt-tbody">${renderApptRows(DB.appointments)}</tbody></table></div></div>`);
 }
-
 function renderApptRows(data){
-  return data.map(a=>{ const p=getPatient(a.patient_id); return `<tr>
-    <td class="cell-mono">${a.id}</td>
-    <td class="cell-primary">${p.name||'?'}</td>
-    <td>${fmt(a.date)}</td>
-    <td><span class="badge bg-blue">${a.time}</span></td>
-    <td>${a.type}</td>
-    <td>${a.doctor}</td>
-    <td><span class="badge ${a.status==='hadir'?'bg-green':a.status==='terjadwal'?'bg-yellow':'bg-gray'}">${a.status}</span></td>
-    <td style="display:flex;gap:6px">
-      ${a.status==='terjadwal'?`<button class="btn btn-green btn-sm" onclick="markApptArrived('${a.id}')">Hadir</button>`:''}
-      <button class="btn btn-red btn-sm" onclick="cancelAppt('${a.id}')">Batal</button>
-    </td>
-  </tr>`; }).join('');
+  return data.map(a=>`<tr>
+    <td class="cell-id">${a.id}</td><td class="cell-name">${P(a.patient_id).name||'?'}</td>
+    <td>${fmt(a.date)}</td><td>${b('badge-blue',a.time)}</td>
+    <td>${a.type}</td><td style="font-size:12px;color:#6a94bb">${a.doctor}</td>
+    <td>${b(a.status==='hadir'?'badge-green':a.status==='terjadwal'?'badge-yellow':'badge-gray',a.status)}</td>
+    <td><div style="display:flex;gap:4px">
+      ${a.status==='terjadwal'?`<button class="btn btn-success btn-sm" onclick="markHadir('${a.id}')">Hadir</button>`:''}
+      <button class="btn btn-danger btn-sm" onclick="batalAppt('${a.id}')">Batal</button>
+    </div></td></tr>`).join('');
 }
-
-function switchApptTab(filter,btn){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-  let data=DB.appointments;
-  if(filter==='today') data=data.filter(a=>a.date==='2025-04-25');
-  else if(filter!=='all') data=data.filter(a=>a.status===filter);
-  document.getElementById('appt-tbody').innerHTML=renderApptRows(data);
-}
-
-function markApptArrived(id){
-  const a=DB.appointments.find(x=>x.id===id);
-  if(a){a.status='hadir';addToQueue(a.patient_id);renderAppointments();showToast('success','✅ Pasien hadir & ditambahkan ke antrian');}
-}
-function cancelAppt(id){
-  const a=DB.appointments.find(x=>x.id===id);
-  if(a){a.status='dibatalkan';renderAppointments();showToast('info','Appointment dibatalkan');}
-}
-
+function switchApptTab(f,btn){ document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); let d=DB.appointments; if(f==='today') d=d.filter(a=>a.date==='2025-04-25'); else if(f!=='all') d=d.filter(a=>a.status===f); document.getElementById('appt-tbody').innerHTML=renderApptRows(d); }
+function markHadir(id){ const a=DB.appointments.find(x=>x.id===id); if(a){a.status='hadir';addToQueue(a.patient_id);renderAppointments();showToast('success','✅ Pasien hadir & ditambahkan ke antrian');} }
+function batalAppt(id){ const a=DB.appointments.find(x=>x.id===id); if(a){a.status='dibatalkan';renderAppointments();showToast('info','Appointment dibatalkan');} }
 function openApptModal(){
   openModal('Jadwal Appointment Baru',`
   <div class="form-grid">
-    <div class="field full"><label>Pasien</label><select id="af-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name} (${p.id})</option>`).join('')}</select></div>
+    <div class="field full"><label>Pasien</label><select id="af-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
     <div class="field"><label>Tanggal</label><input type="date" id="af-date" value="${new Date().toISOString().slice(0,10)}"></div>
     <div class="field"><label>Waktu</label><input type="time" id="af-time" value="09:00"></div>
-    <div class="field full"><label>Poli / Layanan</label><select id="af-type"><option>Poli Umum</option><option>Poli KIA</option><option>Poli Gigi</option><option>Poli Dalam</option><option>Poli Anak</option><option>Poli Mata</option></select></div>
-    <div class="field full"><label>Dokter</label><input type="text" id="af-doctor" value="Dr. Budi Santoso"></div>
+    <div class="field full"><label>Poli</label><select id="af-type"><option>Poli Umum</option><option>Poli KIA</option><option>Poli Gigi</option><option>Poli Dalam</option><option>Poli Anak</option></select></div>
+    <div class="field full"><label>Dokter</label><input id="af-doctor" value="Dr. Budi Santoso"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="saveAppt()">💾 Simpan</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveAppt()">💾 Simpan</button>`);
 }
-
 function saveAppt(){
   DB.appointments.push({id:genId('A',DB.appointments),patient_id:document.getElementById('af-patient').value,date:document.getElementById('af-date').value,time:document.getElementById('af-time').value,type:document.getElementById('af-type').value,doctor:document.getElementById('af-doctor').value,status:'terjadwal'});
-  updateBadges(); closeModal(); renderAppointments();
-  showToast('success','✅ Appointment berhasil dijadwalkan');
+  updateBadges();closeModal();renderAppointments();showToast('success','✅ Appointment dijadwalkan');
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: QUEUE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  QUEUE
+// ══════════════════════════════════════
 function renderQueue(){
-  const waiting=DB.queue.filter(q=>q.status==='menunggu').sort((a,b)=>({emergency:0,urgent:1,normal:2}[a.priority]||2)-({emergency:0,urgent:1,normal:2}[b.priority]||2));
+  const waiting=DB.queue.filter(q=>q.status==='menunggu').sort((a,c)=>({urgent:0,normal:1}[a.priority]||1)-({urgent:0,normal:1}[c.priority]||1));
   const called=DB.queue.filter(q=>q.status==='dipanggil');
-
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Antrian Pasien</div><div class="page-subtitle">${waiting.length} menunggu · ${called.length} dipanggil</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="callNextQueue()">📢 Panggil Berikutnya</button>
-    </div>
+    <div><div class="page-title">Antrian Pasien</div><div class="page-sub">${waiting.length} menunggu · ${called.length} dipanggil</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="callNext()">📢 Panggil Berikutnya</button></div>
   </div>
-  <div class="grid-2">
+  ${grid2(`
     <div>
-      <div class="card-title" style="margin-bottom:12px">🟡 Menunggu (${waiting.length})</div>
-      ${waiting.length?waiting.map(q=>{ const p=getPatient(q.patient_id); return `
-      <div class="queue-item">
-        <div class="queue-num">#${q.number}</div>
-        <div class="queue-info">
-          <div class="queue-name">${p.name||'?'}</div>
-          <div class="queue-meta">${q.location} · Check-in ${q.checked_in}</div>
+      <div style="font-size:12px;font-weight:700;color:#6a94bb;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟡 Menunggu (${waiting.length})</div>
+      ${waiting.map(q=>`<div class="queue-card">
+        <div style="width:36px;height:36px;border-radius:8px;background:#172540;border:1px solid #264573;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#3b9eff;flex-shrink:0">#${q.number}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:13px">${P(q.patient_id).name||'?'}</div>
+          <div style="font-size:11px;color:#6a94bb">${q.location} · ${q.checked_in}</div>
         </div>
-        <span class="badge ${q.priority==='urgent'?'bg-red':'bg-gray'}">${q.priority.toUpperCase()}</span>
-        <button class="btn btn-outline btn-sm" onclick="callQueue('${q.id}')">Panggil</button>
-      </div>`; }).join(''):'<div class="empty"><div class="eicon">✅</div><p>Antrian kosong</p></div>'}
-    </div>
+        ${b(q.priority==='urgent'?'badge-red':'badge-gray',q.priority.toUpperCase())}
+        <button class="btn btn-ghost btn-sm" onclick="callQueue('${q.id}')">Panggil</button>
+      </div>`).join('')||`<div class="empty-state"><div class="empty-icon">✅</div><p style="font-size:13px">Antrian kosong</p></div>`}
+    </div>`,`
     <div>
-      <div class="card-title" style="margin-bottom:12px">🟢 Dipanggil (${called.length})</div>
-      ${called.map(q=>{ const p=getPatient(q.patient_id); return `
-      <div class="queue-item" style="border-color:rgba(39,201,122,.35)">
-        <div class="queue-num" style="color:var(--green)">#${q.number}</div>
-        <div class="queue-info">
-          <div class="queue-name">${p.name||'?'}</div>
-          <div class="queue-meta">${q.location}</div>
-        </div>
-        <button class="btn btn-green btn-sm" onclick="finishQueue('${q.id}')">Selesai</button>
-      </div>`; }).join('')}
+      <div style="font-size:12px;font-weight:700;color:#6a94bb;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟢 Dipanggil (${called.length})</div>
+      ${called.map(q=>`<div class="queue-card" style="border-color:rgba(39,201,122,.3)">
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(39,201,122,.1);border:1px solid rgba(39,201,122,.3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#27c97a;flex-shrink:0">#${q.number}</div>
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">${P(q.patient_id).name||'?'}</div><div style="font-size:11px;color:#6a94bb">${q.location}</div></div>
+        <button class="btn btn-success btn-sm" onclick="finishQ('${q.id}')">Selesai</button>
+      </div>`).join('')}
       <div class="card" style="margin-top:16px">
-        <div class="card-title">📊 Statistik Antrian</div>
-        <div class="info-row"><span class="key">Total hari ini</span><span class="val">${DB.queue.length}</span></div>
-        <div class="info-row"><span class="key">Selesai</span><span class="val">${DB.queue.filter(q=>q.status==='selesai').length}</span></div>
-        <div class="info-row"><span class="key">Menunggu</span><span class="val">${waiting.length}</span></div>
-        <div class="info-row"><span class="key">Urgent</span><span class="val"><span class="badge bg-red">${DB.queue.filter(q=>q.priority==='urgent').length}</span></span></div>
+        <div class="card-title">📊 Statistik</div>
+        <div class="info-row"><span class="info-key">Total hari ini</span><span class="info-val">${DB.queue.length}</span></div>
+        <div class="info-row"><span class="info-key">Selesai</span><span class="info-val">${DB.queue.filter(q=>q.status==='selesai').length}</span></div>
+        <div class="info-row"><span class="info-key">Urgent</span><span class="info-val">${b('badge-red',DB.queue.filter(q=>q.priority==='urgent').length)}</span></div>
       </div>
-    </div>
-  </div>`);
+    </div>`)}
+  `);
 }
+function callQueue(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='dipanggil';const p=P(q.patient_id);renderQueue();showToast('info',`📢 Memanggil: ${p.name} — #${q.number}`);} }
+function finishQ(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='selesai';updateBadges();renderQueue();showToast('success','✅ Pasien selesai ditangani');} }
+function callNext(){ const n=DB.queue.find(q=>q.status==='menunggu'); if(n) callQueue(n.id); else showToast('info','Tidak ada antrian tersisa'); }
 
-function callQueue(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='dipanggil';const p=getPatient(q.patient_id);renderQueue();showToast('info',`📢 Memanggil: ${p.name} — #${q.number}`);} }
-function finishQueue(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='selesai';updateBadges();renderQueue();showToast('success','✅ Pasien selesai ditangani');} }
-function callNextQueue(){ const next=DB.queue.find(q=>q.status==='menunggu'); if(next)callQueue(next.id); else showToast('info','Tidak ada antrian tersisa'); }
-
-// ══════════════════════════════════════════════
-//  PAGE: PATIENT CHART
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  PATIENT CHART
+// ══════════════════════════════════════
 function renderChart(){
   setContent(`
-  <div class="page-header">
-    <div><div class="page-title">Patient Chart</div><div class="page-subtitle">Rekam medis elektronik per pasien</div></div>
-  </div>
-  <div class="table-wrap">
-    <div class="table-toolbar">
-      <div class="tsearch">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" placeholder="Cari pasien…" onkeyup="filterTable(this,'chart-table')">
-      </div>
-    </div>
-    <table id="chart-table">
-      <thead><tr><th>ID</th><th>Nama</th><th>Usia/Gender</th><th>Kunjungan Terakhir</th><th>Kondisi Aktif</th><th>Aksi</th></tr></thead>
-      <tbody>
-        ${DB.patients.map(p=>{ const lastV=DB.visits.filter(v=>v.patient_id===p.id).pop(); const conds=DB.conditions.filter(c=>c.patient_id===p.id&&c.status==='aktif'); return `<tr>
-          <td class="cell-mono">${p.id}</td>
-          <td class="cell-primary">${p.name}</td>
-          <td>${age(p.dob)} / ${p.gender}</td>
-          <td>${lastV?fmt(lastV.date):'—'}</td>
-          <td>${conds.length?conds.map(c=>`<span class="badge bg-yellow">${c.name}</span> `).join(''):'<span style="color:var(--text3)">—</span>'}</td>
-          <td><button class="btn btn-blue btn-sm" onclick="openPatientChart('${p.id}')">📋 Buka Chart</button></td>
-        </tr>`; }).join('')}
-      </tbody>
-    </table>
-  </div>`);
+  <div class="page-header"><div><div class="page-title">Patient Chart</div><div class="page-sub">Rekam medis elektronik per pasien</div></div></div>
+  ${tblWrap('chart-tbl',['ID','Nama','Usia/Gender','Kunjungan Terakhir','Kondisi Aktif','Aksi'],
+    DB.patients.map(p=>{ const lv=DB.visits.filter(v=>v.patient_id===p.id).pop(); const conds=DB.conditions.filter(c=>c.patient_id===p.id&&c.status==='aktif'); return `<tr>
+      <td class="cell-id">${p.id}</td><td class="cell-name">${p.name}</td>
+      <td>${age(p.dob)} / ${p.gender}</td><td>${lv?fmt(lv.date):'—'}</td>
+      <td>${conds.map(c=>b('badge-yellow',c.name)).join(' ')||'<span style="color:#334f68">—</span>'}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="openChart('${p.id}')">📋 Buka</button></td>
+    </tr>`; }).join('')
+  )}`);
 }
-
-function openPatientChart(pid){
-  const p=getPatient(pid);
-  const visits=DB.visits.filter(v=>v.patient_id===pid);
-  const conds=DB.conditions.filter(c=>c.patient_id===pid);
-  const meds=DB.medications.filter(m=>m.patient_id===pid);
-  const labs=DB.lab_orders.filter(l=>l.patient_id===pid);
-  const vitals=DB.vitals.filter(v=>v.patient_id===pid).pop();
-
+function openChart(pid){
+  const p=P(pid), visits=DB.visits.filter(v=>v.patient_id===pid), conds=DB.conditions.filter(c=>c.patient_id===pid), meds=DB.medications.filter(m=>m.patient_id===pid), labs=DB.lab_orders.filter(l=>l.patient_id===pid), vit=DB.vitals.filter(v=>v.patient_id===pid).pop();
   openModal(`📋 Chart — ${p.name}`,`
-  <div class="tabs" style="margin-bottom:16px">
-    <button class="tab-btn active" onclick="chartTab('summary',this)">Summary</button>
-    <button class="tab-btn" onclick="chartTab('visits',this)">Kunjungan</button>
-    <button class="tab-btn" onclick="chartTab('conds',this)">Kondisi</button>
-    <button class="tab-btn" onclick="chartTab('meds',this)">Obat</button>
-    <button class="tab-btn" onclick="chartTab('labs',this)">Lab</button>
+  <div class="tabs" style="margin-bottom:14px">
+    <button class="tab-btn active" onclick="cTab('sum',this)">Summary</button>
+    <button class="tab-btn" onclick="cTab('vis',this)">Kunjungan</button>
+    <button class="tab-btn" onclick="cTab('cond',this)">Kondisi</button>
+    <button class="tab-btn" onclick="cTab('med',this)">Obat</button>
+    <button class="tab-btn" onclick="cTab('lab',this)">Lab</button>
   </div>
-  <div id="ct-summary" class="tab-pane active">
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title">👤 Identitas</div>
-        <div class="info-row"><span class="key">Nama</span><span class="val">${p.name}</span></div>
-        <div class="info-row"><span class="key">DOB / Usia</span><span class="val">${fmt(p.dob)} / ${age(p.dob)}</span></div>
-        <div class="info-row"><span class="key">NIK</span><span class="val cell-mono" style="font-size:11px">${p.nik}</span></div>
-        <div class="info-row"><span class="key">Gol. Darah</span><span class="val"><span class="badge bg-blue">${p.blood_type}</span></span></div>
-        <div class="info-row"><span class="key">Alergi</span><span class="val">${p.allergy?`<span class="badge bg-red">⚠ ${p.allergy}</span>`:'—'}</span></div>
-      </div>
-      <div class="card">
-        <div class="card-title">💓 Vital Terakhir</div>
-        ${vitals?`
-        <div class="info-row"><span class="key">Tek. Darah</span><span class="val">${vitals.bp_systolic}/${vitals.bp_diastolic} mmHg</span></div>
-        <div class="info-row"><span class="key">Nadi</span><span class="val">${vitals.heart_rate} bpm</span></div>
-        <div class="info-row"><span class="key">Suhu</span><span class="val">${vitals.temperature}°C</span></div>
-        <div class="info-row"><span class="key">SpO2</span><span class="val">${vitals.spo2}%</span></div>
-        <div class="info-row"><span class="key">BB / TB</span><span class="val">${vitals.weight}kg / ${vitals.height}cm</span></div>
-        `:'<div style="color:var(--text3);font-size:12px;padding:8px 0">Belum ada data vital</div>'}
-      </div>
-    </div>
+  <div id="ct-sum" class="tab-pane active">
+    ${grid2(`<div class="card"><div class="card-title">👤 Identitas</div>
+      <div class="info-row"><span class="info-key">Nama</span><span class="info-val">${p.name}</span></div>
+      <div class="info-row"><span class="info-key">DOB / Usia</span><span class="info-val">${fmt(p.dob)} / ${age(p.dob)}</span></div>
+      <div class="info-row"><span class="info-key">NIK</span><span class="info-val" style="font-family:'JetBrains Mono',monospace;font-size:11px">${p.nik}</span></div>
+      <div class="info-row"><span class="info-key">Gol. Darah</span><span class="info-val">${b('badge-blue',p.blood_type)}</span></div>
+      <div class="info-row"><span class="info-key">Alergi</span><span class="info-val">${p.allergy?b('badge-red','⚠ '+p.allergy):'—'}</span></div>
+    </div>`,`<div class="card"><div class="card-title">💓 Vital Terakhir</div>
+      ${vit?`<div class="info-row"><span class="info-key">Tek. Darah</span><span class="info-val">${vit.bp_systolic}/${vit.bp_diastolic} mmHg</span></div>
+      <div class="info-row"><span class="info-key">Nadi</span><span class="info-val">${vit.heart_rate} bpm</span></div>
+      <div class="info-row"><span class="info-key">Suhu</span><span class="info-val">${vit.temperature}°C</span></div>
+      <div class="info-row"><span class="info-key">SpO2</span><span class="info-val">${vit.spo2}%</span></div>
+      <div class="info-row"><span class="info-key">BB / TB</span><span class="info-val">${vit.weight}kg / ${vit.height}cm</span></div>
+      `:`<div style="color:#334f68;font-size:12px;padding:8px 0">Belum ada data vital</div>`}
+    </div>`)}
   </div>
-  <div id="ct-visits" class="tab-pane">
-    <div class="timeline">
-      ${visits.length?visits.map(v=>`<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">${fmt(v.date)}</div><div class="timeline-content"><div class="ttype">${v.type}</div><div class="tdesc"><strong>${v.diagnosis}</strong> — ${v.notes||'—'} <span class="badge ${v.status==='selesai'?'bg-green':'bg-yellow'}">${v.status}</span></div></div></div>`).join(''):'<div class="empty"><p>Belum ada riwayat kunjungan</p></div>'}
-    </div>
+  <div id="ct-vis" class="tab-pane">
+    <div class="timeline">${visits.map(v=>`<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">${fmt(v.date)}</div><div class="tl-content"><strong>${v.diagnosis}</strong> — ${v.notes||'—'} ${b(v.status==='selesai'?'badge-green':'badge-yellow',v.status)}</div></div>`).join('')||`<div class="empty-state"><div>📋</div><p>Belum ada kunjungan</p></div>`}</div>
   </div>
-  <div id="ct-conds" class="tab-pane">
-    ${conds.length?conds.map(c=>`<div class="card" style="margin-bottom:8px">
-      <div class="info-row"><span class="key">Kondisi</span><span class="val">${c.name}</span></div>
-      <div class="info-row"><span class="key">Onset</span><span class="val">${fmt(c.onset)}</span></div>
-      <div class="info-row"><span class="key">Keparahan</span><span class="val"><span class="badge ${c.severity==='berat'?'bg-red':c.severity==='sedang'?'bg-yellow':'bg-green'}">${c.severity}</span></span></div>
-    </div>`).join(''):'<div class="empty"><p>Belum ada kondisi tercatat</p></div>'}
+  <div id="ct-cond" class="tab-pane">
+    ${conds.map(c=>`<div class="card" style="margin-bottom:8px">
+      <div class="info-row"><span class="info-key">Kondisi</span><span class="info-val">${c.name}</span></div>
+      <div class="info-row"><span class="info-key">Onset</span><span class="info-val">${fmt(c.onset)}</span></div>
+      <div class="info-row"><span class="info-key">Keparahan</span><span class="info-val">${b(c.severity==='berat'?'badge-red':c.severity==='sedang'?'badge-yellow':'badge-green',c.severity)}</span></div>
+    </div>`).join('')||`<div class="empty-state"><p>Belum ada kondisi</p></div>`}
   </div>
-  <div id="ct-meds" class="tab-pane">
-    ${meds.length?meds.map(m=>`<div class="card" style="margin-bottom:8px">
-      <div class="info-row"><span class="key">Obat</span><span class="val"><strong>${m.drug}</strong></span></div>
-      <div class="info-row"><span class="key">Dosis / Frek.</span><span class="val">${m.dose} — ${m.frequency}</span></div>
-      <div class="info-row"><span class="key">Rute</span><span class="val">${m.route}</span></div>
-      <div class="info-row"><span class="key">Periode</span><span class="val">${fmt(m.start)} s/d ${fmt(m.end)}</span></div>
-      <div class="info-row"><span class="key">Status</span><span class="val"><span class="badge bg-green">${m.status}</span></span></div>
-    </div>`).join(''):'<div class="empty"><p>Tidak ada obat aktif</p></div>'}
+  <div id="ct-med" class="tab-pane">
+    ${meds.map(m=>`<div class="card" style="margin-bottom:8px">
+      <div class="info-row"><span class="info-key">Obat</span><span class="info-val"><strong>${m.drug}</strong></span></div>
+      <div class="info-row"><span class="info-key">Dosis / Frek.</span><span class="info-val">${m.dose} — ${m.frequency}</span></div>
+      <div class="info-row"><span class="info-key">Rute</span><span class="info-val">${m.route}</span></div>
+      <div class="info-row"><span class="info-key">Periode</span><span class="info-val">${fmt(m.start)} s/d ${fmt(m.end)}</span></div>
+    </div>`).join('')||`<div class="empty-state"><p>Tidak ada obat aktif</p></div>`}
   </div>
-  <div id="ct-labs" class="tab-pane">
-    ${labs.length?labs.map(l=>`<div class="card" style="margin-bottom:8px">
-      <div class="info-row"><span class="key">Pemeriksaan</span><span class="val">${l.test}</span></div>
-      <div class="info-row"><span class="key">Tanggal Order</span><span class="val">${fmt(l.ordered)}</span></div>
-      <div class="info-row"><span class="key">Status</span><span class="val"><span class="badge ${l.status==='selesai'?'bg-green':l.status==='proses'?'bg-yellow':'bg-gray'}">${l.status}</span></span></div>
-      <div class="info-row"><span class="key">Hasil</span><span class="val">${l.result||'—'}</span></div>
-    </div>`).join(''):'<div class="empty"><p>Belum ada order lab</p></div>'}
+  <div id="ct-lab" class="tab-pane">
+    ${labs.map(l=>`<div class="card" style="margin-bottom:8px">
+      <div class="info-row"><span class="info-key">Pemeriksaan</span><span class="info-val">${l.test}</span></div>
+      <div class="info-row"><span class="info-key">Tanggal</span><span class="info-val">${fmt(l.ordered)}</span></div>
+      <div class="info-row"><span class="info-key">Status</span><span class="info-val">${b(l.status==='selesai'?'badge-green':l.status==='proses'?'badge-yellow':'badge-gray',l.status)}</span></div>
+      <div class="info-row"><span class="info-key">Hasil</span><span class="info-val">${l.result||'—'}</span></div>
+    </div>`).join('')||`<div class="empty-state"><p>Belum ada lab</p></div>`}
   </div>`);
 }
+function cTab(n,btn){ document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); document.querySelectorAll('[id^="ct-"]').forEach(x=>x.classList.remove('active')); document.getElementById('ct-'+n).classList.add('active'); }
 
-function chartTab(name,btn){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-  document.querySelectorAll('[id^="ct-"]').forEach(p=>p.classList.remove('active'));
-  document.getElementById(`ct-${name}`).classList.add('active');
-}
-
-// ══════════════════════════════════════════════
-//  PAGE: VITALS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  VITALS
+// ══════════════════════════════════════
 function renderVitals(){
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Vital Signs</div><div class="page-subtitle">Rekam tanda vital pasien</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="openVitalModal()">+ Input Vital</button>
-    </div>
+    <div><div class="page-title">Vital Signs</div><div class="page-sub">Tanda vital pasien</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openVitalModal()">+ Input Vital</button></div>
   </div>
-  ${DB.vitals.map(v=>{ const p=getPatient(v.patient_id); const bmi=(v.weight/((v.height/100)**2)).toFixed(1); return `
+  ${DB.vitals.map(v=>{ const p=P(v.patient_id); const bmi=(v.weight/((v.height/100)**2)).toFixed(1); return `
   <div class="card" style="margin-bottom:16px">
-    <div class="card-title">
-      💓 ${p.name||v.patient_id}
-      <span style="color:var(--text3);font-size:11px;font-weight:400">${fmt(v.date)} · ${v.nurse}</span>
-    </div>
-    <div class="vitals-grid">
-      <div class="vital-box ${v.bp_systolic>=140?'critical':v.bp_systolic>=120?'warn':'normal'}">
-        <div class="vname">Tek. Darah</div>
-        <div class="vval" style="font-size:18px">${v.bp_systolic}/${v.bp_diastolic}</div>
-        <div class="vunit">mmHg</div>
-      </div>
-      <div class="vital-box ${v.heart_rate<60||v.heart_rate>100?'warn':'normal'}">
-        <div class="vname">Nadi</div>
-        <div class="vval">${v.heart_rate}</div>
-        <div class="vunit">bpm</div>
-      </div>
-      <div class="vital-box ${v.temperature>=38?'critical':v.temperature>=37.5?'warn':'normal'}">
-        <div class="vname">Suhu</div>
-        <div class="vval">${v.temperature}</div>
-        <div class="vunit">°C</div>
-      </div>
-      <div class="vital-box ${v.spo2<95?'critical':v.spo2<97?'warn':'normal'}">
-        <div class="vname">SpO2</div>
-        <div class="vval">${v.spo2}</div>
-        <div class="vunit">%</div>
-      </div>
-      <div class="vital-box">
-        <div class="vname">Berat</div>
-        <div class="vval">${v.weight}</div>
-        <div class="vunit">kg</div>
-      </div>
-      <div class="vital-box">
-        <div class="vname">Tinggi</div>
-        <div class="vval">${v.height}</div>
-        <div class="vunit">cm</div>
-      </div>
-      <div class="vital-box ${bmi>=30?'critical':bmi>=25?'warn':'normal'}">
-        <div class="vname">BMI</div>
-        <div class="vval">${bmi}</div>
-        <div class="vunit">${bmi<18.5?'Kurus':bmi<25?'Normal':bmi<30?'Overweight':'Obesitas'}</div>
-      </div>
-      <div class="vital-box ${v.respiratory_rate<12||v.respiratory_rate>20?'warn':'normal'}">
-        <div class="vname">Resp. Rate</div>
-        <div class="vval">${v.respiratory_rate}</div>
-        <div class="vunit">x/mnt</div>
-      </div>
+    <div class="card-title">💓 ${p.name||v.patient_id} <span style="color:#334f68;font-size:11px;font-weight:400">${fmt(v.date)} · ${v.nurse}</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px">
+      <div class="vital-box ${v.bp_systolic>=140?'crit':v.bp_systolic>=120?'warn':''}"><div class="vital-name">Tek. Darah</div><div class="vital-val" style="font-size:18px;color:${v.bp_systolic>=140?'#f04f4f':v.bp_systolic>=120?'#f5c542':'#c9e0f8'}">${v.bp_systolic}/${v.bp_diastolic}</div><div class="vital-unit">mmHg</div></div>
+      <div class="vital-box ${v.heart_rate<60||v.heart_rate>100?'warn':''}"><div class="vital-name">Nadi</div><div class="vital-val" style="color:${v.heart_rate<60||v.heart_rate>100?'#f5c542':'#c9e0f8'}">${v.heart_rate}</div><div class="vital-unit">bpm</div></div>
+      <div class="vital-box ${v.temperature>=38?'crit':v.temperature>=37.5?'warn':''}"><div class="vital-name">Suhu</div><div class="vital-val" style="color:${v.temperature>=38?'#f04f4f':v.temperature>=37.5?'#f5c542':'#c9e0f8'}">${v.temperature}</div><div class="vital-unit">°C</div></div>
+      <div class="vital-box ${v.spo2<95?'crit':v.spo2<97?'warn':''}"><div class="vital-name">SpO2</div><div class="vital-val" style="color:${v.spo2<95?'#f04f4f':v.spo2<97?'#f5c542':'#27c97a'}">${v.spo2}</div><div class="vital-unit">%</div></div>
+      <div class="vital-box"><div class="vital-name">Berat</div><div class="vital-val">${v.weight}</div><div class="vital-unit">kg</div></div>
+      <div class="vital-box"><div class="vital-name">Tinggi</div><div class="vital-val">${v.height}</div><div class="vital-unit">cm</div></div>
+      <div class="vital-box ${+bmi>=30?'crit':+bmi>=25?'warn':''}"><div class="vital-name">BMI</div><div class="vital-val" style="color:${+bmi>=30?'#f04f4f':+bmi>=25?'#f5c542':'#c9e0f8'}">${bmi}</div><div class="vital-unit">${bmi<18.5?'Kurus':bmi<25?'Normal':bmi<30?'Overweight':'Obesitas'}</div></div>
+      <div class="vital-box"><div class="vital-name">Resp. Rate</div><div class="vital-val">${v.respiratory_rate}</div><div class="vital-unit">x/mnt</div></div>
     </div>
   </div>`; }).join('')}`);
 }
-
 function openVitalModal(){
   openModal('Input Vital Signs',`
   <div class="form-grid">
@@ -1409,128 +1041,97 @@ function openVitalModal(){
     <div class="field"><label>Nadi (bpm)</label><input type="number" id="vf-hr" value="80"></div>
     <div class="field"><label>Suhu (°C)</label><input type="number" id="vf-temp" step="0.1" value="36.5"></div>
     <div class="field"><label>SpO2 (%)</label><input type="number" id="vf-spo2" value="98"></div>
-    <div class="field"><label>Berat (kg)</label><input type="number" id="vf-weight" step="0.1" value="60"></div>
+    <div class="field"><label>Berat (kg)</label><input type="number" id="vf-weight" value="60"></div>
     <div class="field"><label>Tinggi (cm)</label><input type="number" id="vf-height" value="165"></div>
-    <div class="field"><label>Resp. Rate (x/mnt)</label><input type="number" id="vf-rr" value="18"></div>
+    <div class="field"><label>Resp. Rate</label><input type="number" id="vf-rr" value="18"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="saveVital()">💾 Simpan</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveVital()">💾 Simpan</button>`);
 }
-
 function saveVital(){
   DB.vitals.push({id:genId('VT',DB.vitals),patient_id:document.getElementById('vf-patient').value,date:new Date().toISOString().slice(0,10),bp_systolic:+document.getElementById('vf-sys').value,bp_diastolic:+document.getElementById('vf-dia').value,heart_rate:+document.getElementById('vf-hr').value,temperature:+document.getElementById('vf-temp').value,spo2:+document.getElementById('vf-spo2').value,weight:+document.getElementById('vf-weight').value,height:+document.getElementById('vf-height').value,respiratory_rate:+document.getElementById('vf-rr').value,nurse:currentUser.name});
-  closeModal(); renderVitals();
-  showToast('success','✅ Data vital berhasil disimpan');
+  closeModal();renderVitals();showToast('success','✅ Data vital disimpan');
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: MEDICATIONS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  MEDICATIONS
+// ══════════════════════════════════════
 function renderMedications(){
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Medications</div><div class="page-subtitle">${DB.medications.length} resep aktif</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="openMedModal()">+ Resep Baru</button>
-    </div>
+    <div><div class="page-title">Medications</div><div class="page-sub">${DB.medications.length} resep aktif</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openMedModal()">+ Resep Baru</button></div>
   </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>ID</th><th>Pasien</th><th>Obat</th><th>Dosis</th><th>Frekuensi</th><th>Rute</th><th>Periode</th><th>Status</th></tr></thead>
-      <tbody>
-        ${DB.medications.map(m=>{ const p=getPatient(m.patient_id); return `<tr>
-          <td class="cell-mono">${m.id}</td>
-          <td class="cell-primary">${p.name||'?'}</td>
-          <td><strong>${m.drug}</strong></td>
-          <td>${m.dose}</td>
-          <td><span class="badge bg-blue">${m.frequency}</span></td>
-          <td>${m.route}</td>
-          <td style="font-size:11px">${fmt(m.start)} — ${fmt(m.end)}</td>
-          <td><span class="badge ${m.status==='aktif'?'bg-green':'bg-gray'}">${m.status}</span></td>
-        </tr>`; }).join('')}
-      </tbody>
-    </table>
-  </div>`);
+  ${tblWrap('med-tbl',['ID','Pasien','Obat','Dosis','Frekuensi','Rute','Periode','Status'],
+    DB.medications.map(m=>`<tr>
+      <td class="cell-id">${m.id}</td><td class="cell-name">${P(m.patient_id).name||'?'}</td>
+      <td><strong>${m.drug}</strong></td><td>${m.dose}</td>
+      <td>${b('badge-blue',m.frequency)}</td><td>${m.route}</td>
+      <td style="font-size:11px">${fmt(m.start)} — ${fmt(m.end)}</td>
+      <td>${b(m.status==='aktif'?'badge-green':'badge-gray',m.status)}</td>
+    </tr>`).join('')
+  )}`);
 }
-
 function openMedModal(){
   openModal('Tambah Resep Obat',`
   <div class="form-grid">
     <div class="field full"><label>Pasien</label><select id="mf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
-    <div class="field full"><label>Nama Obat</label><input type="text" id="mf-drug" placeholder="Nama obat"></div>
-    <div class="field"><label>Dosis</label><input type="text" id="mf-dose" placeholder="500mg"></div>
-    <div class="field"><label>Frekuensi</label><select id="mf-freq"><option>1x1</option><option>2x1</option><option>3x1</option><option>4x1</option><option>1x2</option></select></div>
+    <div class="field full"><label>Nama Obat</label><input id="mf-drug" placeholder="Nama obat"></div>
+    <div class="field"><label>Dosis</label><input id="mf-dose" placeholder="500mg"></div>
+    <div class="field"><label>Frekuensi</label><select id="mf-freq"><option>1x1</option><option>2x1</option><option>3x1</option><option>4x1</option></select></div>
     <div class="field"><label>Rute</label><select id="mf-route"><option>Oral</option><option>IV</option><option>IM</option><option>SC</option><option>Topikal</option></select></div>
-    <div class="field"><label>Dokter</label><input type="text" id="mf-doc" value="${currentUser.name}"></div>
     <div class="field"><label>Mulai</label><input type="date" id="mf-start" value="${new Date().toISOString().slice(0,10)}"></div>
     <div class="field"><label>Selesai</label><input type="date" id="mf-end"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="saveMed()">💾 Simpan</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveMed()">💾 Simpan</button>`);
 }
-
 function saveMed(){
-  const drug=document.getElementById('mf-drug').value;
-  if(!drug){showToast('error','Nama obat wajib diisi');return;}
-  DB.medications.push({id:genId('M',DB.medications),patient_id:document.getElementById('mf-patient').value,drug,dose:document.getElementById('mf-dose').value,frequency:document.getElementById('mf-freq').value,route:document.getElementById('mf-route').value,doctor:document.getElementById('mf-doc').value,start:document.getElementById('mf-start').value,end:document.getElementById('mf-end').value,status:'aktif'});
-  closeModal(); renderMedications();
-  showToast('success',`✅ Resep ${drug} berhasil ditambahkan`);
+  const drug=document.getElementById('mf-drug').value; if(!drug){showToast('error','Nama obat wajib');return;}
+  DB.medications.push({id:genId('M',DB.medications),patient_id:document.getElementById('mf-patient').value,drug,dose:document.getElementById('mf-dose').value,frequency:document.getElementById('mf-freq').value,route:document.getElementById('mf-route').value,doctor:currentUser.name,start:document.getElementById('mf-start').value,end:document.getElementById('mf-end').value,status:'aktif'});
+  closeModal();renderMedications();showToast('success',`✅ Resep ${drug} ditambahkan`);
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: ORDERS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  ORDERS
+// ══════════════════════════════════════
 function renderOrders(){
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Orders</div><div class="page-subtitle">Permintaan pemeriksaan & tindakan</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="openLabOrderModal()">+ Lab Order Baru</button>
-    </div>
+    <div><div class="page-title">Orders</div><div class="page-sub">Permintaan pemeriksaan & tindakan</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openLabOrderModal()">+ Lab Order</button></div>
   </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>ID</th><th>Pasien</th><th>Pemeriksaan</th><th>Tanggal Order</th><th>Dokter</th><th>Status</th><th>Aksi</th></tr></thead>
-      <tbody>
-        ${DB.lab_orders.map(l=>{ const p=getPatient(l.patient_id); return `<tr>
-          <td class="cell-mono">${l.id}</td>
-          <td class="cell-primary">${p.name||'?'}</td>
-          <td>${l.test}</td>
-          <td>${fmt(l.ordered)}</td>
-          <td>${l.doctor}</td>
-          <td><span class="badge ${l.status==='selesai'?'bg-green':l.status==='proses'?'bg-yellow':'bg-gray'}">${l.status}</span></td>
-          <td>${l.status==='pending'?`<button class="btn btn-outline btn-sm" onclick="processOrder('${l.id}')">Proses</button>`:''}</td>
-        </tr>`; }).join('')}
-      </tbody>
-    </table>
-  </div>`);
+  ${tblWrap('ord-tbl',['ID','Pasien','Pemeriksaan','Tanggal','Dokter','Status','Aksi'],
+    DB.lab_orders.map(l=>`<tr>
+      <td class="cell-id">${l.id}</td><td class="cell-name">${P(l.patient_id).name||'?'}</td>
+      <td>${l.test}</td><td>${fmt(l.ordered)}</td>
+      <td style="font-size:11px;color:#6a94bb">${l.doctor}</td>
+      <td>${b(l.status==='selesai'?'badge-green':l.status==='proses'?'badge-yellow':'badge-gray',l.status)}</td>
+      <td>${l.status==='pending'?`<button class="btn btn-ghost btn-sm" onclick="processOrder('${l.id}')">Proses</button>`:''}</td>
+    </tr>`).join('')
+  )}`);
 }
-
 function processOrder(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses';renderOrders();showToast('info','🔬 Order diproses ke laboratorium');} }
-function openLabOrderModal(){ openModal('Lab Order Baru',`
+function openLabOrderModal(){
+  openModal('Lab Order Baru',`
   <div class="form-grid">
     <div class="field full"><label>Pasien</label><select id="lf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
-    <div class="field full"><label>Pemeriksaan</label><input type="text" id="lf-test" placeholder="Darah Lengkap, Gula Darah, dll…"></div>
-    <div class="field full"><label>Dokter</label><input type="text" id="lf-doc" value="${currentUser.name}"></div>
+    <div class="field full"><label>Pemeriksaan</label><input id="lf-test" placeholder="Darah Lengkap, Gula Darah, dll…"></div>
+    <div class="field full"><label>Dokter</label><input id="lf-doc" value="${currentUser?currentUser.name:''}"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="saveLabOrder()">💾 Simpan</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveLabOrder()">💾 Simpan</button>`);
 }
 function saveLabOrder(){
-  const test=document.getElementById('lf-test').value;
-  if(!test){showToast('error','Nama pemeriksaan wajib');return;}
+  const test=document.getElementById('lf-test').value; if(!test){showToast('error','Nama pemeriksaan wajib');return;}
   DB.lab_orders.push({id:genId('L',DB.lab_orders),patient_id:document.getElementById('lf-patient').value,test,ordered:new Date().toISOString().slice(0,10),doctor:document.getElementById('lf-doc').value,status:'pending',result:''});
-  updateBadges(); closeModal(); renderOrders();
-  showToast('success','✅ Lab order berhasil dibuat');
+  updateBadges();closeModal();renderOrders();showToast('success','✅ Lab order dibuat');
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: LABORATORY
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  LABORATORY
+// ══════════════════════════════════════
 function renderLaboratory(){
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Laboratorium</div><div class="page-subtitle">${DB.lab_orders.filter(l=>l.status==='pending').length} pending · ${DB.lab_orders.filter(l=>l.status==='proses').length} proses</div></div>
+    <div><div class="page-title">Laboratorium</div><div class="page-sub">${DB.lab_orders.filter(l=>l.status==='pending').length} pending · ${DB.lab_orders.filter(l=>l.status==='proses').length} proses</div></div>
   </div>
   <div class="tabs">
     <button class="tab-btn active" onclick="switchLabTab('all',this)">Semua</button>
@@ -1538,318 +1139,364 @@ function renderLaboratory(){
     <button class="tab-btn" onclick="switchLabTab('proses',this)">Proses</button>
     <button class="tab-btn" onclick="switchLabTab('selesai',this)">Selesai</button>
   </div>
-  <div class="table-wrap">
-    <table><thead><tr><th>ID</th><th>Pasien</th><th>Pemeriksaan</th><th>Tanggal</th><th>Status</th><th>Hasil</th><th>Aksi</th></tr></thead>
-      <tbody id="lab-tbody">${renderLabRows(DB.lab_orders)}</tbody>
-    </table>
-  </div>`);
+  <div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>ID</th><th>Pasien</th><th>Pemeriksaan</th><th>Tanggal</th><th>Status</th><th>Hasil</th><th>Aksi</th></tr></thead>
+      <tbody id="lab-tbody">${renderLabRows(DB.lab_orders)}</tbody></table></div></div>`);
 }
-
-function renderLabRows(data){
-  return data.map(l=>{ const p=getPatient(l.patient_id); return `<tr>
-    <td class="cell-mono">${l.id}</td>
-    <td class="cell-primary">${p.name||'?'}</td>
-    <td>${l.test}</td>
-    <td>${fmt(l.ordered)}</td>
-    <td><span class="badge ${l.status==='selesai'?'bg-green':l.status==='proses'?'bg-yellow':'bg-gray'}">${l.status}</span></td>
-    <td style="font-size:12px;color:var(--text2)">${l.result||'—'}</td>
-    <td>
-      ${l.status==='proses'?`<button class="btn btn-green btn-sm" onclick="enterLabResult('${l.id}')">Input Hasil</button>`:''}
-      ${l.status==='pending'?`<button class="btn btn-outline btn-sm" onclick="startLab('${l.id}')">Mulai</button>`:''}
-    </td>
-  </tr>`; }).join('');
-}
-
-function switchLabTab(f,btn){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  document.getElementById('lab-tbody').innerHTML=renderLabRows(f==='all'?DB.lab_orders:DB.lab_orders.filter(l=>l.status===f));
-}
-
+function renderLabRows(data){ return data.map(l=>`<tr>
+  <td class="cell-id">${l.id}</td><td class="cell-name">${P(l.patient_id).name||'?'}</td>
+  <td>${l.test}</td><td>${fmt(l.ordered)}</td>
+  <td>${b(l.status==='selesai'?'badge-green':l.status==='proses'?'badge-yellow':'badge-gray',l.status)}</td>
+  <td style="font-size:12px;color:#6a94bb">${l.result||'—'}</td>
+  <td><div style="display:flex;gap:4px">
+    ${l.status==='proses'?`<button class="btn btn-success btn-sm" onclick="enterResult('${l.id}')">Input Hasil</button>`:''}
+    ${l.status==='pending'?`<button class="btn btn-ghost btn-sm" onclick="startLab('${l.id}')">Mulai</button>`:''}
+  </div></td>
+</tr>`).join(''); }
+function switchLabTab(f,btn){ document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); document.getElementById('lab-tbody').innerHTML=renderLabRows(f==='all'?DB.lab_orders:DB.lab_orders.filter(l=>l.status===f)); }
 function startLab(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses';updateBadges();renderLaboratory();showToast('info','🔬 Pemeriksaan dimulai');} }
-
-function enterLabResult(id){
-  openModal('Input Hasil Laboratorium',`
-  <div class="field full"><label>Hasil Pemeriksaan</label><textarea id="result-txt" style="min-height:100px" placeholder="Masukkan hasil pemeriksaan…"></textarea></div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="saveLabResult('${id}')">💾 Simpan Hasil</button>`);
+function enterResult(id){
+  openModal('Input Hasil Laboratorium',`<div class="field full"><label>Hasil Pemeriksaan</label><textarea id="res-txt" style="min-height:100px" placeholder="Masukkan hasil pemeriksaan…"></textarea></div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveResult('${id}')">💾 Simpan</button>`);
 }
+function saveResult(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.result=document.getElementById('res-txt').value;l.status='selesai';closeModal();renderLaboratory();showToast('success','✅ Hasil lab disimpan');} }
 
-function saveLabResult(id){
-  const l=DB.lab_orders.find(x=>x.id===id);
-  if(l){l.result=document.getElementById('result-txt').value;l.status='selesai';closeModal();renderLaboratory();showToast('success','✅ Hasil lab berhasil disimpan');}
-}
-
-// ══════════════════════════════════════════════
-//  PAGE: WARD
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  WARD
+// ══════════════════════════════════════
 function renderWard(){
   const rooms=[...new Set(DB.beds.map(b=>b.room))];
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Ward & Bed Management</div><div class="page-subtitle">${DB.beds.filter(b=>b.status==='terisi').length} terisi · ${DB.beds.filter(b=>b.status==='kosong').length} kosong</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="openAdmitModal()">+ Admit Pasien</button>
+    <div><div class="page-title">Ward & Bed</div><div class="page-sub">${DB.beds.filter(b=>b.status==='terisi').length} terisi · ${DB.beds.filter(b=>b.status==='kosong').length} kosong</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openAdmitModal()">+ Admit Pasien</button></div>
+  </div>
+  ${statGrid([statCard('Tersedia',DB.beds.filter(b=>b.status==='kosong').length,'#27c97a','Bed siap'),statCard('Terisi',DB.beds.filter(b=>b.status==='terisi').length,'#f04f4f','Pasien rawat inap')].join(''))}
+  ${rooms.map(room=>{ const beds=DB.beds.filter(b=>b.room===room); return `<div class="card" style="margin-bottom:16px">
+    <div class="card-title">🏥 ${room} <span style="color:#334f68;font-weight:400;font-size:11px">${beds.length} bed</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
+      ${beds.map(x=>{ const p=x.patient_id?P(x.patient_id):null; return `
+      <div class="bed-card ${x.status==='terisi'?'occupied':x.status==='maintenance'?'maintenance':''}">
+        <div style="font-size:22px;margin-bottom:4px">${x.status==='kosong'?'🛏️':x.status==='terisi'?'🧑‍⚕️':'🔧'}</div>
+        <div style="font-weight:700;font-size:13px">${x.number}</div>
+        <div style="font-size:10px;color:#334f68;margin-bottom:6px">${x.type}</div>
+        ${p?`<div style="font-size:11px;font-weight:600">${p.name}</div><div style="font-size:10px;color:#6a94bb">${fmt(x.admitted)}</div>
+        <button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%" onclick="discharge('${x.id}')">Discharge</button>`:''}
+      </div>`; }).join('')}
     </div>
-  </div>
-  <div class="grid-2" style="margin-bottom:20px">
-    <div class="stat-card"><div class="slabel">Tersedia</div><div class="svalue" style="color:var(--green)">${DB.beds.filter(b=>b.status==='kosong').length}</div><div class="ssub">Bed siap pakai</div></div>
-    <div class="stat-card"><div class="slabel">Terisi</div><div class="svalue" style="color:var(--red)">${DB.beds.filter(b=>b.status==='terisi').length}</div><div class="ssub">Pasien rawat inap</div></div>
-  </div>
-  ${rooms.map(room=>{
-    const beds=DB.beds.filter(b=>b.room===room);
-    return `<div class="card" style="margin-bottom:16px">
-      <div class="card-title">🏥 ${room} <span style="color:var(--text3);font-weight:400;font-size:12px">${beds.length} bed</span></div>
-      <div class="bed-grid">
-        ${beds.map(b=>{ const p=b.patient_id?getPatient(b.patient_id):null; return `
-        <div class="bed-card ${b.status==='kosong'?'empty':b.status==='terisi'?'occupied':'maintenance'}">
-          <div class="bed-icon">${b.status==='kosong'?'🛏️':b.status==='terisi'?'🧑‍⚕️':'🔧'}</div>
-          <div class="bed-num">${b.number}</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px">${b.type}</div>
-          ${p?`<div style="margin-top:8px;font-size:11px"><strong>${p.name}</strong><br><span style="color:var(--text3)">${fmt(b.admitted)}</span><br><span style="color:var(--text2)">${b.diagnosis||'—'}</span></div>
-          <button class="btn btn-red btn-sm" style="margin-top:8px;width:100%" onclick="dischargePatient('${b.id}')">Discharge</button>`:''}
-        </div>`; }).join('')}
-      </div>
-    </div>`;
-  }).join('')}`);
+  </div>`; }).join('')}`);
 }
-
 function openAdmitModal(){
-  const emptyBeds=DB.beds.filter(b=>b.status==='kosong');
+  const empty=DB.beds.filter(b=>b.status==='kosong');
   openModal('Admit Pasien',`
   <div class="form-grid">
     <div class="field full"><label>Pasien</label><select id="wf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
-    <div class="field full"><label>Bed</label><select id="wf-bed">${emptyBeds.map(b=>`<option value="${b.id}">${b.number} — ${b.room} (${b.type})</option>`).join('')}</select></div>
-    <div class="field full"><label>Diagnosis Masuk</label><input type="text" id="wf-diag" placeholder="Diagnosis utama"></div>
+    <div class="field full"><label>Bed</label><select id="wf-bed">${empty.map(b=>`<option value="${b.id}">${b.number} — ${b.room} (${b.type})</option>`).join('')}</select></div>
+    <div class="field full"><label>Diagnosis Masuk</label><input id="wf-diag" placeholder="Diagnosis utama"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="admitPatient()">✅ Admit</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="admitPasien()">✅ Admit</button>`);
+}
+function admitPasien(){
+  const pid=document.getElementById('wf-patient').value, bid=document.getElementById('wf-bed').value, bed=DB.beds.find(b=>b.id===bid);
+  if(bed){bed.patient_id=pid;bed.status='terisi';bed.admitted=new Date().toISOString().slice(0,10);bed.diagnosis=document.getElementById('wf-diag').value;closeModal();renderWard();showToast('success',`✅ ${P(pid).name} di-admit ke ${bed.number}`);}
+}
+function discharge(bedId){
+  const bx=DB.beds.find(x=>x.id===bedId); if(bx){const n=P(bx.patient_id).name;bx.patient_id='';bx.status='kosong';bx.admitted='';bx.diagnosis='';renderWard();showToast('success',`✅ ${n} di-discharge`);}
 }
 
-function admitPatient(){
-  const pid=document.getElementById('wf-patient').value;
-  const bid=document.getElementById('wf-bed').value;
-  const bed=DB.beds.find(b=>b.id===bid);
-  if(bed){bed.patient_id=pid;bed.status='terisi';bed.admitted=new Date().toISOString().slice(0,10);bed.diagnosis=document.getElementById('wf-diag').value;closeModal();renderWard();showToast('success',`✅ ${getPatient(pid).name} berhasil di-admit ke ${bed.number}`);}
-}
-
-function dischargePatient(bedId){
-  const b=DB.beds.find(x=>x.id===bedId);
-  if(b){const name=getPatient(b.patient_id).name;b.patient_id='';b.status='kosong';b.admitted='';b.diagnosis='';renderWard();showToast('success',`✅ ${name} berhasil di-discharge`);}
-}
-
-// ══════════════════════════════════════════════
-//  PAGE: REPORTS
-// ══════════════════════════════════════════════
-function renderReports(){
-  const byGender={'Laki-laki':DB.patients.filter(p=>p.gender==='Laki-laki').length,'Perempuan':DB.patients.filter(p=>p.gender==='Perempuan').length};
-  const visitsByType={};
-  DB.visits.forEach(v=>{visitsByType[v.type]=(visitsByType[v.type]||0)+1;});
-  const labDone=DB.lab_orders.filter(l=>l.status==='selesai').length;
-  const labTotal=DB.lab_orders.length;
-
+// ══════════════════════════════════════
+//  CPPT
+// ══════════════════════════════════════
+function renderCPPT(){
+  if(!DB.cppt) DB.cppt=[];
+  const profBadge = pr => b(pr==='Dokter'?'badge-blue':pr==='Perawat'?'badge-green':pr==='Bidan'?'badge-purple':pr==='Farmasi'?'badge-orange':'badge-gray', pr);
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Reports & Analytics</div><div class="page-subtitle">Statistik fasilitas kesehatan</div></div>
+    <div><div class="page-title">CPPT</div><div class="page-sub">Catatan Perkembangan Pasien Terintegrasi · ${DB.cppt.length} catatan</div></div>
     <div class="page-actions">
-      <button class="btn btn-blue" onclick="exportJSON()">📥 Export JSON</button>
+      <select onchange="filterCPPTProf(this.value)" style="background:#111d2e;border:1px solid #1c3050;border-radius:8px;padding:7px 12px;color:#c9e0f8;font-size:12px;font-family:inherit;outline:none">
+        <option value="">Semua Profesi</option>
+        <option>Dokter</option><option>Perawat</option><option>Bidan</option>
+        <option>Farmasi</option><option>Gizi</option><option>Fisioterapi</option>
+      </select>
+      <button class="btn btn-primary" onclick="openCPPTModal()">+ Tambah Catatan</button>
     </div>
   </div>
-  <div class="stat-grid" style="margin-bottom:20px">
-    <div class="stat-card"><div class="slabel">Total Pasien</div><div class="svalue" style="color:var(--accent)">${DB.patients.length}</div><div class="ssub">♂ ${byGender['Laki-laki']} · ♀ ${byGender['Perempuan']}</div></div>
-    <div class="stat-card"><div class="slabel">Total Kunjungan</div><div class="svalue" style="color:var(--green)">${DB.visits.length}</div></div>
-    <div class="stat-card"><div class="slabel">Lab Selesai</div><div class="svalue" style="color:var(--purple)">${labDone}/${labTotal}</div><div class="ssub">${Math.round(labDone/Math.max(labTotal,1)*100)}% completion</div></div>
-    <div class="stat-card"><div class="slabel">Obat Diresepkan</div><div class="svalue" style="color:var(--orange)">${DB.medications.length}</div></div>
+
+  <!-- Mobile card view -->
+  <div id="cppt-cards" style="display:none">
+    ${DB.cppt.map(c=>{ const p=P(c.patient_id); return `
+    <div style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px">
+        <div>
+          <div style="font-weight:700;font-size:14px">${p.name||'—'}</div>
+          <div style="font-size:11px;color:#6a94bb;font-family:'JetBrains Mono',monospace">${c.tanggal} · ${c.jam}</div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          ${profBadge(c.profesi)}
+        </div>
+      </div>
+      ${[['S','#3b9eff','#172540',c.subjektif],['A','#f5c542','#1e2009',c.asesmen],['P','#f04f4f','#1e0909',c.planning]].map(([l,col,bg,val])=>val?`
+      <div style="background:${bg};border-left:2px solid ${col};border-radius:0 6px 6px 0;padding:6px 10px;margin-bottom:6px;font-size:12px">
+        <span style="color:${col};font-weight:700;margin-right:6px">${l}</span>${val}
+      </div>`:'')}
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-primary btn-sm" onclick="openCPPTDetail('${c.id}')">🔍 Detail</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCPPTModal('${c.id}')">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="delCPPT('${c.id}')">🗑</button>
+      </div>
+    </div>`; }).join('')}
   </div>
-  <div class="grid-2" style="margin-bottom:20px">
+
+  <!-- Desktop table view -->
+  <div id="cppt-tbl-wrap" style="background:#0c1422;border:1px solid #1c3050;border-radius:12px;overflow:hidden">
+    <div style="padding:12px 14px;border-bottom:1px solid #1c3050">
+      <div class="search-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#334f68" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Cari pasien atau catatan…" onkeyup="filterTbl(this,'cppt-tbl')"></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="cppt-tbl">
+        <thead><tr><th>Tgl/Jam</th><th>Pasien</th><th>Profesi</th><th>S — Subjektif</th><th>O — Objektif</th><th>A — Asesmen</th><th>P — Planning</th><th>TTD</th><th>Aksi</th></tr></thead>
+        <tbody id="cppt-tbody">
+          ${DB.cppt.map(c=>{ const p=P(c.patient_id); return `<tr>
+            <td style="white-space:nowrap" class="cell-id">${c.tanggal}<br><span style="color:#334f68">${c.jam}</span></td>
+            <td><div class="cell-name">${p.name||'—'}</div><div class="cell-id">${c.patient_id}</div></td>
+            <td>${profBadge(c.profesi)}</td>
+            <td style="max-width:150px;font-size:12px;color:#6a94bb">${(c.subjektif||'—').slice(0,80)}${c.subjektif&&c.subjektif.length>80?'…':''}</td>
+            <td style="max-width:150px;font-size:12px;color:#6a94bb">${(c.objektif||'—').slice(0,80)}${c.objektif&&c.objektif.length>80?'…':''}</td>
+            <td style="max-width:130px;font-size:12px"><strong>${(c.asesmen||'—').slice(0,60)}${c.asesmen&&c.asesmen.length>60?'…':''}</strong></td>
+            <td style="max-width:130px;font-size:12px;color:#6a94bb">${(c.planning||'—').slice(0,60)}${c.planning&&c.planning.length>60?'…':''}</td>
+            <td style="font-size:11px;color:#6a94bb">${c.ttd||'—'}</td>
+            <td><div style="display:flex;gap:4px">
+              <button class="btn btn-primary btn-sm" onclick="openCPPTDetail('${c.id}')">🔍</button>
+              <button class="btn btn-ghost btn-sm" onclick="openCPPTModal('${c.id}')">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="delCPPT('${c.id}')">🗑</button>
+            </div></td>
+          </tr>`; }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`);
+
+  // Responsive: show cards on mobile, table on desktop
+  const cards = document.getElementById('cppt-cards');
+  const tbl = document.getElementById('cppt-tbl-wrap');
+  function adaptCPPT(){ if(window.innerWidth<=640){cards.style.display='block';tbl.style.display='none';}else{cards.style.display='none';tbl.style.display='block';} }
+  adaptCPPT();
+  window.addEventListener('resize', adaptCPPT);
+}
+
+function filterCPPTProf(val){
+  document.querySelectorAll('#cppt-tbody tr').forEach(row=>{
+    row.style.display=(!val||row.textContent.includes(val))?'':'none';
+  });
+}
+
+function openCPPTModal(editId){
+  const isEdit=!!editId, c=isEdit?DB.cppt.find(x=>x.id===editId):null;
+  const now=new Date(), today=now.toISOString().slice(0,10), time=now.toTimeString().slice(0,5);
+  const soapSection = (letter, color, title, sub, fieldId, val) => `
+  <div class="soap-block" style="margin-bottom:10px">
+    <div class="soap-header" style="background:${color}22;border-bottom:1px solid ${color}44">
+      <span style="background:${color};color:${letter==='A'?'#000':'#fff'};width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${letter}</span>
+      <span style="font-weight:700;font-size:12.5px">${title}</span>
+      <span style="color:#6a94bb;font-weight:400;font-size:11px">${sub}</span>
+    </div>
+    <div style="padding:12px">
+      <textarea id="${fieldId}" rows="3" placeholder="${sub}…" style="width:100%;background:#111d2e;border:1px solid #1c3050;border-radius:8px;color:#c9e0f8;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='${color}';this.style.boxShadow='0 0 0 3px ${color}22'" onblur="this.style.borderColor='#1c3050';this.style.boxShadow=''">${val||''}</textarea>
+    </div>
+  </div>`;
+  openModal((isEdit?'✏️ Edit':'📝 Tambah')+' Catatan CPPT',`
+  <div style="background:#111d2e;border:1px solid #1c3050;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="font-size:10px;color:#334f68;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Identitas Pencatat</div>
+    <div class="form-grid">
+      <div class="field"><label>Pasien</label><select id="cf-patient">${DB.patients.map(p=>`<option value="${p.id}" ${c&&c.patient_id===p.id?'selected':''}>${p.name} (${p.id})</option>`).join('')}</select></div>
+      <div class="field"><label>Profesi</label><select id="cf-profesi">${['Dokter','Perawat','Bidan','Farmasi','Gizi','Fisioterapi'].map(pr=>`<option ${c&&c.profesi===pr?'selected':''}>${pr}</option>`).join('')}</select></div>
+      <div class="field"><label>Tanggal</label><input type="date" id="cf-tgl" value="${c?c.tanggal:today}"></div>
+      <div class="field"><label>Jam</label><input type="time" id="cf-jam" value="${c?c.jam:time}"></div>
+    </div>
+  </div>
+  ${soapSection('S','#3b9eff','Subjektif','Keluhan pasien, anamnesis','cf-s',c?c.subjektif:'')}
+  ${soapSection('O','#27c97a','Objektif','Pemeriksaan fisik & penunjang','cf-o',c?c.objektif:'')}
+  ${soapSection('A','#f5c542','Asesmen','Diagnosis / masalah keperawatan','cf-a',c?c.asesmen:'')}
+  ${soapSection('P','#f04f4f','Planning','Rencana tindak lanjut, terapi, edukasi','cf-p',c?c.planning:'')}
+  <div style="background:#111d2e;border:1px solid #1c3050;border-radius:10px;padding:14px;margin-top:10px">
+    <div class="form-grid">
+      <div class="field full"><label>Instruksi Khusus</label><textarea id="cf-ins" rows="2" placeholder="Instruksi untuk shift berikutnya…" style="width:100%;background:#0c1422;border:1px solid #1c3050;border-radius:8px;color:#c9e0f8;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none">${c?c.instruksi||'':''}</textarea></div>
+      <div class="field"><label>Nama / TTD Petugas</label><input id="cf-ttd" placeholder="Nama lengkap & gelar" value="${c?c.ttd:currentUser?currentUser.name:''}"></div>
+    </div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+   <button class="btn btn-primary" onclick="saveCPPT(${isEdit?`'${editId}'`:'null'})">${isEdit?'💾 Update':'✅ Simpan'} Catatan</button>`);
+}
+
+function saveCPPT(editId){
+  const d={patient_id:document.getElementById('cf-patient').value,profesi:document.getElementById('cf-profesi').value,tanggal:document.getElementById('cf-tgl').value,jam:document.getElementById('cf-jam').value,subjektif:document.getElementById('cf-s').value.trim(),objektif:document.getElementById('cf-o').value.trim(),asesmen:document.getElementById('cf-a').value.trim(),planning:document.getElementById('cf-p').value.trim(),instruksi:document.getElementById('cf-ins').value.trim(),ttd:document.getElementById('cf-ttd').value.trim()};
+  if(!d.subjektif&&!d.objektif&&!d.asesmen&&!d.planning){showToast('error','❌ Minimal isi satu field SOAP');return;}
+  if(editId){ const c=DB.cppt.find(x=>x.id===editId); if(c) Object.assign(c,d); }
+  else DB.cppt.push({id:'CPPT'+String(Date.now()).slice(-6),...d});
+  updateBadges();closeModal();renderCPPT();showToast('success',editId?'✅ Catatan diperbarui':'✅ Catatan CPPT tersimpan');
+}
+
+function openCPPTDetail(id){
+  const c=DB.cppt.find(x=>x.id===id); if(!c) return;
+  const p=P(c.patient_id);
+  const profBadge = pr => `<span class="badge ${pr==='Dokter'?'badge-blue':pr==='Perawat'?'badge-green':pr==='Bidan'?'badge-purple':'badge-orange'}">${pr}</span>`;
+  openModal(`🔍 Detail CPPT — ${p.name}`,`
+  <div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px 14px;background:#111d2e;border:1px solid #1c3050;border-radius:10px;margin-bottom:14px">
+    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Pasien</div><div style="font-weight:700">${p.name}</div><div class="cell-id">${c.patient_id}</div></div>
+    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Profesi</div>${profBadge(c.profesi)}</div>
+    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Tgl/Jam</div><div style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">${c.tanggal} · ${c.jam}</div></div>
+    <div><div style="font-size:10px;color:#334f68;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Petugas</div><div style="font-weight:700">${c.ttd||'—'}</div></div>
+  </div>
+  ${[['S — Subjektif','#3b9eff',c.subjektif],['O — Objektif','#27c97a',c.objektif],['A — Asesmen','#f5c542',c.asesmen],['P — Planning','#f04f4f',c.planning]].map(([lbl,col,val])=>`
+  <div class="soap-block" style="margin-bottom:8px">
+    <div class="soap-header" style="background:${col}22;border-bottom:1px solid ${col}44;color:${col}">${lbl}</div>
+    <div class="soap-body">${val||`<span style="color:#334f68">—</span>`}</div>
+  </div>`).join('')}
+  ${c.instruksi?`<div class="soap-block"><div class="soap-header" style="background:#22d3ee22;border-bottom:1px solid #22d3ee44;color:#22d3ee">📌 Instruksi Khusus</div><div class="soap-body">${c.instruksi}</div></div>`:''}`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Tutup</button><button class="btn btn-primary" onclick="closeModal();openCPPTModal('${c.id}')">✏️ Edit</button>`);
+}
+function delCPPT(id){
+  if(!confirm('Hapus catatan CPPT ini?')) return;
+  DB.cppt=DB.cppt.filter(x=>x.id!==id);updateBadges();renderCPPT();showToast('success','🗑 Catatan dihapus');
+}
+
+// ══════════════════════════════════════
+//  REPORTS
+// ══════════════════════════════════════
+function renderReports(){
+  const byG={'Laki-laki':DB.patients.filter(p=>p.gender==='Laki-laki').length,'Perempuan':DB.patients.filter(p=>p.gender==='Perempuan').length};
+  const vByT={}; DB.visits.forEach(v=>{vByT[v.type]=(vByT[v.type]||0)+1;});
+  const labDone=DB.lab_orders.filter(l=>l.status==='selesai').length, labTotal=DB.lab_orders.length;
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">Reports & Analytics</div><div class="page-sub">Statistik fasilitas</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="exportJSON()">📥 Export JSON</button></div>
+  </div>
+  ${statGrid([
+    statCard('Total Pasien',DB.patients.length,'#3b9eff',`♂ ${byG['Laki-laki']} · ♀ ${byG['Perempuan']}`),
+    statCard('Total Kunjungan',DB.visits.length,'#27c97a'),
+    statCard('Lab Selesai',`${labDone}/${labTotal}`,'#a87eff',`${Math.round(labDone/Math.max(labTotal,1)*100)}% selesai`),
+    statCard('Obat Diresepkan',DB.medications.length,'#ff8c42'),
+  ].join(''))}
+  ${grid2(`
     <div class="card">
       <div class="card-title">📊 Kunjungan per Poli</div>
-      ${Object.entries(visitsByType).map(([k,v])=>`
-      <div class="chart-bar-wrap">
-        <div class="chart-bar-label"><span>${k}</span><span style="color:var(--text);font-weight:600">${v}</span></div>
-        <div class="chart-bar"><div class="chart-bar-fill" style="width:${v/Math.max(DB.visits.length,1)*100}%;background:var(--accent)"></div></div>
-      </div>`).join('')}
-    </div>
+      ${Object.entries(vByT).map(([k,v])=>`<div class="chart-bar-wrap"><div class="chart-bar-label"><span>${k}</span><span style="font-weight:700">${v}</span></div><div class="chart-bar"><div class="chart-bar-fill" style="width:${v/Math.max(DB.visits.length,1)*100}%;background:#3b9eff"></div></div></div>`).join('')}
+    </div>`,`
     <div class="card">
-      <div class="card-title">📈 Status Lab Orders</div>
-      ${[['Selesai','selesai','bg-green','var(--green)'],['Proses','proses','bg-yellow','var(--yellow)'],['Pending','pending','bg-gray','var(--text3)']].map(([l,s,c,col])=>{
-        const n=DB.lab_orders.filter(x=>x.status===s).length;
-        return `<div class="chart-bar-wrap">
-          <div class="chart-bar-label"><span>${l}</span><span class="badge ${c}">${n}</span></div>
-          <div class="chart-bar"><div class="chart-bar-fill" style="width:${n/Math.max(labTotal,1)*100}%;background:${col}"></div></div>
-        </div>`;
-      }).join('')}
-      <div style="margin-top:18px">
-        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px">Kapasitas Rawat Inap</div>
-        <div class="progress" style="height:8px;margin-bottom:6px"><div class="progress-fill" style="width:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length*100}%;background:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length>0.8?'var(--red)':'var(--green)'}"></div></div>
-        <div style="font-size:11px;color:var(--text2)">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length} bed terisi</div>
-      </div>
-    </div>
-  </div>
+      <div class="card-title">🔬 Status Lab</div>
+      ${[['Selesai','selesai','#27c97a'],['Proses','proses','#f5c542'],['Pending','pending','#334f68']].map(([l,s,col])=>{ const n=DB.lab_orders.filter(x=>x.status===s).length; return `<div class="chart-bar-wrap"><div class="chart-bar-label"><span>${l}</span><span style="font-weight:700">${n}</span></div><div class="chart-bar"><div class="chart-bar-fill" style="width:${n/Math.max(labTotal,1)*100}%;background:${col}"></div></div></div>`; }).join('')}
+      <div class="divider"></div>
+      <div style="font-size:11px;color:#334f68;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Kapasitas Rawat Inap</div>
+      <div class="progress" style="height:8px;margin-bottom:6px"><div class="progress-fill" style="width:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length*100}%;background:#f04f4f"></div></div>
+      <div style="font-size:11px;color:#6a94bb">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length} bed terisi</div>
+    </div>`)}
   <div class="card">
     <div class="card-title">📋 Program Kesehatan</div>
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr>${['Program','Kode','Koordinator','Pasien Aktif','Status'].map(h=>`<th style="padding:8px 12px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${h}</th>`).join('')}</tr></thead>
-      <tbody>
-        ${DB.programs.map(pr=>`<tr>
-          <td style="padding:10px 12px;border-bottom:1px solid var(--border)">${pr.name}</td>
-          <td style="padding:10px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-blue">${pr.code}</span></td>
-          <td style="padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2)">${pr.coordinator}</td>
-          <td style="padding:10px 12px;border-bottom:1px solid var(--border);font-weight:700;color:var(--text)">${pr.active_patients}</td>
-          <td style="padding:10px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-green">${pr.status}</span></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
+    ${tblWrap('prog-tbl',['Program','Kode','Koordinator','Pasien Aktif','Status'],DB.programs.map(pr=>`<tr><td>${pr.name}</td><td>${b('badge-blue',pr.code)}</td><td style="color:#6a94bb;font-size:12px">${pr.coordinator}</td><td style="font-weight:700">${pr.active_patients}</td><td>${b('badge-green',pr.status)}</td></tr>`).join(''),false)}
   </div>`);
 }
 
-// ══════════════════════════════════════════════
-//  PAGE: ADMIN
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  ADMIN
+// ══════════════════════════════════════
 function renderAdmin(){
   setContent(`
-  <div class="page-header">
-    <div><div class="page-title">Administration</div><div class="page-subtitle">Pengaturan sistem E-RM</div></div>
-  </div>
-  <div class="grid-3" style="margin-bottom:20px">
-    ${[['⚙️','Global Properties','Konfigurasi sistem global','openGlobalProps()'],['📚','Concept Dictionary','Kamus terminologi ICD/LOINC','openConceptDict()'],['🏥','Location Management','Manajemen lokasi & poli','openLocations()'],['🔖','Encounter Types','Jenis kunjungan klinis','openEncounterTypes()'],['📋','Program Management','Program kesehatan aktif','openPrograms()'],['🆔','Identifier Types','Tipe ID pasien NIK/BPJS','openIdentifiers()']].map(([icon,title,desc,fn])=>`
-    <div class="card" style="cursor:pointer;transition:border-color .15s" onclick="${fn}" onmouseenter="this.style.borderColor='var(--border2)'" onmouseleave="this.style.borderColor='var(--border)'">
-      <div style="font-size:26px;margin-bottom:10px">${icon}</div>
-      <div style="font-weight:600;margin-bottom:5px">${title}</div>
-      <div style="font-size:11.5px;color:var(--text2)">${desc}</div>
+  <div class="page-header"><div><div class="page-title">Administration</div><div class="page-sub">Pengaturan sistem E-RM</div></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">
+    ${[['⚙️','Global Properties','Konfigurasi sistem','openGlobalProps()'],['📚','Concept Dictionary','Kamus ICD/LOINC',''],['🏥','Location','Manajemen lokasi',''],['📋','Programs','Program kesehatan','openPrograms()']].map(([icon,t,d,fn])=>`
+    <div class="card" style="cursor:pointer;text-align:center" ${fn?`onclick="${fn}"`:''}  onmouseenter="this.style.borderColor='#264573'" onmouseleave="this.style.borderColor='#1c3050'">
+      <div style="font-size:28px;margin-bottom:8px">${icon}</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px">${t}</div>
+      <div style="font-size:11px;color:#6a94bb">${d}</div>
     </div>`).join('')}
   </div>
   <div class="card">
     <div class="card-title">📚 Concept Dictionary</div>
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr>${['Kode','Nama','Sistem','Kategori'].map(h=>`<th style="padding:8px 12px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${h}</th>`).join('')}</tr></thead>
-      <tbody>
-        ${DB.concept_dict.map(c=>`<tr>
-          <td style="padding:9px 12px;border-bottom:1px solid var(--border)" class="cell-mono">${c.code}</td>
-          <td style="padding:9px 12px;border-bottom:1px solid var(--border)">${c.name}</td>
-          <td style="padding:9px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-purple">${c.system}</span></td>
-          <td style="padding:9px 12px;border-bottom:1px solid var(--border)"><span class="badge bg-gray">${c.category}</span></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
+    ${tblWrap('dict-tbl',['Kode','Nama','Sistem','Kategori'],DB.concept_dict.map(c=>`<tr><td class="cell-id">${c.code}</td><td>${c.name}</td><td>${b('badge-purple',c.system)}</td><td>${b('badge-gray',c.category)}</td></tr>`).join(''),false)}
   </div>`);
 }
-
 function openGlobalProps(){
   openModal('⚙️ Global Properties',`
-  <div class="info-row"><span class="key">Fasilitas</span><span class="val">${DB.meta.facility}</span></div>
-  <div class="info-row"><span class="key">Versi E-RM</span><span class="val">v${DB.meta.version}</span></div>
-  <div class="info-row"><span class="key">Dibuat</span><span class="val">${fmt(DB.meta.created)}</span></div>
-  <div style="margin-top:16px"><div class="field"><label>Nama Fasilitas</label><input type="text" id="gp-facility" value="${DB.meta.facility}"></div></div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="saveGlobalProps()">💾 Simpan</button>`);
+  <div class="field"><label>Nama Fasilitas</label><input id="gp-facility" value="${DB.meta.facility}"></div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="DB.meta.facility=document.getElementById('gp-facility').value;closeModal();renderAdmin();showToast('success','✅ Diupdate')">💾 Simpan</button>`);
 }
-function saveGlobalProps(){ DB.meta.facility=document.getElementById('gp-facility').value; closeModal(); renderAdmin(); showToast('success','✅ Global properties diupdate'); }
-function openConceptDict(){ showToast('info','📚 Concept Dictionary — lihat tabel di bawah'); }
-function openLocations(){ showToast('info','🏥 Location management'); }
-function openEncounterTypes(){ showToast('info','🔖 Encounter Types dikelola via Concept Dictionary'); }
 function openPrograms(){ showPage('reports'); }
-function openIdentifiers(){ showToast('info','🆔 Identifier Types: NIK, No. RM, No. BPJS'); }
 
-// ══════════════════════════════════════════════
-//  PAGE: USERS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  USERS
+// ══════════════════════════════════════
 function renderUsers(){
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">User Management</div><div class="page-subtitle">${DB.users.length} pengguna terdaftar</div></div>
-    <div class="page-actions">
-      <button class="btn btn-blue" onclick="openAddUserModal()">+ Tambah User</button>
-    </div>
+    <div><div class="page-title">User Management</div><div class="page-sub">${DB.users.length} pengguna</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openAddUser()">+ Tambah User</button></div>
   </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>ID</th><th>Nama</th><th>Username</th><th>Role</th><th>Departemen</th><th>Status</th><th>Aksi</th></tr></thead>
-      <tbody>
-        ${DB.users.map(u=>`<tr>
-          <td class="cell-mono">${u.id}</td>
-          <td class="cell-primary">${u.name}</td>
-          <td class="cell-mono">${u.username}</td>
-          <td><span class="badge ${u.role==='admin'?'bg-purple':u.role==='doctor'?'bg-blue':u.role==='nurse'?'bg-green':u.role==='labtech'?'bg-orange':'bg-yellow'}">${ROLE_LABELS[u.role]||u.role}</span></td>
-          <td style="font-size:12px;color:var(--text2)">${u.specialty||u.department||'—'}</td>
-          <td><span class="badge ${u.status==='active'?'bg-green':'bg-red'}">${u.status}</span></td>
-          <td><button class="btn btn-outline btn-sm" onclick="toggleUserStatus('${u.id}')">Toggle Status</button></td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-  </div>`);
+  ${tblWrap('usr-tbl',['ID','Nama','Username','Role','Departemen','Status','Aksi'],
+    DB.users.map(u=>`<tr>
+      <td class="cell-id">${u.id}</td><td class="cell-name">${u.name}</td>
+      <td class="cell-id">${u.username}</td>
+      <td>${b(ROLE_BADGE[u.role]||'badge-gray',ROLE_LABELS[u.role]||u.role)}</td>
+      <td style="font-size:12px;color:#6a94bb">${u.specialty||u.department||'—'}</td>
+      <td>${b(u.status==='active'?'badge-green':'badge-red',u.status)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="toggleUser('${u.id}')">Toggle</button></td>
+    </tr>`).join('')
+  )}`);
 }
-
-function openAddUserModal(){
+function openAddUser(){
   openModal('Tambah User Baru',`
   <div class="form-grid">
-    <div class="field full"><label>Nama Lengkap</label><input type="text" id="uf-name" placeholder="Nama lengkap"></div>
-    <div class="field"><label>Username</label><input type="text" id="uf-username" placeholder="username"></div>
+    <div class="field full"><label>Nama Lengkap</label><input id="uf-name" placeholder="Nama lengkap"></div>
+    <div class="field"><label>Username</label><input id="uf-user" placeholder="username"></div>
     <div class="field"><label>Role</label><select id="uf-role"><option value="doctor">Dokter</option><option value="nurse">Perawat</option><option value="receptionist">Resepsionis</option><option value="labtech">Lab Tech</option><option value="admin">Admin</option></select></div>
-    <div class="field full"><label>Departemen / Spesialisasi</label><input type="text" id="uf-dept" placeholder="Poli Umum, ICU, dll"></div>
+    <div class="field full"><label>Departemen</label><input id="uf-dept" placeholder="Poli Umum, ICU, dll"></div>
   </div>`,
-  `<button class="btn btn-outline" onclick="closeModal()">Batal</button>
-   <button class="btn btn-blue" onclick="saveUser()">💾 Simpan</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveUser()">💾 Simpan</button>`);
 }
-
 function saveUser(){
-  const name=document.getElementById('uf-name').value;
-  if(!name){showToast('error','Nama wajib diisi');return;}
-  DB.users.push({id:genId('u',DB.users),name,username:document.getElementById('uf-username').value,role:document.getElementById('uf-role').value,department:document.getElementById('uf-dept').value,status:'active'});
-  closeModal(); renderUsers();
-  showToast('success',`✅ User ${name} berhasil ditambahkan`);
+  const name=document.getElementById('uf-name').value; if(!name){showToast('error','Nama wajib');return;}
+  DB.users.push({id:genId('u',DB.users),name,username:document.getElementById('uf-user').value,role:document.getElementById('uf-role').value,department:document.getElementById('uf-dept').value,status:'active'});
+  closeModal();renderUsers();showToast('success',`✅ User ${name} ditambahkan`);
 }
+function toggleUser(id){ const u=DB.users.find(x=>x.id===id); if(u){u.status=u.status==='active'?'inactive':'active';renderUsers();showToast('info',`User ${u.name}: ${u.status}`);} }
 
-function toggleUserStatus(id){
-  const u=DB.users.find(x=>x.id===id);
-  if(u){u.status=u.status==='active'?'inactive':'active';renderUsers();showToast('info',`User ${u.name}: ${u.status}`);}
-}
-
-// ══════════════════════════════════════════════
-//  PAGE: SETTINGS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════
 function renderSettings(){
   setContent(`
-  <div class="page-header">
-    <div><div class="page-title">Implementer Tools</div><div class="page-subtitle">Konfigurasi teknis sistem</div></div>
-  </div>
-  <div class="alert alert-yellow">⚠️ Halaman ini hanya untuk Administrator Teknis. Perubahan dapat mempengaruhi seluruh sistem.</div>
-  <div class="grid-2">
+  <div class="page-header"><div><div class="page-title">Implementer Tools</div><div class="page-sub">Konfigurasi teknis</div></div></div>
+  <div class="alert alert-yellow">⚠️ Halaman ini hanya untuk Administrator Teknis.</div>
+  ${grid2(`
     <div class="card">
       <div class="card-title">🔧 Feature Flags</div>
-      ${[['Lab Module','Aktif'],['Inpatient Module','Aktif'],['ANC Module','Aktif'],['TB Module','Aktif'],['Drug Dispensing','Nonaktif']].map(([f,s])=>`
-      <div class="info-row"><span class="key">${f}</span><span class="val"><span class="badge ${s==='Aktif'?'bg-green':'bg-gray'}">${s}</span></span></div>`).join('')}
-    </div>
+      ${[['Lab Module','Aktif'],['Inpatient Module','Aktif'],['ANC Module','Aktif'],['TB Module','Aktif'],['Drug Dispensing','Nonaktif']].map(([f,s])=>`<div class="info-row"><span class="info-key">${f}</span><span class="info-val">${b(s==='Aktif'?'badge-green':'badge-gray',s)}</span></div>`).join('')}
+    </div>`,`
     <div class="card">
       <div class="card-title">📦 Database Info</div>
-      <div class="info-row"><span class="key">Pasien</span><span class="val">${DB.patients.length} records</span></div>
-      <div class="info-row"><span class="key">Kunjungan</span><span class="val">${DB.visits.length} records</span></div>
-      <div class="info-row"><span class="key">Lab Orders</span><span class="val">${DB.lab_orders.length} records</span></div>
-      <div class="info-row"><span class="key">Medications</span><span class="val">${DB.medications.length} records</span></div>
-      <div class="info-row"><span class="key">Vitals</span><span class="val">${DB.vitals.length} records</span></div>
-      <div class="info-row"><span class="key">Users</span><span class="val">${DB.users.length} records</span></div>
-    </div>
-  </div>
+      ${[['Pasien',DB.patients.length],['Kunjungan',DB.visits.length],['Lab Orders',DB.lab_orders.length],['Medications',DB.medications.length],['Vitals',DB.vitals.length],['CPPT',DB.cppt.length],['Users',DB.users.length]].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v} records</span></div>`).join('')}
+    </div>`)}
   <div class="card" style="margin-top:16px">
     <div class="card-title">💾 Data Management</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
-      <button class="btn btn-blue" onclick="exportJSON()">📥 Export JSON</button>
-      <button class="btn btn-red" onclick="if(confirm('Reset semua data ke default?')){location.reload()}">🗑️ Reset ke Default</button>
+      <button class="btn btn-primary" onclick="exportJSON()">📥 Export JSON</button>
+      <label class="btn btn-ghost" style="cursor:pointer">📂 Import JSON<input type="file" accept=".json" class="hidden" onchange="importJSON(this)"></label>
+      <button class="btn btn-danger" onclick="if(confirm('Reset semua data?'))location.reload()">🗑️ Reset</button>
     </div>
-    <div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px">JSON Preview</div>
-      <pre style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:10px;font-family:'DM Mono',monospace;overflow:auto;max-height:200px;color:var(--text2)">${JSON.stringify({meta:DB.meta,patients_count:DB.patients.length,visits_count:DB.visits.length},null,2)}</pre>
-    </div>
+    <pre style="background:#111d2e;border:1px solid #1c3050;border-radius:8px;padding:12px;font-size:10.5px;font-family:'JetBrains Mono',monospace;overflow:auto;max-height:180px;color:#6a94bb">${JSON.stringify({meta:DB.meta,pasien:DB.patients.length,kunjungan:DB.visits.length,cppt:DB.cppt.length},null,2)}</pre>
   </div>`);
 }
 
-// ── KEYBOARD SHORTCUTS ──
+// ── KEYBOARD ──
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
-    e.preventDefault();document.getElementById('global-search').focus();
-  }
+  if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){ e.preventDefault(); document.getElementById('global-search').focus(); }
   if(e.key==='Escape') closeModal();
 });
-document.getElementById('modal-overlay').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+
+// ── INIT ──
+checkMobile();
 </script>
 </body>
 </html>
