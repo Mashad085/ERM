@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#dc2626">
+<title>E-ICU · Sistem Monitoring Intensive Care</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Plus Jakarta Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      colors: {
+        surface: {
+          950: '#e8edf5', 900: '#f0f4f9', 800: '#ffffff',
+          700: '#dce4f0', 600: '#c8d6e8', 500: '#b0c4de',
+        },
+        brand: { DEFAULT: '#dc2626', light: '#ef4444', dark: '#991b1b' },
+        success: '#16a34a',
+        warn: '#f59e0b',
+        danger: '#dc2626',
+        violet: '#8b5cf6',
+        teal: '#0891b2',
+        orange: '#ea580c',
+      },
+      screens: { xs: '480px' }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f4f9; color: #1a2b3c; overflow: hidden; height: 100dvh; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 4px; }
+  input, select, textarea { font-family: inherit; }
+  input[type=date], input[type=time] { color-scheme: light; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  @keyframes alarm-pulse { 0%,100%{background:#dc2626} 50%{background:#991b1b} }
+  .pulse-dot { animation: pulse 2s infinite; }
+  .alarm-blinking { animation: alarm-pulse 0.8s infinite; color:#fff; }
+
+  #toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:#ffffff; border:1px solid #d0dcea; border-radius:12px; color:#1a2b3c;
+    padding:10px 18px; display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:500; z-index:9999; min-width:260px; max-width:90vw;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s; opacity:0; }
+  #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+  #modal-overlay { position:fixed; inset:0; background:rgba(15,30,60,.35); backdrop-filter:blur(4px);
+    z-index:500; display:flex; align-items:center; justify-content:center; padding:16px; }
+  #modal { background:#ffffff; border:1px solid #d0dcea; border-radius:16px;
+    width:100%; max-width:680px; max-height:90dvh; display:flex; flex-direction:column;
+    box-shadow:0 24px 80px rgba(0,0,0,.6); }
+  #modal-header { padding:18px 20px; border-bottom:1px solid #e2eaf4; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  #modal-title { font-size:15px; font-weight:700; }
+  #modal-body { padding:20px; overflow-y:auto; flex:1; }
+  #modal-footer { padding:14px 20px; border-top:1px solid #e2eaf4; display:flex; justify-content:flex-end; gap:8px; flex-shrink:0; flex-wrap:wrap; }
+
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media(max-width:480px){ .form-grid { grid-template-columns:1fr; } }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field.full { grid-column:1/-1; }
+  .field label { font-size:11px; font-weight:600; color:#4a6b8a; text-transform:uppercase; letter-spacing:.4px; }
+  .field input, .field select, .field textarea {
+    background:#f8fafc; border:1px solid #cdd8e8; border-radius:8px;
+    color:#1a2b3c; font-size:13px; padding:8px 11px; outline:none;
+    transition:border-color .15s, box-shadow .15s; width:100%; }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color:#dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.1); }
+
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px;
+    border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer;
+    border:none; font-family:inherit; transition:all .15s; white-space:nowrap; }
+  .btn-primary { background:#dc2626; color:#fff; }
+  .btn-primary:hover { background:#ef4444; }
+  .btn-ghost { background:#ffffff; border:1px solid #cdd8e8; color:#4a6b8a; }
+  .btn-ghost:hover { border-color:#dc2626; color:#1a2b3c; }
+  .btn-success { background:#16a34a; color:#fff; }
+  .btn-danger { background:#dc2626; color:#fff; }
+  .btn-sm { padding:4px 10px; font-size:11.5px; border-radius:6px; }
+  .btn-alarm { background:#dc2626; color:#fff; animation: alarm-pulse 1.5s infinite; }
+
+  .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:20px; font-size:10.5px; font-weight:600; font-family:'JetBrains Mono',monospace; }
+  .badge-red    { background:rgba(220,38,38,.15);   color:#b91c1c; }
+  .badge-green  { background:rgba(22,163,74,.15); color:#15803d; }
+  .badge-yellow { background:rgba(245,158,11,.15);  color:#92400e; }
+  .badge-blue   { background:rgba(37,99,235,.15); color:#1b6fd4; }
+  .badge-purple { background:rgba(139,92,246,.15); color:#6d28d9; }
+  .badge-gray   { background:rgba(107,147,181,.12); color:#4a6b8a; }
+
+  .card { background:#ffffff; border:1px solid #e2eaf4; border-radius:12px; padding:16px; }
+  .card-title { font-size:12.5px; font-weight:700; color:#1a2b3c; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .card-critical { border-color:rgba(220,38,38,.4); background:#fef2f2; }
+
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #edf2f8; font-size:12.5px; }
+  .info-row:last-child { border-bottom:none; }
+  .info-key { color:#4a6b8a; font-weight:500; }
+  .info-val { font-weight:600; text-align:right; color:#0f1f35; }
+
+  .vital-box { background:#f8fafc; border:1px solid #e2eaf4; border-radius:10px; padding:12px; text-align:center; }
+  .vital-box.crit { border-color:rgba(220,38,38,.5); background:rgba(220,38,38,.08); }
+  .vital-box.warn { border-color:rgba(217,119,6,.4); background:rgba(217,119,6,.06); }
+  .vital-name { font-size:10px; color:#4a6b8a; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+  .vital-val  { font-size:24px; font-weight:800; line-height:1; }
+  .vital-unit { font-size:10px; color:#4a6b8a; margin-top:2px; }
+
+  .bed-card { border-radius:10px; padding:14px; border:1px solid #e2eaf4; background:#f8fafc; }
+  .bed-card.occupied { border-color:rgba(220,38,38,.4); background:rgba(220,38,38,.04); }
+  .bed-card.ventilator { border-color:rgba(8,145,178,.4); background:rgba(8,145,178,.05); }
+  .bed-card.critical { border-color:#dc2626; background:rgba(220,38,38,.08); }
+
+  .score-card { background:#f8fafc; border:1px solid #e2eaf4; border-radius:10px; padding:14px; text-align:center; }
+  .score-val { font-size:32px; font-weight:800; line-height:1; }
+  .score-label { font-size:10px; color:#4a6b8a; text-transform:uppercase; letter-spacing:.4px; margin-top:6px; }
+
+  .tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .tbl thead th { padding:9px 12px; text-align:left; font-size:10px; text-transform:uppercase;
+    letter-spacing:.5px; color:#4a6b8a; border-bottom:1px solid #e2eaf4; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap; }
+  .tbl tbody tr { border-bottom:1px solid #e8edf5; transition:background .12s; }
+  .tbl tbody tr:hover { background:rgba(220,38,38,.04); }
+  .tbl tbody td { padding:9px 12px; color:#1a2b3c; vertical-align:middle; }
+  .cell-id { font-family:'JetBrains Mono',monospace; font-size:11px; color:#4a6b8a; }
+  .cell-name { font-weight:600; }
+
+  .alarm-bar { background:#dc2626; color:#fff; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .ventilator-data { font-family:'JetBrains Mono',monospace; background:#f0fdfa; border:1px solid #0891b2; border-radius:8px; padding:10px; font-size:14px; }
+
+  .soap-block { border-radius:10px; overflow:hidden; border:1px solid #e2eaf4; margin-bottom:10px; }
+  .soap-header { padding:8px 14px; font-size:12px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .soap-body { background:#f8fafc; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; color:#1a2b3c; }
+
+  .progress { background:#e2eaf4; border-radius:4px; height:6px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:4px; transition:width .5s; }
+
+  #bottom-nav { display:none; }
+  @media(max-width:768px){
+    #bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0;
+      background:#ffffff; border-top:1px solid #e2eaf4; z-index:100;
+      justify-content:space-around; padding:6px 0 env(safe-area-inset-bottom,6px); }
+    .bnav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 8px;
+      font-size:10px; color:#4a6b8a; cursor:pointer; border:none; background:none; -webkit-tap-highlight-color:transparent; font-family:inherit; transition:color .15s; flex:1; }
+    .bnav-item.active { color:#dc2626; }
+    .bnav-icon { font-size:18px; line-height:1; }
+    #content-area { padding-bottom:70px !important; }
+  }
+
+  #login-screen { position:fixed; inset:0; background:#f0f4f9; display:flex; align-items:center; justify-content:center; z-index:1000;
+    background-image:radial-gradient(ellipse 70% 60% at 50% -10%, rgba(220,38,38,.08) 0%, transparent 70%); }
+
+  #content-area { flex:1; overflow-y:auto; padding:20px; }
+  @media(max-width:640px){ #content-area { padding:14px; } }
+
+  .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .page-title { font-size:20px; font-weight:800; line-height:1.1; color:#0f1f35; }
+  .page-sub { font-size:12px; color:#4a6b8a; margin-top:3px; }
+
+  .hidden { display:none !important; }
+  .divider { height:1px; background:#e2eaf4; margin:16px 0; }
+  .empty-state { text-align:center; padding:40px 20px; color:#7a9ab5; }
+
+  .monitor-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-bottom:20px; }
+
+  #save-indicator { position:fixed; top:60px; right:16px; background:#ffffff; border:1px solid #16a34a44;
+    border-radius:8px; padding:5px 12px; font-size:11px; font-weight:600; color:#15803d;
+    display:flex; align-items:center; gap:6px; z-index:200;
+    opacity:0; transform:translateY(-4px); transition:all .3s; pointer-events:none; }
+  #save-indicator.show { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div id="save-indicator">💾 Tersimpan</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:18px;padding:36px;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(220,38,38,.1)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px">
+      <div style="width:44px;height:44px;background:linear-gradient(135deg,#991b1b,#dc2626);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 16px rgba(220,38,38,.3)">🫀</div>
+      <div>
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.5px;color:#0f1f35">E-ICU</div>
+        <div style="font-size:11px;color:#7a9ab5;font-family:'JetBrains Mono',monospace">Intensive Care Monitoring</div>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:12px"><label>Username</label><input type="text" id="login-user" value="dr.icu" placeholder="Masukkan username"></div>
+    <div class="field" style="margin-bottom:12px"><label>Password</label><input type="password" id="login-pass" value="icu123" placeholder="••••••••"></div>
+    <div class="field" style="margin-bottom:18px">
+      <label>Role</label>
+      <select id="login-role">
+        <option value="doctor">Dokter ICU / Intensivist</option>
+        <option value="nurse">Perawat ICU</option>
+        <option value="admin">Administrator ICU</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px;font-size:14px" onclick="doLogin()">Masuk ke E-ICU</button>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e2eaf4">
+      <p style="font-size:11px;color:#7a9ab5;margin-bottom:8px">Quick login:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span onclick="setDemo('dr.icu','icu123','doctor')" style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Dokter ICU</span>
+        <span onclick="setDemo('ns.icu','icu123','nurse')" style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Perawat ICU</span>
+        <span onclick="setDemo('admin','icu123','admin')" style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Admin</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app" class="hidden" style="display:flex;flex-direction:column;height:100dvh">
+
+  <!-- HEADER -->
+  <header style="height:52px;background:#ffffff;border-bottom:1px solid #e2eaf4;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:50">
+    <div style="display:flex;align-items:center;gap:8px;min-width:fit-content">
+      <div style="width:28px;height:28px;background:linear-gradient(135deg,#991b1b,#dc2626);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px">🫀</div>
+      <span style="font-size:16px;font-weight:800;letter-spacing:-.4px;color:#0f1f35" class="hidden sm:inline">E-ICU</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#16a34a;margin-right:auto">
+      <span class="pulse-dot" style="width:7px;height:7px;background:#16a34a;border-radius:50%;display:inline-block"></span>
+      <span class="hidden sm:inline">ICU Monitoring Active</span>
+    </div>
+    <span id="alarm-indicator" class="hidden" style="background:#dc2626;color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;animation:alarm-pulse 1.5s infinite">🚨 ALARM</span>
+    <div style="display:flex;align-items:center;gap:8px;background:#f0f4f9;border:1px solid #e2eaf4;border-radius:8px;padding:5px 10px">
+      <div id="user-avatar" style="width:24px;height:24px;border-radius:50%;background:#991b1b;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">DR</div>
+      <span id="user-name" style="font-size:12px;font-weight:600;color:#1a2b3c" class="hidden sm:inline">Intensivist</span>
+      <span id="user-role-badge" class="badge badge-red hidden sm:inline">ICU</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()" title="Keluar">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </header>
+
+  <div style="display:flex;flex:1;overflow:hidden">
+    <!-- SIDEBAR -->
+    <nav id="sidebar" style="width:220px;background:#ffffff;border-right:1px solid #e2eaf4;overflow-y:auto;flex-shrink:0;transition:width .2s">
+      <div style="padding:10px 8px">
+        <div style="padding:4px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px">Monitoring</div>
+        <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">📊</span><span>Dashboard ICU</span>
+        </div>
+        <div class="nav-item" data-page="monitor" onclick="showPage('monitor')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">🫀</span><span>Live Monitor</span>
+        </div>
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px">Klinis</div>
+        <div class="nav-item" data-page="beds" onclick="showPage('beds')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">🛏️</span><span>Bed ICU</span>
+          <span class="nav-count red ml-auto" id="bed-badge">0</span>
+        </div>
+        <div class="nav-item" data-page="cppt" onclick="showPage('cppt')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">📝</span><span>CPPT ICU</span>
+        </div>
+        <div class="nav-item" data-page="scoring" onclick="showPage('scoring')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">📐</span><span>Scoring</span>
+        </div>
+        <div class="nav-item" data-page="medications" onclick="showPage('medications')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">💉</span><span>Obat ICU</span>
+        </div>
+        <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px">Data & Admin</div>
+        <div class="nav-item" data-page="laboratory" onclick="showPage('laboratory')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">🔬</span><span>Lab Results</span>
+          <span class="nav-count yellow ml-auto" id="lab-badge">0</span>
+        </div>
+        <div class="nav-item" data-page="export" onclick="showPage('export')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
+          <span style="font-size:16px;width:20px">📥</span><span>Export Data</span>
+        </div>
+      </div>
+    </nav>
+
+    <main id="content-area" style="flex:1;overflow-y:auto;padding:20px;background:#f0f4f9"></main>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav id="bottom-nav">
+    <button class="bnav-item active" onclick="showPage('dashboard')" data-bnav="dashboard"><span class="bnav-icon">📊</span>Dashboard</button>
+    <button class="bnav-item" onclick="showPage('monitor')" data-bnav="monitor"><span class="bnav-icon">🫀</span>Monitor</button>
+    <button class="bnav-item" onclick="showPage('beds')" data-bnav="beds"><span class="bnav-icon">🛏️</span>Bed</button>
+    <button class="bnav-item" onclick="showPage('cppt')" data-bnav="cppt"><span class="bnav-icon">📝</span>CPPT</button>
+  </nav>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="hidden" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <div id="modal-header">
+      <div id="modal-title">Modal</div>
+      <button onclick="closeModal()" style="background:none;border:none;color:#4a6b8a;font-size:18px;cursor:pointer;line-height:1;padding:0">✕</button>
+    </div>
+    <div id="modal-body"></div>
+    <div id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><span id="toast-icon">ℹ️</span><span id="toast-msg"></span></div>
+
+<script>
+// ══════════════════════════════════════
+//  ICU DATA STORE
+// ══════════════════════════════════════
+let DB = {
+  meta: { version:"3.0", facility:"ICU RSUD", created: new Date().toISOString() },
+  users: [
+    { id:"u1", name:"Dr. Ahmad Intensivist", username:"dr.icu", role:"doctor", specialty:"Intensive Care", status:"active" },
+    { id:"u2", name:"Ns. Dewi ICU", username:"ns.icu", role:"nurse", department:"ICU", status:"active" },
+    { id:"u3", name:"Administrator ICU", username:"admin", role:"admin", status:"active" }
+  ],
+  patients: [
+    { id:"P001", name:"Budi Hartono", dob:"1978-11-30", gender:"Laki-laki", nik:"3201234567890003", blood_type:"B+", status:"icu", diagnosis:"ARDS + Sepsis", admission:"2025-04-23", severity:"kritis" },
+    { id:"P002", name:"Rudi Setiawan", dob:"1965-09-02", gender:"Laki-laki", nik:"3201234567890005", blood_type:"O-", status:"icu", diagnosis:"Post-CABG", admission:"2025-04-24", severity:"sedang" },
+    { id:"P003", name:"Andi Wijaya", dob:"1985-03-12", gender:"Laki-laki", nik:"3201234567890001", blood_type:"O+", status:"icu", diagnosis:"STEMI + Syok Kardiogenik", admission:"2025-04-25", severity:"kritis" }
+  ],
+  beds: [
+    { id:"B001", number:"ICU-01", patient_id:"P003", status:"terisi", ventilator:true, admitted:"2025-04-25", monitoring:"Ketat" },
+    { id:"B002", number:"ICU-02", patient_id:"P001", status:"terisi", ventilator:true, admitted:"2025-04-23", monitoring:"Ketat" },
+    { id:"B003", number:"ICU-03", patient_id:"P002", status:"terisi", ventilator:false, admitted:"2025-04-24", monitoring:"Intermediate" },
+    { id:"B004", number:"ICU-04", patient_id:"", status:"kosong", ventilator:false, admitted:"", monitoring:"" },
+    { id:"B005", number:"ICU-05", patient_id:"", status:"kosong", ventilator:true, admitted:"", monitoring:"" },
+    { id:"B006", number:"ICU-06", patient_id:"", status:"maintenance", ventilator:false, admitted:"", monitoring:"" }
+  ],
+  vitals: [
+    { id:"VT001", patient_id:"P003", datetime:new Date().toISOString(), hr:115, bp_systolic:85, bp_diastolic:55, map:65, spo2:92, temp:37.8, rr:24, cvp:8, gcs:13, urine_output:25, vasopressor:"Norepinephrine 0.15", vent_mode:"VC-AC", vt:450, fio2:60, peep:8 },
+    { id:"VT002", patient_id:"P001", datetime:new Date().toISOString(), hr:98, bp_systolic:100, bp_diastolic:60, map:73, spo2:94, temp:38.2, rr:22, cvp:10, gcs:10, urine_output:30, vasopressor:"Norepinephrine 0.08", vent_mode:"PC-AC", vt:420, fio2:50, peep:10 },
+    { id:"VT003", patient_id:"P002", datetime:new Date().toISOString(), hr:85, bp_systolic:130, bp_diastolic:80, map:97, spo2:98, temp:36.8, rr:16, cvp:7, gcs:15, urine_output:50, vasopressor:"", vent_mode:"Spontaneous", vt:0, fio2:28, peep:5 }
+  ],
+  medications: [
+    { id:"M001", patient_id:"P003", drug:"Norepinephrine", dose:"0.15 mcg/kg/min", route:"IV Continuous", start:"2025-04-25", status:"running" },
+    { id:"M002", patient_id:"P003", drug:"Fentanyl", dose:"50 mcg/hour", route:"IV Continuous", start:"2025-04-25", status:"running" },
+    { id:"M003", patient_id:"P003", drug:"Midazolam", dose:"3 mg/hour", route:"IV", start:"2025-04-25", status:"running" },
+    { id:"M004", patient_id:"P001", drug:"Meropenem", dose:"1g / 8jam", route:"IV", start:"2025-04-23", status:"active" },
+    { id:"M005", patient_id:"P001", drug:"Norepinephrine", dose:"0.08 mcg/kg/min", route:"IV Continuous", start:"2025-04-23", status:"running" },
+    { id:"M006", patient_id:"P002", drug:"Aspirin", dose:"100mg / 24jam", route:"Oral", start:"2025-04-24", status:"active" }
+  ],
+  lab_orders: [
+    { id:"L001", patient_id:"P003", test:"AGD, Laktat, Elektrolit", ordered:new Date().toISOString().slice(0,10), status:"pending", result:"" },
+    { id:"L002", patient_id:"P001", test:"Darah Lengkap, CRP, Prokalsitonin", ordered:"2025-04-25", status:"selesai", result:"Leukosit 18.000, CRP 120, PCT 8.5" },
+    { id:"L003", patient_id:"P002", test:"Elektrolit, Gula Darah", ordered:"2025-04-25", status:"selesai", result:"Dalam batas normal" }
+  ],
+  scoring: [
+    { id:"S001", patient_id:"P003", type:"APACHE II", score:24, mortality:42, date:"2025-04-25" },
+    { id:"S002", patient_id:"P003", type:"SOFA", score:11, organ:"Kardiovaskular+Respirasi+Renal", date:"2025-04-25" },
+    { id:"S003", patient_id:"P001", type:"APACHE II", score:18, mortality:24, date:"2025-04-23" },
+    { id:"S004", patient_id:"P001", type:"SOFA", score:8, organ:"Respirasi+Renal", date:"2025-04-23" }
+  ],
+  cppt: [
+    { id:"CPPT001", patient_id:"P003", tanggal:"2025-04-25", jam:"08:30", profesi:"Dokter ICU", petugas:"Dr. Ahmad",
+      subjektif:"Pasien post-STEMI dengan syok kardiogenik. Kesadaran menurun (GCS 13), masih dependen vasopressor.",
+      objektif:"TD: 85/55 (MAP 65), HR: 115x/mnt, SpO2: 92% dg FiO2 60%. Urine output: 0.5cc/kgBB/jam. CVP: 8. Ventilator: VC-AC, VT 450, PEEP 8.",
+      asesmen:"Syok kardiogenik (R57.0) + ARDS ringan-sedang. SOFA Score 11. Risiko AKI progresif.",
+      planning:"Naikkan Norepinephrine titrasi MAP≥65. Evaluasi fluid responsiveness. AGD serial 4 jam. Konsul nefrologi jika oliguria persisten.",
+      instruksi:"Strict I/O monitoring. AGD tiap 4 jam. Monitor CVP kontinyu. Laporkan jika MAP <60.", ttd:"Dr. Ahmad" },
+    { id:"CPPT002", patient_id:"P003", tanggal:"2025-04-25", jam:"09:00", profesi:"Perawat ICU", petugas:"Ns. Dewi",
+      subjektif:"Pasien tidak responsif terhadap perintah verbal. Keluarga sudah diinformasikan kondisi kritis.",
+      objektif:"TD: 84/53, HR: 118, SpO2: 91%. Ventilator: VC-AC, VT 450, FiO2 60%. Infus pump: Norepinephrine 0.15 mcg/kg/min via CVC. CVP: 8 mmHg. Urine output 20cc/jam terakhir.",
+      asesmen:"Risiko penurunan cardiac output. Risiko ketidakefektifan pola nafas.",
+      planning:"Lanjutkan monitoring hemodinamik ketat. Pasang monitor cardiac output jika tersedia. Evaluasi tanda overload cairan.",
+      instruksi:"Monitor TD tiap 15 menit. Laporkan jika MAP <60 atau >90. AGD sesuai order dokter.", ttd:"Ns. Dewi" }
+  ]
+};
+
+// ══════════════════════════════════════
+//  PERSISTENCE
+// ══════════════════════════════════════
+const STORAGE_KEY = 'eicu_db_v3';
+let _saveTimer = null;
+
+function saveDB() {
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+      const ind = document.getElementById('save-indicator');
+      if (ind) { ind.classList.add('show'); setTimeout(() => ind.classList.remove('show'), 1500); }
+    } catch(e) { console.warn('[E-ICU] saveDB gagal:', e); }
+  }, 400);
+}
+
+function loadDB() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved && saved.patients) {
+      Object.keys(saved).forEach(k => { DB[k] = saved[k]; });
+      if (!DB.cppt) DB.cppt = [];
+      if (!DB.scoring) DB.scoring = [];
+      console.info('[E-ICU] Data dimuat dari localStorage (' + DB.patients.length + ' pasien ICU)');
+    }
+  } catch(e) { console.warn('[E-ICU] loadDB gagal:', e); }
+}
+
+loadDB();
+
+let currentUser = null;
+let currentPage = 'dashboard';
+
+const ROLE_MENUS = {
+  admin:  ['dashboard','monitor','beds','cppt','scoring','medications','laboratory','export'],
+  doctor: ['dashboard','monitor','beds','cppt','scoring','medications','laboratory','export'],
+  nurse:  ['dashboard','monitor','beds','cppt','scoring','medications','laboratory']
+};
+const ROLE_LABELS = { admin:'ADMIN ICU', doctor:'INTENSIVIST', nurse:'PERAWAT ICU' };
+const ROLE_AVATARS = { admin:'AD', doctor:'DR', nurse:'NS' };
+
+function P(id){ return DB.patients.find(p=>p.id===id)||{}; }
+function B(bedId){ return DB.beds.find(bd=>bd.id===bedId)||{}; }
+function age(dob){ if(!dob) return '—'; return Math.floor((Date.now()-new Date(dob))/(365.25*24*3600*1000))+'th'; }
+function fmt(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDate(d){ if(!d) return '—'; const dt=new Date(d); return dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short'})+' '+dt.toTimeString().slice(0,5); }
+function genId(prefix,arr){ return prefix+String(Date.now()).slice(-6); }
+function b(cls,txt){ return `<span class="badge ${cls}">${txt}</span>`; }
+
+function showToast(type,msg){
+  const t=document.getElementById('toast');
+  const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
+  t.className = type;
+  document.getElementById('toast-icon').textContent=icons[type]||'ℹ️';
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function openModal(title,body,footer){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-footer').innerHTML = footer!==undefined ? footer : `<button class="btn btn-ghost" onclick="closeModal()">Tutup</button>`;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.add('hidden'); }
+
+function setDemo(u,p,r){
+  document.getElementById('login-user').value=u;
+  document.getElementById('login-pass').value=p;
+  document.getElementById('login-role').value=r;
+}
+
+function doLogin(){
+  const role = document.getElementById('login-role').value;
+  const names = { admin:'Administrator ICU', doctor:'Dr. Ahmad Intensivist', nurse:'Ns. Dewi ICU' };
+  currentUser = { role, name: names[role], allowed: ROLE_MENUS[role] };
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('app').style.display='flex';
+  document.getElementById('user-name').textContent = currentUser.name;
+  document.getElementById('user-avatar').textContent = ROLE_AVATARS[role];
+  document.getElementById('user-role-badge').textContent = ROLE_LABELS[role];
+  updateBadges();
+  checkAlarms();
+  showPage('dashboard');
+}
+
+function logout(){
+  currentUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').classList.add('hidden');
+}
+
+function showPage(page){
+  if(!currentUser||!currentUser.allowed.includes(page)){ showToast('error','❌ Akses ditolak'); return; }
+  currentPage=page;
+  document.querySelectorAll('.nav-item').forEach(el=>{ el.style.background=''; el.style.color='#4a6b8a'; });
+  const nav=document.querySelector(`.nav-item[data-page="${page}"]`);
+  if(nav){ nav.style.background='rgba(220,38,38,.1)'; nav.style.color='#dc2626'; }
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  const bnav=document.querySelector(`.bnav-item[data-bnav="${page}"]`);
+  if(bnav) bnav.classList.add('active');
+  const pages={
+    dashboard:renderDashboard, monitor:renderMonitor, beds:renderBeds,
+    cppt:renderCPPT, scoring:renderScoring, medications:renderMedications,
+    laboratory:renderLaboratory, export:renderExport
+  };
+  if(pages[page]) pages[page]();
+}
+
+function updateBadges(){
+  document.getElementById('bed-badge').textContent = DB.beds.filter(bd=>bd.status==='terisi').length;
+  document.getElementById('lab-badge').textContent = DB.lab_orders.filter(l=>l.status==='pending').length;
+}
+
+function checkAlarms(){
+  const alarmEl = document.getElementById('alarm-indicator');
+  const hasCritical = DB.vitals.some(v=>{
+    return v.spo2<90 || v.hr>130 || v.hr<50 || (v.bp_systolic&&v.bp_systolic<80) || v.gcs<9;
+  });
+  if(hasCritical && alarmEl) alarmEl.classList.remove('hidden');
+  else if(alarmEl) alarmEl.classList.add('hidden');
+}
+
+function statGrid(cards){ return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px">${cards}</div>`; }
+function statCard(label,val,color,sub=''){
+  return `<div class="stat-card" style="border:1px solid #e2eaf4"><div class="stat-label">${label}</div><div class="stat-value" style="color:${color}">${val}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`;
+}
+function grid2(a,b){ return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px">${a}${b}</div>`; }
+
+// ══════════════════════════════════════
+//  DASHBOARD ICU
+// ══════════════════════════════════════
+function renderDashboard(){
+  const occupied = DB.beds.filter(bd=>bd.status==='terisi').length;
+  const onVent = DB.beds.filter(bd=>bd.ventilator&&bd.status==='terisi').length;
+  const critical = DB.beds.filter(bd=>bd.status==='terisi'&&bd.monitoring==='Ketat').length;
+  const pendLab = DB.lab_orders.filter(l=>l.status==='pending').length;
+  const totalBeds = DB.beds.length;
+
+  setContent(`
+  <div class="page-header">
+    <div>
+      <div class="page-title">🫀 ICU Dashboard</div>
+      <div class="page-sub">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})} · ${DB.meta.facility}</div>
+    </div>
+  </div>
+  ${statGrid([
+    statCard('Bed Terisi', `${occupied}/${totalBeds}`, '#dc2626', `${critical} monitoring ketat`),
+    statCard('Ventilator', `${onVent} pasien`, '#0891b2', 'Terpasang ventilator'),
+    statCard('Lab Pending', pendLab, '#ea580c', 'Menunggu hasil'),
+    statCard('CPPT Hari Ini', DB.cppt.filter(c=>c.tanggal===new Date().toISOString().slice(0,10)).length, '#15803d', 'Catatan terbaru'),
+  ].join(''))}
+  ${grid2(`
+    <div class="card">
+      <div class="card-title">🛏️ Status Bed ICU</div>
+      ${DB.beds.map(bd=>{
+        const p=bd.patient_id?P(bd.patient_id):null;
+        return `<div class="info-row">
+          <span class="info-key"><strong>${bd.number}</strong> ${p?p.name:'Kosong'}</span>
+          <span class="info-val">
+            ${bd.status==='terisi'?b('badge-red','Terisi'):bd.status==='kosong'?b('badge-green','Kosong'):b('badge-yellow','Maint')}
+            ${bd.ventilator?' 🔧':''}
+          </span>
+        </div>`;
+      }).join('')}
+    </div>`,`
+    <div class="card">
+      <div class="card-title">⚠️ Pasien Kritis</div>
+      ${DB.beds.filter(bd=>bd.status==='terisi').map(bd=>{
+        const p=P(bd.patient_id);
+        const v=DB.vitals.filter(v=>v.patient_id===bd.patient_id).pop();
+        const isCrit = v && (v.spo2<93 || v.hr>110 || (v.bp_systolic&&v.bp_systolic<90));
+        return `<div class="info-row" style="${isCrit?'background:#fef2f2;padding:4px 8px;border-radius:6px':''}">
+          <span class="info-key">${p.name} ${isCrit?'🔴':''}</span>
+          <span class="info-val">${v?`${v.bp_systolic||'?'}/${v.bp_diastolic||'?'} · SpO2 ${v.spo2}%`:''}</span>
+        </div>`;
+      }).join('')||'<div style="color:#7a9ab5;font-size:12px">Tidak ada pasien</div>'}
+    </div>`)}
+  <div class="card">
+    <div class="card-title">📝 CPPT Terbaru</div>
+    ${DB.cppt.slice(-3).reverse().map(c=>`<div class="info-row">
+      <span class="info-key">${P(c.patient_id).name} · ${c.tanggal} ${c.jam}</span>
+      <span class="info-val">${b('badge-red',c.profesi)}</span>
+    </div>`).join('')}
+  </div>`);
+}
+
+// ══════════════════════════════════════
+//  LIVE MONITOR
+// ══════════════════════════════════════
+function renderMonitor(){
+  setContent(`
+  <div class="page-header">
+    <div>
+      <div class="page-title">🫀 Live Monitoring</div>
+      <div class="page-sub">Vital signs real-time · ${DB.beds.filter(bd=>bd.status==='terisi').length} pasien terpantau</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="inputVitalNow()">+ Input Vital</button>
+      <button class="btn btn-ghost btn-sm" onclick="checkAlarms();renderMonitor()">🔄 Refresh</button>
+    </div>
+  </div>
+  <div class="monitor-grid">
+    ${DB.beds.filter(bd=>bd.status==='terisi').map(bd=>{
+      const p=P(bd.patient_id);
+      const v=DB.vitals.filter(v=>v.patient_id===bd.patient_id).pop();
+      if(!v) return '';
+      const isCrit = v.spo2<90 || v.hr>130 || v.hr<50 || (v.bp_systolic&&v.bp_systolic<80) || v.gcs<9;
+      return `
+      <div class="card ${isCrit?'card-critical':''}" style="position:relative">
+        ${isCrit?`<div class="alarm-bar alarm-blinking" style="gap:4px;font-size:11px">🚨 KRITIS</div>`:''}
+        <div class="card-title" style="justify-content:space-between">
+          <span>🛏️ ${bd.number} · ${p.name}</span>
+          ${b(isCrit?'badge-red':'badge-yellow',isCrit?'KRITIS':'Monitor')}
+        </div>
+        <div style="font-size:11px;color:#4a6b8a;margin-bottom:12px">${p.diagnosis||''} · ${bd.ventilator?'🔧 Ventilator':''}</div>
+        
+        <!-- Hemodynamic -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div class="vital-box ${v.bp_systolic<90?'crit':v.bp_systolic<100?'warn':''}">
+            <div class="vital-name">Blood Pressure</div>
+            <div class="vital-val" style="color:${v.bp_systolic<90?'#dc2626':v.bp_systolic<100?'#ea580c':'#1a2b3c'}">${v.bp_systolic}/${v.bp_diastolic}</div>
+            <div class="vital-unit">mmHg · MAP ${v.map||'?'}</div>
+          </div>
+          <div class="vital-box ${v.hr>110||v.hr<50?'crit':v.hr>100||v.hr<60?'warn':''}">
+            <div class="vital-name">Heart Rate</div>
+            <div class="vital-val" style="color:${v.hr>110||v.hr<50?'#dc2626':v.hr>100||v.hr<60?'#ea580c':'#1a2b3c'}">${v.hr}</div>
+            <div class="vital-unit">bpm</div>
+          </div>
+          <div class="vital-box ${v.spo2<90?'crit':v.spo2<94?'warn':''}">
+            <div class="vital-name">SpO₂</div>
+            <div class="vital-val" style="color:${v.spo2<90?'#dc2626':v.spo2<94?'#ea580c':'#15803d'}">${v.spo2}</div>
+            <div class="vital-unit">% · FiO₂ ${v.fio2||'?'}%</div>
+          </div>
+          <div class="vital-box ${v.gcs<9?'crit':v.gcs<13?'warn':''}">
+            <div class="vital-name">GCS</div>
+            <div class="vital-val" style="color:${v.gcs<9?'#dc2626':v.gcs<13?'#ea580c':'#1a2b3c'}">${v.gcs}</div>
+            <div class="vital-unit">/15</div>
+          </div>
+        </div>
+
+        <!-- Ventilator Data -->
+        ${bd.ventilator?`
+        <div class="ventilator-data" style="margin-bottom:8px">
+          <div style="font-size:10px;color:#0891b2;font-weight:700;margin-bottom:6px">VENTILATOR</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px">
+            <div>Mode: <strong>${v.vent_mode||'?'}</strong></div>
+            <div>VT: <strong>${v.vt||'?'} mL</strong></div>
+            <div>FiO₂: <strong>${v.fio2||'?'}%</strong></div>
+            <div>PEEP: <strong>${v.peep||'?'} cmH₂O</strong></div>
+          </div>
+        </div>`:''}
+
+        <!-- Other Parameters -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+          <div class="vital-box"><div class="vital-name">Temp</div><div class="vital-val" style="font-size:16px">${v.temp}°</div></div>
+          <div class="vital-box"><div class="vital-name">RR</div><div class="vital-val" style="font-size:16px">${v.rr}</div><div class="vital-unit">/min</div></div>
+          <div class="vital-box"><div class="vital-name">CVP</div><div class="vital-val" style="font-size:16px">${v.cvp||'?'}</div><div class="vital-unit">mmHg</div></div>
+        </div>
+        
+        <div class="info-row"><span class="info-key">Urine Output</span><span class="info-val">${v.urine_output||'?'} mL/jam</span></div>
+        <div class="info-row"><span class="info-key">Vasopressor</span><span class="info-val" style="font-size:11px">${v.vasopressor||'—'}</span></div>
+        
+        <div style="display:flex;gap:6px;margin-top:12px">
+          <button class="btn btn-primary btn-sm" onclick="inputVitalFor('${bd.patient_id}')">✏️ Update Vital</button>
+          <button class="btn btn-ghost btn-sm" onclick="openChart('${bd.patient_id}')">📋 Detail</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`);
+}
+
+function inputVitalNow(){
+  inputVitalFor('');
+}
+
+function inputVitalFor(patientId){
+  const v=patientId?DB.vitals.filter(v=>v.patient_id===patientId).pop():null;
+  openModal('Input Vital Signs ICU',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label>
+      <select id="ivf-patient">${DB.patients.filter(p=>p.status==='icu').map(p=>`<option value="${p.id}" ${patientId===p.id?'selected':''}>${p.name} (${p.id})</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>Heart Rate (bpm)</label><input type="number" id="ivf-hr" value="${v?v.hr:''}"></div>
+    <div class="field"><label>Sistolik (mmHg)</label><input type="number" id="ivf-sys" value="${v?v.bp_systolic:''}"></div>
+    <div class="field"><label>Diastolik (mmHg)</label><input type="number" id="ivf-dia" value="${v?v.bp_diastolic:''}"></div>
+    <div class="field"><label>MAP (mmHg)</label><input type="number" id="ivf-map" value="${v?v.map:''}"></div>
+    <div class="field"><label>SpO₂ (%)</label><input type="number" id="ivf-spo2" value="${v?v.spo2:''}"></div>
+    <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="ivf-temp" value="${v?v.temp:''}"></div>
+    <div class="field"><label>Resp Rate (/min)</label><input type="number" id="ivf-rr" value="${v?v.rr:''}"></div>
+    <div class="field"><label>GCS</label><input type="number" id="ivf-gcs" min="3" max="15" value="${v?v.gcs:''}"></div>
+    <div class="field"><label>CVP (mmHg)</label><input type="number" id="ivf-cvp" value="${v?v.cvp:''}"></div>
+    <div class="field"><label>Urine Output (mL/jam)</label><input type="number" id="ivf-uo" value="${v?v.urine_output:''}"></div>
+    <div class="field full"><label>Vasopressor</label><input id="ivf-vaso" placeholder="Norepinephrine 0.1 mcg/kg/min" value="${v?v.vasopressor:''}"></div>
+    <div class="field"><label>Ventilator Mode</label><select id="ivf-vmode"><option ${v&&v.vent_mode==='VC-AC'?'selected':''}>VC-AC</option><option ${v&&v.vent_mode==='PC-AC'?'selected':''}>PC-AC</option><option ${v&&v.vent_mode==='PSV'?'selected':''}>PSV</option><option ${v&&v.vent_mode==='Spontaneous'?'selected':''}>Spontaneous</option></select></div>
+    <div class="field"><label>VT (mL)</label><input type="number" id="ivf-vt" value="${v?v.vt:''}"></div>
+    <div class="field"><label>FiO₂ (%)</label><input type="number" id="ivf-fio2" value="${v?v.fio2:''}"></div>
+    <div class="field"><label>PEEP (cmH₂O)</label><input type="number" id="ivf-peep" value="${v?v.peep:''}"></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+   <button class="btn btn-primary" onclick="saveVitalICU()">💾 Simpan Vital</button>`);
+}
+
+function saveVitalICU(){
+  DB.vitals.push({
+    id:genId('VT',DB.vitals),
+    patient_id:document.getElementById('ivf-patient').value,
+    datetime:new Date().toISOString(),
+    hr:+document.getElementById('ivf-hr').value,
+    bp_systolic:+document.getElementById('ivf-sys').value,
+    bp_diastolic:+document.getElementById('ivf-dia').value,
+    map:+document.getElementById('ivf-map').value,
+    spo2:+document.getElementById('ivf-spo2').value,
+    temp:+document.getElementById('ivf-temp').value,
+    rr:+document.getElementById('ivf-rr').value,
+    gcs:+document.getElementById('ivf-gcs').value,
+    cvp:+document.getElementById('ivf-cvp').value,
+    urine_output:+document.getElementById('ivf-uo').value,
+    vasopressor:document.getElementById('ivf-vaso').value,
+    vent_mode:document.getElementById('ivf-vmode').value,
+    vt:+document.getElementById('ivf-vt').value,
+    fio2:+document.getElementById('ivf-fio2').value,
+    peep:+document.getElementById('ivf-peep').value
+  });
+  saveDB(); checkAlarms(); closeModal(); renderMonitor();
+  showToast('success','✅ Vital signs tersimpan');
+}
+
+function openChart(pid){
+  const p=P(pid), v=DB.vitals.filter(v=>v.patient_id===pid).pop(), s=DB.scoring.filter(s=>s.patient_id===pid), cppt=DB.cppt.filter(c=>c.patient_id===pid);
+  openModal(`📋 Detail ICU — ${p.name}`,`
+  <div style="margin-bottom:14px">
+    <div style="font-weight:700;font-size:14px;margin-bottom:4px">${p.name} · ${age(p.dob)} · ${p.gender}</div>
+    <div style="font-size:12px;color:#4a6b8a">Diagnosis: <strong>${p.diagnosis}</strong> · Severity: ${b('badge-red',p.severity)}</div>
+    <div style="font-size:12px;color:#4a6b8a">Admission: ${fmt(p.admission)} · Blood: ${b('badge-blue',p.blood_type)}</div>
+  </div>
+  ${v?`
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-title">💓 Vital Signs Terbaru (${fmtDate(v.datetime)})</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div class="vital-box"><div class="vital-name">HR</div><div class="vital-val">${v.hr}</div></div>
+      <div class="vital-box"><div class="vital-name">BP</div><div class="vital-val">${v.bp_systolic}/${v.bp_diastolic}</div></div>
+      <div class="vital-box"><div class="vital-name">SpO₂</div><div class="vital-val">${v.spo2}%</div></div>
+    </div>
+    <div class="info-row"><span class="info-key">GCS</span><span class="info-val">${v.gcs}/15</span></div>
+    <div class="info-row"><span class="info-key">Ventilator</span><span class="info-val">${v.vent_mode||'Spontaneous'} · VT ${v.vt||0} · FiO₂ ${v.fio2||21}% · PEEP ${v.peep||0}</span></div>
+  </div>`:''}
+  ${s.length?`
+  <div class="card" style="margin-bottom:12px">
+    <div class="card-title">📐 Scoring</div>
+    ${s.map(sc=>`<div class="info-row"><span class="info-key">${sc.type}</span><span class="info-val">Score: <strong>${sc.score}</strong> · Mortalitas: ${sc.mortality||sc.organ||'?'}%</span></div>`).join('')}
+  </div>`:''}
+  <div><strong>CPPT Terbaru:</strong> ${cppt.length} catatan</div>`);
+}
+
+// ══════════════════════════════════════
+//  BED MANAGEMENT
+// ══════════════════════════════════════
+function renderBeds(){
+  setContent(`
+  <div class="page-header">
+    <div>
+      <div class="page-title">🛏️ Bed ICU Management</div>
+      <div class="page-sub">${DB.beds.filter(bd=>bd.status==='terisi').length}/${DB.beds.length} terisi</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="openAdmitModal()">+ Admit ICU</button>
+    </div>
+  </div>
+  <div class="monitor-grid">
+    ${DB.beds.map(bd=>{
+      const p=bd.patient_id?P(bd.patient_id):null;
+      return `
+      <div class="bed-card ${bd.status==='terisi'&&bd.monitoring==='Ketat'?'critical':bd.status==='terisi'?(bd.ventilator?'ventilator':'occupied'):''}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div>
+            <div style="font-weight:800;font-size:16px;color:#0f1f35">${bd.number}</div>
+            <div style="font-size:11px;color:#4a6b8a">${bd.ventilator?'🔧 Ventilator ready':'Standard bed'}</div>
+          </div>
+          ${b(bd.status==='terisi'?'badge-red':bd.status==='kosong'?'badge-green':'badge-yellow',bd.status==='terisi'?'TERISI':bd.status.toUpperCase())}
+        </div>
+        ${p?`
+        <div style="background:#f8fafc;border-radius:8px;padding:10px;margin-bottom:10px">
+          <div style="font-weight:700;font-size:13px">${p.name}</div>
+          <div style="font-size:11px;color:#4a6b8a">${p.diagnosis}</div>
+          <div style="font-size:10px;color:#7a9ab5">Admitted: ${fmt(bd.admitted)}</div>
+          <div style="margin-top:6px">Monitoring: ${b('badge-red',bd.monitoring)}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-success btn-sm" onclick="discharge('${bd.id}')">Discharge</button>
+          <button class="btn btn-ghost btn-sm" onclick="transferBed('${bd.id}')">Transfer</button>
+        </div>`:bd.status==='kosong'?`
+        <div style="color:#7a9ab5;font-size:12px;padding:20px;text-align:center">Bed kosong · Siap digunakan</div>
+        <button class="btn btn-primary btn-sm" style="width:100%" onclick="openAdmitModal()">+ Admit</button>`:`
+        <div style="color:#ea580c;font-size:12px;padding:20px;text-align:center">Maintenance · Tidak tersedia</div>`}
+      </div>`;
+    }).join('')}
+  </div>`);
+}
+
+function openAdmitModal(){
+  const empty=DB.beds.filter(bd=>bd.status==='kosong');
+  openModal('Admit Pasien ke ICU',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien (pilih dari database)</label>
+      <select id="af-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name} — ${p.diagnosis}</option>`).join('')}</select>
+    </div>
+    <div class="field full"><label>Bed ICU</label>
+      <select id="af-bed">${empty.map(bd=>`<option value="${bd.id}">${bd.number} ${bd.ventilator?'(Ventilator)':''}</option>`).join('')}</select>
+    </div>
+    <div class="field full"><label>Diagnosis Masuk ICU</label><input id="af-diag" placeholder="Primary diagnosis"></div>
+    <div class="field"><label>Gunakan Ventilator</label><select id="af-vent"><option value="yes">Ya</option><option value="no">Tidak</option></select></div>
+    <div class="field"><label>Level Monitoring</label><select id="af-mon"><option>Ketat</option><option>Intermediate</option><option>Rutin</option></select></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+   <button class="btn btn-primary" onclick="admitICU()">✅ Admit ke ICU</button>`);
+}
+
+function admitICU(){
+  const pid=document.getElementById('af-patient').value;
+  const bid=document.getElementById('af-bed').value;
+  const bed=DB.beds.find(bd=>bd.id===bid);
+  const pt=DB.patients.find(p=>p.id===pid);
+  if(bed&&pt){
+    bed.patient_id=pid;
+    bed.status='terisi';
+    bed.admitted=new Date().toISOString().slice(0,10);
+    bed.ventilator=document.getElementById('af-vent').value==='yes';
+    bed.monitoring=document.getElementById('af-mon').value;
+    pt.status='icu';
+    pt.diagnosis=document.getElementById('af-diag').value||pt.diagnosis;
+    pt.admission=bed.admitted;
+    saveDB(); updateBadges(); closeModal(); renderBeds();
+    showToast('success',`✅ ${pt.name} di-admit ke ${bed.number}`);
+  }
+}
+
+function discharge(bedId){
+  const bx=DB.beds.find(x=>x.id===bedId);
+  if(bx&&bx.patient_id){
+    const n=P(bx.patient_id).name;
+    if(!confirm(`Discharge ${n} dari ${bx.number}?`)) return;
+    const pt=DB.patients.find(p=>p.id===bx.patient_id);
+    if(pt) pt.status='discharged';
+    bx.patient_id=''; bx.status='kosong'; bx.admitted=''; bx.monitoring='';
+    bx.ventilator=bx.ventilator||false;
+    saveDB(); updateBadges(); renderBeds();
+    showToast('success',`✅ ${n} di-discharge`);
+  }
+}
+
+function transferBed(bedId){
+  showToast('info','Fitur transfer bed dalam pengembangan');
+}
+
+// ══════════════════════════════════════
+//  CPPT ICU (SOAP Format)
+// ══════════════════════════════════════
+function renderCPPT(){
+  if(!DB.cppt) DB.cppt=[];
+  const profBadge = pr => b(pr==='Dokter ICU'?'badge-red':'badge-blue', pr);
+  setContent(`
+  <div class="page-header">
+    <div>
+      <div class="page-title">📝 CPPT ICU</div>
+      <div class="page-sub">Catatan Perkembangan Pasien Terintegrasi · ${DB.cppt.length} catatan</div>
+    </div>
+    <div class="page-actions">
+      <select onchange="filterCPPTProf(this.value)" style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;padding:7px 12px;color:#1a2b3c;font-size:12px;font-family:inherit;outline:none">
+        <option value="">Semua Profesi</option>
+        <option>Dokter ICU</option><option>Perawat ICU</option>
+      </select>
+      <button class="btn btn-primary" onclick="openCPPTModal()">+ Tambah Catatan</button>
+    </div>
+  </div>
+
+  <div id="cppt-cards" style="display:none">
+    ${DB.cppt.map(c=>{ const p=P(c.patient_id); return `
+    <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;padding:14px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px">
+        <div>
+          <div style="font-weight:700;font-size:14px;color:#0f1f35">${p.name||'—'}</div>
+          <div style="font-size:11px;color:#4a6b8a;font-family:'JetBrains Mono',monospace">${c.tanggal} · ${c.jam}</div>
+        </div>
+        ${profBadge(c.profesi)}
+      </div>
+      ${[['S','#dc2626','#fef2f2',c.subjektif],['A','#ea580c','#fff7ed',c.asesmen],['P','#16a34a','#f0fdf4',c.planning]].map(([l,col,bg,val])=>val?`
+      <div style="background:${bg};border-left:3px solid ${col};border-radius:0 6px 6px 0;padding:7px 10px;margin-bottom:6px;font-size:12px;color:#1a2b3c">
+        <span style="color:${col};font-weight:700;margin-right:6px">${l}</span>${val}
+      </div>`:'')}
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-primary btn-sm" onclick="openCPPTDetail('${c.id}')">🔍 Detail</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCPPTModal('${c.id}')">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="delCPPT('${c.id}')">🗑</button>
+      </div>
+    </div>`; }).join('')}
+  </div>
+
+  <div id="cppt-tbl-wrap" style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="tbl" id="cppt-tbl">
+        <thead><tr><th>Tgl/Jam</th><th>Pasien</th><th>Profesi</th><th>S</th><th>O</th><th>A</th><th>P</th><th>Instruksi</th><th>Aksi</th></tr></thead>
+        <tbody id="cppt-tbody">
+          ${DB.cppt.map(c=>{ const p=P(c.patient_id); return `<tr>
+            <td style="white-space:nowrap" class="cell-id">${c.tanggal}<br>${c.jam}</td>
+            <td><div class="cell-name">${p.name||'—'}</div></td>
+            <td>${profBadge(c.profesi)}</td>
+            <td style="max-width:120px;font-size:11px;color:#4a6b8a">${(c.subjektif||'').slice(0,50)}</td>
+            <td style="max-width:120px;font-size:11px;color:#4a6b8a">${(c.objektif||'').slice(0,50)}</td>
+            <td style="max-width:100px;font-size:11px">${(c.asesmen||'').slice(0,50)}</td>
+            <td style="max-width:100px;font-size:11px;color:#4a6b8a">${(c.planning||'').slice(0,50)}</td>
+            <td style="max-width:100px;font-size:11px;color:#dc2626">${(c.instruksi||'').slice(0,50)}</td>
+            <td><div style="display:flex;gap:4px">
+              <button class="btn btn-primary btn-sm" onclick="openCPPTDetail('${c.id}')">🔍</button>
+              <button class="btn btn-ghost btn-sm" onclick="openCPPTModal('${c.id}')">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="delCPPT('${c.id}')">🗑</button>
+            </div></td>
+          </tr>`; }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`);
+
+  const cards = document.getElementById('cppt-cards');
+  const tbl = document.getElementById('cppt-tbl-wrap');
+  function adaptCPPT(){ if(window.innerWidth<=640){cards.style.display='block';tbl.style.display='none';}else{cards.style.display='none';tbl.style.display='block';} }
+  adaptCPPT();
+  window.addEventListener('resize', adaptCPPT);
+}
+
+function filterCPPTProf(val){
+  document.querySelectorAll('#cppt-tbody tr').forEach(row=>{
+    row.style.display=(!val||row.textContent.includes(val))?'':'none';
+  });
+}
+
+function openCPPTModal(editId){
+  const isEdit=!!editId, c=isEdit?DB.cppt.find(x=>x.id===editId):null;
+  const now=new Date(), today=now.toISOString().slice(0,10), time=now.toTimeString().slice(0,5);
+  const soapSection = (letter, color, title, sub, fieldId, val) => `
+  <div class="soap-block" style="margin-bottom:10px">
+    <div class="soap-header" style="background:${color}15;border-bottom:1px solid ${color}30">
+      <span style="background:${color};color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${letter}</span>
+      <span style="font-weight:700;font-size:12.5px;color:#1a2b3c">${title}</span>
+      <span style="color:#4a6b8a;font-weight:400;font-size:11px">${sub}</span>
+    </div>
+    <div style="padding:12px">
+      <textarea id="${fieldId}" rows="3" placeholder="${sub}…" style="width:100%;background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;color:#1a2b3c;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none;transition:border-color .15s" onfocus="this.style.borderColor='${color}';this.style.boxShadow='0 0 0 3px ${color}22'" onblur="this.style.borderColor='#e2eaf4';this.style.boxShadow=''">${val||''}</textarea>
+    </div>
+  </div>`;
+  openModal((isEdit?'✏️ Edit':'📝 Tambah')+' Catatan CPPT ICU',`
+  <div style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div class="form-grid">
+      <div class="field"><label>Pasien</label><select id="cf-patient">${DB.patients.filter(p=>p.status==='icu').map(p=>`<option value="${p.id}" ${c&&c.patient_id===p.id?'selected':''}>${p.name}</option>`).join('')}</select></div>
+      <div class="field"><label>Profesi</label><select id="cf-profesi"><option ${c&&c.profesi==='Dokter ICU'?'selected':''}>Dokter ICU</option><option ${c&&c.profesi==='Perawat ICU'?'selected':''}>Perawat ICU</option></select></div>
+      <div class="field"><label>Tanggal</label><input type="date" id="cf-tgl" value="${c?c.tanggal:today}"></div>
+      <div class="field"><label>Jam</label><input type="time" id="cf-jam" value="${c?c.jam:time}"></div>
+    </div>
+  </div>
+  ${soapSection('S','#dc2626','Subjektif','Keluhan, anamnesis','cf-s',c?c.subjektif:'')}
+  ${soapSection('O','#0891b2','Objektif','Pemeriksaan fisik & penunjang','cf-o',c?c.objektif:'')}
+  ${soapSection('A','#ea580c','Asesmen','Diagnosis, scoring','cf-a',c?c.asesmen:'')}
+  ${soapSection('P','#16a34a','Planning','Rencana tindak lanjut','cf-p',c?c.planning:'')}
+  <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:14px;margin-top:10px">
+    <div class="field full"><label>⚠️ Instruksi Khusus</label>
+      <textarea id="cf-ins" rows="2" placeholder="Instruksi untuk shift berikutnya…" style="width:100%;background:#ffffff;border:1px solid #fca5a5;border-radius:8px;color:#dc2626;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none">${c?c.instruksi||'':''}</textarea>
+    </div>
+    <div class="field"><label>Nama / TTD</label><input id="cf-ttd" placeholder="Nama lengkap" value="${c?c.ttd:currentUser?currentUser.name:''}"></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+   <button class="btn btn-primary" onclick="saveCPPT(${isEdit?`'${editId}'`:'null'})">${isEdit?'💾 Update':'✅ Simpan'} Catatan</button>`);
+}
+
+function saveCPPT(editId){
+  const d={patient_id:document.getElementById('cf-patient').value,profesi:document.getElementById('cf-profesi').value,tanggal:document.getElementById('cf-tgl').value,jam:document.getElementById('cf-jam').value,subjektif:document.getElementById('cf-s').value.trim(),objektif:document.getElementById('cf-o').value.trim(),asesmen:document.getElementById('cf-a').value.trim(),planning:document.getElementById('cf-p').value.trim(),instruksi:document.getElementById('cf-ins').value.trim(),ttd:document.getElementById('cf-ttd').value.trim()};
+  if(!d.subjektif&&!d.objektif&&!d.asesmen){showToast('error','❌ Minimal isi S, O, atau A');return;}
+  if(editId){ const c=DB.cppt.find(x=>x.id===editId); if(c) Object.assign(c,d); }
+  else DB.cppt.push({id:genId('CPPT',DB.cppt),...d});
+  saveDB(); updateBadges();closeModal();renderCPPT();showToast('success',editId?'✅ Catatan diperbarui':'✅ Catatan CPPT tersimpan');
+}
+
+function openCPPTDetail(id){
+  const c=DB.cppt.find(x=>x.id===id); if(!c) return;
+  const p=P(c.patient_id);
+  openModal(`🔍 Detail CPPT ICU — ${p.name}`,`
+  <div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px 14px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;margin-bottom:14px">
+    <div><div style="font-size:10px;color:#7a9ab5;text-transform:uppercase;letter-spacing:.4px">Pasien</div><div style="font-weight:700">${p.name}</div></div>
+    <div><div style="font-size:10px;color:#7a9ab5;text-transform:uppercase;letter-spacing:.4px">Profesi</div>${b('badge-red',c.profesi)}</div>
+    <div><div style="font-size:10px;color:#7a9ab5;text-transform:uppercase;letter-spacing:.4px">Tgl/Jam</div><div style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">${c.tanggal} · ${c.jam}</div></div>
+  </div>
+  ${[['S — Subjektif','#dc2626',c.subjektif],['O — Objektif','#0891b2',c.objektif],['A — Asesmen','#ea580c',c.asesmen],['P — Planning','#16a34a',c.planning]].map(([lbl,col,val])=>`
+  <div class="soap-block" style="margin-bottom:8px">
+    <div class="soap-header" style="background:${col}15;border-bottom:1px solid ${col}30;color:${col}">${lbl}</div>
+    <div class="soap-body">${val||`<span style="color:#7a9ab5">—</span>`}</div>
+  </div>`).join('')}
+  ${c.instruksi?`<div class="soap-block"><div class="soap-header" style="background:#fef2f2;border-bottom:1px solid #fca5a5;color:#dc2626">📌 Instruksi Khusus</div><div class="soap-body">${c.instruksi}</div></div>`:''}`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Tutup</button><button class="btn btn-primary" onclick="closeModal();openCPPTModal('${c.id}')">✏️ Edit</button>`);
+}
+function delCPPT(id){
+  if(!confirm('Hapus catatan CPPT ini?')) return;
+  DB.cppt=DB.cppt.filter(x=>x.id!==id); saveDB(); renderCPPT();showToast('success','🗑 Catatan dihapus');
+}
+
+// ══════════════════════════════════════
+//  SCORING (APACHE II, SOFA, GCS)
+// ══════════════════════════════════════
+function renderScoring(){
+  setContent(`
+  <div class="page-header">
+    <div>
+      <div class="page-title">📐 ICU Scoring</div>
+      <div class="page-sub">APACHE II · SOFA · GCS — ${DB.scoring.length} penilaian</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="openScoreModal()">+ Hitung Score</button>
+    </div>
+  </div>
+  <div class="monitor-grid">
+    ${DB.scoring.map(s=>{
+      const p=P(s.patient_id);
+      return `
+      <div class="score-card" style="${s.score>=20?'border-color:#dc2626;background:#fef2f2':''}">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px">${p.name}</div>
+        <div style="font-size:10px;color:#7a9ab5;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">${s.type}</div>
+        <div class="score-val" style="color:${s.score>=20?'#dc2626':s.score>=15?'#ea580c':'#1a2b3c'}">${s.score}</div>
+        <div class="score-label">Score · ${s.type==='APACHE II'?'Mortalitas: '+s.mortality+'%':s.type==='SOFA'?'Organ: '+s.organ:'GCS: /15'}</div>
+        <div style="font-size:10px;color:#4a6b8a;margin-top:6px">${fmt(s.date)}</div>
+      </div>`;
+    }).join('')}
+  </div>`);
+}
+
+function openScoreModal(){
+  openModal('Hitung ICU Score',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="sf-patient">${DB.patients.filter(p=>p.status==='icu').map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+    <div class="field full"><label>Tipe Scoring</label><select id="sf-type"><option>APACHE II</option><option>SOFA</option><option>GCS</option></select></div>
+    <div class="field"><label>Score</label><input type="number" id="sf-score" placeholder="Masukkan total score"></div>
+    <div class="field"><label>Detail</label><input id="sf-detail" placeholder="Mortalitas % / Organ failure / dll"></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+   <button class="btn btn-primary" onclick="saveScore()">💾 Simpan Score</button>`);
+}
+
+function saveScore(){
+  const type=document.getElementById('sf-type').value;
+  const score=+document.getElementById('sf-score').value;
+  if(!score){showToast('error','Score wajib diisi');return;}
+  DB.scoring.push({
+    id:genId('S',DB.scoring),
+    patient_id:document.getElementById('sf-patient').value,
+    type,
+    score,
+    mortality:type==='APACHE II'?document.getElementById('sf-detail').value:'',
+    organ:type==='SOFA'?document.getElementById('sf-detail').value:'',
+    date:new Date().toISOString().slice(0,10)
+  });
+  saveDB(); closeModal(); renderScoring(); showToast('success','✅ Score ICU disimpan');
+}
+
+// ══════════════════════════════════════
+//  MEDICATIONS ICU
+// ══════════════════════════════════════
+function renderMedications(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">💉 Obat ICU</div><div class="page-sub">${DB.medications.filter(m=>m.status==='running').length} infus berjalan</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openMedModal()">+ Order Obat</button></div>
+  </div>
+  <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>Pasien</th><th>Obat</th><th>Dosis</th><th>Rute</th><th>Start</th><th>Status</th></tr></thead>
+        <tbody>
+          ${DB.medications.map(m=>`<tr>
+            <td class="cell-name">${P(m.patient_id).name||'?'}</td>
+            <td><strong>${m.drug}</strong></td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${m.dose}</td>
+            <td>${b(m.route.includes('Continuous')?'badge-red':'badge-blue',m.route)}</td>
+            <td>${fmt(m.start)}</td>
+            <td>${b(m.status==='running'?'badge-red':m.status==='active'?'badge-green':'badge-gray',m.status)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`);
+}
+
+function openMedModal(){
+  openModal('Order Obat ICU',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="mf-patient">${DB.patients.filter(p=>p.status==='icu').map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+    <div class="field full"><label>Nama Obat</label><input id="mf-drug" placeholder="Norepinephrine, Fentanyl, dll"></div>
+    <div class="field"><label>Dosis</label><input id="mf-dose" placeholder="0.1 mcg/kg/min"></div>
+    <div class="field"><label>Rute</label><select id="mf-route"><option>IV Continuous</option><option>IV Bolus</option><option>IV</option><option>Oral</option><option>NGT</option></select></div>
+    <div class="field"><label>Tanggal Mulai</label><input type="date" id="mf-start" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div class="field"><label>Status</label><select id="mf-status"><option>running</option><option>active</option></select></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveMed()">💾 Simpan</button>`);
+}
+
+function saveMed(){
+  const drug=document.getElementById('mf-drug').value; if(!drug){showToast('error','Nama obat wajib');return;}
+  DB.medications.push({
+    id:genId('M',DB.medications),
+    patient_id:document.getElementById('mf-patient').value,
+    drug,
+    dose:document.getElementById('mf-dose').value,
+    route:document.getElementById('mf-route').value,
+    start:document.getElementById('mf-start').value,
+    status:document.getElementById('mf-status').value
+  });
+  saveDB(); closeModal(); renderMedications(); showToast('success',`✅ ${drug} diorder`);
+}
+
+// ══════════════════════════════════════
+//  LABORATORY
+// ══════════════════════════════════════
+function renderLaboratory(){
+  setContent(`
+  <div class="page-header">
+    <div><div class="page-title">🔬 Lab Results ICU</div><div class="page-sub">${DB.lab_orders.filter(l=>l.status==='pending').length} pending</div></div>
+    <div class="page-actions"><button class="btn btn-primary" onclick="openLabModal()">+ Order Lab</button></div>
+  </div>
+  <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;overflow:hidden">
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>Pasien</th><th>Pemeriksaan</th><th>Tanggal</th><th>Status</th><th>Hasil</th><th>Aksi</th></tr></thead>
+        <tbody>
+          ${DB.lab_orders.map(l=>`<tr>
+            <td class="cell-name">${P(l.patient_id).name||'?'}</td>
+            <td>${l.test}</td>
+            <td>${fmt(l.ordered)}</td>
+            <td>${b(l.status==='selesai'?'badge-green':l.status==='pending'?'badge-yellow':'badge-gray',l.status)}</td>
+            <td style="font-size:11px;max-width:200px">${l.result||'—'}</td>
+            <td>${l.status==='pending'?`<button class="btn btn-success btn-sm" onclick="inputLabResult('${l.id}')">Input Hasil</button>`:''}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`);
+}
+
+function openLabModal(){
+  openModal('Order Pemeriksaan Lab',`
+  <div class="form-grid">
+    <div class="field full"><label>Pasien</label><select id="lf-patient">${DB.patients.filter(p=>p.status==='icu').map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
+    <div class="field full"><label>Pemeriksaan</label><input id="lf-test" placeholder="AGD, Laktat, Elektrolit, dll"></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveLab()">💾 Order</button>`);
+}
+
+function saveLab(){
+  const test=document.getElementById('lf-test').value; if(!test){showToast('error','Jenis pemeriksaan wajib');return;}
+  DB.lab_orders.push({
+    id:genId('L',DB.lab_orders),
+    patient_id:document.getElementById('lf-patient').value,
+    test,
+    ordered:new Date().toISOString().slice(0,10),
+    status:'pending',
+    result:''
+  });
+  saveDB(); updateBadges(); closeModal(); renderLaboratory(); showToast('success','✅ Lab diorder');
+}
+
+function inputLabResult(id){
+  const l=DB.lab_orders.find(x=>x.id===id);
+  openModal('Input Hasil Lab',`
+  <div style="font-weight:600;margin-bottom:10px">${P(l.patient_id).name} — ${l.test}</div>
+  <div class="field full"><label>Hasil Pemeriksaan</label><textarea id="res-txt" style="min-height:100px" placeholder="Masukkan hasil lab…"></textarea></div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-success" onclick="saveLabResult('${id}')">💾 Simpan Hasil</button>`);
+}
+
+function saveLabResult(id){
+  const l=DB.lab_orders.find(x=>x.id===id);
+  if(l){l.result=document.getElementById('res-txt').value;l.status='selesai'; saveDB(); updateBadges(); closeModal(); renderLaboratory(); showToast('success','✅ Hasil lab disimpan');}
+}
+
+// ══════════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════════
+function renderExport(){
+  const storageSize = (() => { try { const s = localStorage.getItem(STORAGE_KEY); return s ? (s.length/1024).toFixed(1)+'KB' : '0KB'; } catch(e){ return 'N/A'; } })();
+  setContent(`
+  <div class="page-header"><div><div class="page-title">📥 Export Data ICU</div><div class="page-sub">Backup & reporting</div></div></div>
+  <div class="card">
+    <div class="card-title">💾 Data Management</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+      <button class="btn btn-primary" onclick="exportJSON()">📥 Export JSON</button>
+      <label class="btn btn-ghost" style="cursor:pointer">📂 Import JSON<input type="file" accept=".json" class="hidden" onchange="importJSON(this)"></label>
+      <button class="btn btn-danger" onclick="if(confirm('Reset semua data ICU?')){localStorage.removeItem(STORAGE_KEY);location.reload()}">🗑️ Reset Data</button>
+    </div>
+    <div style="margin-bottom:10px;font-size:11px;color:#4a6b8a">Storage: ${b('badge-blue',storageSize)}</div>
+    <pre style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;padding:12px;font-size:10.5px;font-family:'JetBrains Mono',monospace;overflow:auto;max-height:200px;color:#4a6b8a">${JSON.stringify({meta:DB.meta,pasien_icu:DB.patients.filter(p=>p.status==='icu').length,beds_terisi:DB.beds.filter(bd=>bd.status==='terisi').length,vitals:DB.vitals.length,cppt:DB.cppt.length,scoring:DB.scoring.length,storage:storageSize},null,2)}</pre>
+  </div>`);
+}
+
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`E-ICU_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  showToast('success','💾 Data ICU berhasil diekspor');
+}
+
+function importJSON(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{ try{
+    const data=JSON.parse(e.target.result);
+    if(data.patients){ DB=data; if(!DB.cppt) DB.cppt=[]; if(!DB.scoring) DB.scoring=[]; saveDB(); updateBadges(); checkAlarms(); showPage(currentPage); showToast('success',`📂 Import berhasil`); }
+    else showToast('error','❌ Format JSON tidak valid');
+  } catch{ showToast('error','❌ File JSON rusak'); } };
+  reader.readAsText(file); input.value='';
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeModal();
+});
+
+// ── INIT ──
+checkAlarms();
+setInterval(checkAlarms, 30000);
+</script>
+</body>
+</html>
