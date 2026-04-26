@@ -44,13 +44,11 @@ tailwind.config = {
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 4px; }
   input, select, textarea { font-family: inherit; }
-  input[type=date], input[type=time] { color-scheme: dark; }
+  input[type=date], input[type=time] { color-scheme: light; }
 
-  /* ── PULSE DOT ── */
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
   .pulse-dot { animation: pulse 2s infinite; }
 
-  /* ── TOAST ── */
   #toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
     background:#ffffff; border:1px solid #d0dcea; border-radius:12px; color:#1a2b3c;
     padding:10px 18px; display:flex; align-items:center; gap:10px;
@@ -62,7 +60,6 @@ tailwind.config = {
   #toast.warn    { border-color:#f5c54244; }
   #toast.info    { border-color:#3b9eff44; }
 
-  /* ── MODAL ── */
   #modal-overlay { position:fixed; inset:0; background:rgba(15,30,60,.35); backdrop-filter:blur(4px);
     z-index:500; display:flex; align-items:center; justify-content:center; padding:16px; }
   #modal { background:#ffffff; border:1px solid #d0dcea; border-radius:16px;
@@ -73,7 +70,6 @@ tailwind.config = {
   #modal-body { padding:20px; overflow-y:auto; flex:1; }
   #modal-footer { padding:14px 20px; border-top:1px solid #e2eaf4; display:flex; justify-content:flex-end; gap:8px; flex-shrink:0; flex-wrap:wrap; }
 
-  /* ── FORM ── */
   .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   @media(max-width:480px){ .form-grid { grid-template-columns:1fr; } }
   .field { display:flex; flex-direction:column; gap:5px; }
@@ -85,9 +81,8 @@ tailwind.config = {
     transition:border-color .15s, box-shadow .15s; width:100%; }
   .field input:focus, .field select:focus, .field textarea:focus {
     border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.1); }
-  .field select option { background:#ffffff; }
+  .field select option { background:#ffffff; color:#1a2b3c; }
 
-  /* ── BUTTONS ── */
   .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px;
     border-radius:8px; font-size:12.5px; font-weight:600; cursor:pointer;
     border:none; font-family:inherit; transition:all .15s; white-space:nowrap; }
@@ -99,25 +94,22 @@ tailwind.config = {
   .btn-danger { background:#f04f4f; color:#fff; }
   .btn-sm { padding:4px 10px; font-size:11.5px; border-radius:6px; }
 
-  /* ── BADGES ── */
   .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:20px; font-size:10.5px; font-weight:600; font-family:'JetBrains Mono',monospace; }
-  .badge-blue   { background:rgba(59,158,255,.15); color:#6db9ff; }
-  .badge-green  { background:rgba(39,201,122,.15); color:#27c97a; }
-  .badge-yellow { background:rgba(245,197,66,.15);  color:#f5c542; }
-  .badge-red    { background:rgba(240,79,79,.15);   color:#f04f4f; }
-  .badge-purple { background:rgba(168,126,255,.15); color:#a87eff; }
-  .badge-orange { background:rgba(255,140,66,.15);  color:#ff8c42; }
+  .badge-blue   { background:rgba(59,158,255,.15); color:#1b6fd4; }
+  .badge-green  { background:rgba(39,201,122,.15); color:#15803d; }
+  .badge-yellow { background:rgba(245,197,66,.15);  color:#92400e; }
+  .badge-red    { background:rgba(240,79,79,.15);   color:#b91c1c; }
+  .badge-purple { background:rgba(168,126,255,.15); color:#6d28d9; }
+  .badge-orange { background:rgba(255,140,66,.15);  color:#c2410c; }
   .badge-gray   { background:rgba(107,147,181,.12); color:#4a6b8a; }
 
-  /* ── NAV BADGE ── */
   .nav-count { background:#dce6f5; color:#1a2b3c; border-radius:20px; font-size:10px;
     font-weight:700; padding:1px 6px; min-width:18px; text-align:center; font-family:'JetBrains Mono',monospace; }
-  .nav-count.red    { background:rgba(240,79,79,.25);   color:#f04f4f; }
-  .nav-count.yellow { background:rgba(245,197,66,.25);  color:#f5c542; }
-  .nav-count.green  { background:rgba(39,201,122,.25);  color:#27c97a; }
-  .nav-count.blue   { background:rgba(59,158,255,.25);  color:#6db9ff; }
+  .nav-count.red    { background:rgba(240,79,79,.2);   color:#b91c1c; }
+  .nav-count.yellow { background:rgba(245,197,66,.2);  color:#92400e; }
+  .nav-count.green  { background:rgba(39,201,122,.2);  color:#15803d; }
+  .nav-count.blue   { background:rgba(59,158,255,.2);  color:#1b6fd4; }
 
-  /* ── TABLE ── */
   .tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
   .tbl thead th { padding:9px 12px; text-align:left; font-size:10px; text-transform:uppercase;
     letter-spacing:.5px; color:#4a6b8a; border-bottom:1px solid #e2eaf4; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap; }
@@ -127,23 +119,19 @@ tailwind.config = {
   .cell-id { font-family:'JetBrains Mono',monospace; font-size:11px; color:#4a6b8a; }
   .cell-name { font-weight:600; }
 
-  /* ── STAT CARD ── */
   .stat-card { background:#ffffff; border:1px solid #e2eaf4; border-radius:12px; padding:16px 18px; }
   .stat-label { font-size:10.5px; color:#4a6b8a; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
   .stat-value { font-size:28px; font-weight:800; line-height:1; margin-bottom:4px; }
   .stat-sub { font-size:11px; color:#4a6b8a; }
 
-  /* ── CARD ── */
   .card { background:#ffffff; border:1px solid #e2eaf4; border-radius:12px; padding:16px; }
   .card-title { font-size:12.5px; font-weight:700; color:#1a2b3c; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
 
-  /* ── INFO ROW ── */
   .info-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #edf2f8; font-size:12.5px; }
   .info-row:last-child { border-bottom:none; }
   .info-key { color:#4a6b8a; font-weight:500; }
   .info-val { font-weight:600; text-align:right; color:#0f1f35; }
 
-  /* ── TABS ── */
   .tabs { display:flex; gap:2px; border-bottom:1px solid #e2eaf4; margin-bottom:16px; overflow-x:auto; }
   .tab-btn { padding:8px 14px; font-size:12px; font-weight:600; color:#4a6b8a; background:none; border:none;
     border-bottom:2px solid transparent; cursor:pointer; font-family:inherit; transition:all .15s; white-space:nowrap; }
@@ -152,7 +140,6 @@ tailwind.config = {
   .tab-pane { display:none; }
   .tab-pane.active { display:block; }
 
-  /* ── VITALS GRID ── */
   .vital-box { background:#f8fafc; border:1px solid #e2eaf4; border-radius:10px; padding:12px; text-align:center; }
   .vital-box.crit { border-color:rgba(220,38,38,.3); background:rgba(220,38,38,.05); }
   .vital-box.warn { border-color:rgba(217,119,6,.3); background:rgba(217,119,6,.05); }
@@ -160,15 +147,12 @@ tailwind.config = {
   .vital-val  { font-size:22px; font-weight:800; line-height:1; }
   .vital-unit { font-size:10px; color:#4a6b8a; margin-top:2px; }
 
-  /* ── BED CARD ── */
   .bed-card { border-radius:10px; padding:12px; border:1px solid #e2eaf4; background:#f8fafc; text-align:center; font-size:12px; }
   .bed-card.occupied { border-color:rgba(220,38,38,.25); background:rgba(220,38,38,.04); }
   .bed-card.maintenance { border-color:rgba(217,119,6,.25); background:rgba(217,119,6,.04); }
 
-  /* ── QUEUE CARD ── */
   .queue-card { display:flex; align-items:center; gap:12px; background:#ffffff; border:1px solid #e2eaf4; border-radius:10px; padding:12px 14px; margin-bottom:8px; }
 
-  /* ── TIMELINE ── */
   .timeline { position:relative; padding-left:20px; }
   .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:1px; background:#d0dcea; }
   .tl-item { position:relative; margin-bottom:16px; }
@@ -176,27 +160,22 @@ tailwind.config = {
   .tl-date { font-size:10.5px; color:#4a6b8a; margin-bottom:4px; font-family:'JetBrains Mono',monospace; }
   .tl-content { background:#f8fafc; border:1px solid #e2eaf4; border-radius:8px; padding:10px 12px; font-size:12.5px; }
 
-  /* ── ALERT ── */
   .alert { border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; font-weight:500; border:1px solid; }
   .alert-red    { background:#fef2f2; border-color:#fca5a5; color:#dc2626; }
   .alert-yellow { background:#fffbeb; border-color:#fcd34d; color:#b45309; }
 
-  /* ── SOAP BLOCK ── */
   .soap-block { border-radius:10px; overflow:hidden; border:1px solid #e2eaf4; margin-bottom:10px; }
   .soap-header { padding:8px 14px; font-size:12px; font-weight:700; display:flex; align-items:center; gap:8px; }
-  .soap-body { background:#f8fafc; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; }
+  .soap-body { background:#f8fafc; padding:12px 14px; font-size:13px; line-height:1.7; white-space:pre-wrap; color:#1a2b3c; }
 
-  /* ── PROGRESS ── */
   .progress { background:#e2eaf4; border-radius:4px; height:6px; overflow:hidden; }
   .progress-fill { height:100%; border-radius:4px; transition:width .5s; }
 
-  /* ── CHART BAR ── */
   .chart-bar-wrap { margin-bottom:10px; }
-  .chart-bar-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
+  .chart-bar-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#1a2b3c; }
   .chart-bar { background:#e2eaf4; border-radius:4px; height:8px; overflow:hidden; }
   .chart-bar-fill { height:100%; border-radius:4px; transition:width .6s cubic-bezier(.4,0,.2,1); }
 
-  /* ── BOTTOM NAV (mobile) ── */
   #bottom-nav { display:none; }
   @media(max-width:768px){
     #bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0;
@@ -209,40 +188,44 @@ tailwind.config = {
     #content-area { padding-bottom:70px !important; }
   }
 
-  /* ── SIDEBAR COLLAPSED on tablet ── */
   @media(max-width:1024px) and (min-width:769px){
     #sidebar { width:56px !important; }
     .nav-label, .nav-text, .nav-count, #sidebar-footer-text { display:none !important; }
     .nav-item { justify-content:center !important; padding:10px !important; }
   }
 
-  /* ── SEARCH ── */
   .search-box { display:flex; align-items:center; gap:8px; background:#f8fafc; border:1px solid #cdd8e8; border-radius:8px; padding:6px 12px; }
   .search-box input { background:none; border:none; color:#1a2b3c; font-size:12.5px; outline:none; flex:1; font-family:inherit; }
   .search-box input::placeholder { color:#7a9ab5; }
 
-  /* ── LOGIN SCREEN ── */
   #login-screen { position:fixed; inset:0; background:#f0f4f9; display:flex; align-items:center; justify-content:center; z-index:1000;
     background-image:radial-gradient(ellipse 70% 60% at 50% -10%, rgba(37,99,235,.12) 0%, transparent 70%); }
 
-  /* ── SCROLLABLE CONTENT ── */
   #content-area { flex:1; overflow-y:auto; padding:20px; }
   @media(max-width:640px){ #content-area { padding:14px; } }
 
-  /* ── PAGE HEADER ── */
   .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
   .page-title { font-size:20px; font-weight:800; line-height:1.1; color:#0f1f35; }
   .page-sub { font-size:12px; color:#4a6b8a; margin-top:3px; }
   .page-actions { display:flex; gap:8px; flex-wrap:wrap; }
 
-  /* ── MISC ── */
   .hidden { display:none !important; }
   .divider { height:1px; background:#e2eaf4; margin:16px 0; }
   .empty-state { text-align:center; padding:40px 20px; color:#7a9ab5; }
   .empty-icon { font-size:36px; margin-bottom:12px; }
+
+  /* ── SAVE INDICATOR ── */
+  #save-indicator { position:fixed; top:60px; right:16px; background:#ffffff; border:1px solid #27c97a44;
+    border-radius:8px; padding:5px 12px; font-size:11px; font-weight:600; color:#15803d;
+    display:flex; align-items:center; gap:6px; z-index:200;
+    opacity:0; transform:translateY(-4px); transition:all .3s; pointer-events:none; }
+  #save-indicator.show { opacity:1; transform:translateY(0); }
 </style>
 </head>
 <body>
+
+<!-- SAVE INDICATOR -->
+<div id="save-indicator">💾 Tersimpan</div>
 
 <!-- ── LOGIN ── -->
 <div id="login-screen">
@@ -270,11 +253,11 @@ tailwind.config = {
     <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e2eaf4">
       <p style="font-size:11px;color:#7a9ab5;margin-bottom:8px">Quick login:</p>
       <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <span onclick="setDemo('admin','admin','admin')"     style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Admin</span>
-        <span onclick="setDemo('dr.budi','pass','doctor')"   style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Dokter</span>
-        <span onclick="setDemo('ns.sari','pass','nurse')"    style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Perawat</span>
-        <span onclick="setDemo('resep','pass','receptionist')" style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Resepsionis</span>
-        <span onclick="setDemo('lab','pass','labtech')"      style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a;transition:all .15s" onmouseenter="this.style.borderColor='#2563eb';this.style.color='#2563eb'" onmouseleave="this.style.borderColor='#cdd8e8';this.style.color='#4a6b8a'">Lab Tech</span>
+        <span onclick="setDemo('admin','admin','admin')"     style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Admin</span>
+        <span onclick="setDemo('dr.budi','pass','doctor')"   style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Dokter</span>
+        <span onclick="setDemo('ns.sari','pass','nurse')"    style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Perawat</span>
+        <span onclick="setDemo('resep','pass','receptionist')" style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Resepsionis</span>
+        <span onclick="setDemo('lab','pass','labtech')"      style="cursor:pointer;padding:3px 10px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:20px;font-size:11px;color:#4a6b8a">Lab Tech</span>
       </div>
     </div>
   </div>
@@ -285,7 +268,6 @@ tailwind.config = {
 
   <!-- HEADER -->
   <header style="height:52px;background:#ffffff;border-bottom:1px solid #e2eaf4;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:50">
-    <!-- Brand -->
     <button id="sidebar-toggle" onclick="toggleSidebar()" class="btn btn-ghost btn-sm" style="padding:6px 8px;display:none" title="Menu">☰</button>
     <div style="display:flex;align-items:center;gap:8px;min-width:fit-content">
       <div style="width:28px;height:28px;background:linear-gradient(135deg,#1b6fd4,#3b9eff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px">🏥</div>
@@ -295,15 +277,11 @@ tailwind.config = {
       <span class="pulse-dot" style="width:7px;height:7px;background:#16a34a;border-radius:50%;display:inline-block"></span>
       <span class="hidden sm:inline">Online</span>
     </div>
-
-    <!-- Search -->
     <div class="search-box" style="flex:1;max-width:280px">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a9ab5" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input id="global-search" type="text" placeholder="Cari pasien… (/)" onkeyup="globalSearch(this.value)">
       <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#4a6b8a;background:#e8edf5;border:1px solid #cdd8e8;border-radius:3px;padding:1px 4px" class="hidden lg:inline">/</span>
     </div>
-
-    <!-- Actions -->
     <button class="btn btn-ghost btn-sm hidden md:flex" onclick="exportJSON()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export
@@ -313,10 +291,8 @@ tailwind.config = {
       Import
       <input type="file" accept=".json" class="hidden" onchange="importJSON(this)">
     </label>
-
-    <!-- User -->
     <div style="display:flex;align-items:center;gap:8px;background:#f0f4f9;border:1px solid #e2eaf4;border-radius:8px;padding:5px 10px">
-      <div id="user-avatar" style="width:24px;height:24px;border-radius:50%;background:#1b6fd4;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700">AD</div>
+      <div id="user-avatar" style="width:24px;height:24px;border-radius:50%;background:#1b6fd4;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">AD</div>
       <span id="user-name" style="font-size:12px;font-weight:600;color:#1a2b3c" class="hidden sm:inline">Administrator</span>
       <span id="user-role-badge" class="badge badge-purple hidden sm:inline">ADMIN</span>
     </div>
@@ -325,18 +301,14 @@ tailwind.config = {
     </button>
   </header>
 
-  <!-- BODY: SIDEBAR + CONTENT -->
   <div style="display:flex;flex:1;overflow:hidden">
-
     <!-- SIDEBAR -->
     <nav id="sidebar" style="width:220px;background:#ffffff;border-right:1px solid #e2eaf4;overflow-y:auto;flex-shrink:0;transition:width .2s,transform .2s">
       <div style="padding:10px 8px">
-
         <div style="padding:4px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Utama</div>
         <div class="nav-item" data-page="dashboard" onclick="showPage('dashboard')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🏠</span><span class="nav-text">Dashboard</span>
         </div>
-
         <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Penerimaan</div>
         <div class="nav-item" data-page="registration" onclick="showPage('registration')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">👤</span><span class="nav-text">Pendaftaran</span>
@@ -349,7 +321,6 @@ tailwind.config = {
           <span style="font-size:16px;width:20px;text-align:center">🚶</span><span class="nav-text">Antrian</span>
           <span class="nav-count green ml-auto" id="queue-badge">0</span>
         </div>
-
         <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Klinis</div>
         <div class="nav-item" data-page="chart" onclick="showPage('chart')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">📋</span><span class="nav-text">Patient Chart</span>
@@ -367,7 +338,6 @@ tailwind.config = {
           <span style="font-size:16px;width:20px;text-align:center">🗒️</span><span class="nav-text">CPPT</span>
           <span class="nav-count blue ml-auto" id="cppt-badge">0</span>
         </div>
-
         <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Lab & Rawat Inap</div>
         <div class="nav-item" data-page="laboratory" onclick="showPage('laboratory')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🔬</span><span class="nav-text">Lab Orders</span>
@@ -376,7 +346,6 @@ tailwind.config = {
         <div class="nav-item" data-page="ward" onclick="showPage('ward')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🏥</span><span class="nav-text">Ward / Bed</span>
         </div>
-
         <div style="padding:8px 8px 2px;font-size:9.5px;font-weight:700;color:#7a9ab5;text-transform:uppercase;letter-spacing:.6px" class="nav-label">Laporan & Admin</div>
         <div class="nav-item" data-page="reports" onclick="showPage('reports')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">📊</span><span class="nav-text">Reports</span>
@@ -390,7 +359,6 @@ tailwind.config = {
         <div class="nav-item" data-page="settings" onclick="showPage('settings')" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:#4a6b8a;transition:all .12s;margin-bottom:1px">
           <span style="font-size:16px;width:20px;text-align:center">🔧</span><span class="nav-text">Implementer Tools</span>
         </div>
-
       </div>
     </nav>
 
@@ -398,7 +366,7 @@ tailwind.config = {
     <main id="content-area" style="flex:1;overflow-y:auto;padding:20px;background:#f0f4f9"></main>
   </div>
 
-  <!-- BOTTOM NAV (mobile) -->
+  <!-- BOTTOM NAV -->
   <nav id="bottom-nav">
     <button class="bnav-item active" onclick="showPage('dashboard')" data-bnav="dashboard"><span class="bnav-icon">🏠</span>Home</button>
     <button class="bnav-item" onclick="showPage('queue')" data-bnav="queue"><span class="bnav-icon">🚶</span>Antrian</button>
@@ -425,7 +393,7 @@ tailwind.config = {
 
 <script>
 // ══════════════════════════════════════
-//  DATA STORE
+//  DATA STORE (DEFAULT / SEED)
 // ══════════════════════════════════════
 let DB = {
   meta: { version:"2.0", facility:"Puskesmas Sehat Sejahtera", created: new Date().toISOString() },
@@ -526,6 +494,50 @@ let DB = {
   ]
 };
 
+// ══════════════════════════════════════
+//  PERSISTENCE — localStorage auto-save
+// ══════════════════════════════════════
+const STORAGE_KEY = 'erm_db_v2';
+let _saveTimer = null;
+
+function saveDB() {
+  // Debounce: save 400ms after last call to avoid excessive writes
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+      // Show tiny save indicator
+      const ind = document.getElementById('save-indicator');
+      if (ind) {
+        ind.classList.add('show');
+        setTimeout(() => ind.classList.remove('show'), 1500);
+      }
+    } catch(e) {
+      console.warn('[E-RM] saveDB gagal:', e);
+    }
+  }, 400);
+}
+
+function loadDB() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved && saved.patients && saved.patients.length >= 1) {
+      // Merge saved data over defaults
+      Object.keys(saved).forEach(k => { DB[k] = saved[k]; });
+      if (!DB.cppt) DB.cppt = [];
+      if (!DB.meta) DB.meta = { version:"2.0", facility:"Puskesmas Sehat Sejahtera", created: new Date().toISOString() };
+      console.info('[E-RM] ✅ Data dimuat dari localStorage (' + DB.patients.length + ' pasien, ' + DB.cppt.length + ' CPPT)');
+    }
+  } catch(e) {
+    console.warn('[E-RM] loadDB gagal:', e);
+  }
+}
+
+// Load saved data immediately
+loadDB();
+
 let currentUser = null;
 let currentPage = 'dashboard';
 
@@ -541,7 +553,6 @@ const ROLE_LABELS = { admin:'ADMIN', doctor:'DOKTER', nurse:'PERAWAT', reception
 const ROLE_AVATARS = { admin:'AD', doctor:'DR', nurse:'NS', receptionist:'RP', labtech:'LB' };
 const ROLE_BADGE = { admin:'badge-purple', doctor:'badge-blue', nurse:'badge-green', receptionist:'badge-yellow', labtech:'badge-orange' };
 
-// ── RESPONSIVE: show/hide sidebar toggle on mobile ──
 function checkMobile(){
   const isMobile = window.innerWidth <= 768;
   const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
@@ -604,21 +615,16 @@ function logout(){
   sidebarOpen=false;
 }
 
-// ── NAVIGATION ──
 function showPage(page){
   if(!currentUser||!currentUser.allowed.includes(page)){ showToast('error','❌ Akses ditolak untuk role Anda'); return; }
   currentPage=page;
-  // close mobile sidebar
   if(window.innerWidth<=768){ const s=document.getElementById('sidebar'); s.style.display='none'; sidebarOpen=false; }
-  // update active nav
   document.querySelectorAll('.nav-item').forEach(el=>{ el.style.background=''; el.style.color='#4a6b8a'; });
   const nav=document.querySelector(`.nav-item[data-page="${page}"]`);
   if(nav){ nav.style.background='rgba(37,99,235,.1)'; nav.style.color='#2563eb'; }
-  // update bottom nav
   document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
   const bnav=document.querySelector(`.bnav-item[data-bnav="${page}"]`);
   if(bnav) bnav.classList.add('active');
-
   const pages={
     dashboard:renderDashboard, registration:renderRegistration, appointments:renderAppointments,
     queue:renderQueue, chart:renderChart, vitals:renderVitals, medications:renderMedications,
@@ -649,7 +655,6 @@ function updateBadges(){
   document.getElementById('cppt-badge').textContent = DB.cppt ? DB.cppt.length : 0;
 }
 
-// ── HELPERS ──
 function P(id){ return DB.patients.find(p=>p.id===id)||{}; }
 function age(dob){ if(!dob) return '—'; return Math.floor((Date.now()-new Date(dob))/(365.25*24*3600*1000))+'th'; }
 function fmt(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
@@ -697,13 +702,12 @@ function importJSON(input){
   const reader=new FileReader();
   reader.onload=e=>{ try{
     const data=JSON.parse(e.target.result);
-    if(data.patients){ DB=data; if(!DB.cppt) DB.cppt=[]; updateBadges(); showPage(currentPage); showToast('success',`📂 Import berhasil`); }
+    if(data.patients){ DB=data; if(!DB.cppt) DB.cppt=[]; saveDB(); updateBadges(); showPage(currentPage); showToast('success',`📂 Import berhasil`); }
     else showToast('error','❌ Format JSON tidak valid');
   } catch{ showToast('error','❌ File JSON rusak'); } };
   reader.readAsText(file); input.value='';
 }
 
-// ── PAGE CONTENT HELPERS ──
 function statGrid(cards){ return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px">${cards}</div>`; }
 function statCard(label,val,color,sub=''){
   return `<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-value" style="color:${color}">${val}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`;
@@ -719,12 +723,12 @@ function grid2(a,b){ return `<div style="display:grid;grid-template-columns:repe
 //  DASHBOARD
 // ══════════════════════════════════════
 function renderDashboard(){
+  const today = new Date().toISOString().slice(0,10);
   const activeQ=DB.queue.filter(q=>q.status==='menunggu').length;
   const pendLab=DB.lab_orders.filter(l=>l.status==='pending').length;
-  const todayAppt=DB.appointments.filter(a=>a.date==='2025-04-25').length;
+  const todayAppt=DB.appointments.filter(a=>a.date===today||a.date==='2025-04-25').length;
   const urgentQ=DB.queue.filter(q=>q.priority==='urgent');
   const recentV=DB.visits.slice(-5).reverse();
-
   setContent(`
   <div class="page-header">
     <div>
@@ -734,12 +738,12 @@ function renderDashboard(){
   </div>
   ${urgentQ.length?`<div class="alert alert-red">🚨 <strong>${urgentQ.length} pasien URGENT</strong> di antrian — segera tangani!</div>`:''}
   ${statGrid([
-    statCard('Total Pasien', DB.patients.length, '#3b9eff', 'Terdaftar aktif'),
-    statCard('Kunjungan Hari Ini', DB.visits.filter(v=>v.date==='2025-04-25').length, '#27c97a', `Dari total ${DB.visits.length}`),
-    statCard('Antrian Aktif', activeQ, '#f5c542', 'Menunggu dipanggil'),
-    statCard('Lab Pending', pendLab, '#f04f4f', 'Menunggu hasil'),
-    statCard('Appointment', todayAppt, '#a87eff', 'Hari ini'),
-    statCard('Bed Terisi', `${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length}`, '#ff8c42', 'Rawat inap'),
+    statCard('Total Pasien', DB.patients.length, '#2563eb', 'Terdaftar aktif'),
+    statCard('Kunjungan Hari Ini', DB.visits.filter(v=>v.date===today||v.date==='2025-04-25').length, '#15803d', `Dari total ${DB.visits.length}`),
+    statCard('Antrian Aktif', activeQ, '#b45309', 'Menunggu dipanggil'),
+    statCard('Lab Pending', pendLab, '#b91c1c', 'Menunggu hasil'),
+    statCard('Appointment', todayAppt, '#6d28d9', 'Hari ini'),
+    statCard('Bed Terisi', `${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length}`, '#c2410c', 'Rawat inap'),
   ].join(''))}
   ${grid2(`
     <div class="card">
@@ -753,15 +757,15 @@ function renderDashboard(){
     </div>`)}
   ${grid2(`
     <div class="card">
-      <div class="card-title">📅 Appointment Hari Ini</div>
-      ${DB.appointments.filter(a=>a.date==='2025-04-25').map(a=>`
+      <div class="card-title">📅 Appointment</div>
+      ${DB.appointments.filter(a=>a.status!=='dibatalkan').slice(0,5).map(a=>`
       <div class="info-row"><span class="info-key">${b('badge-blue',a.time)} ${P(a.patient_id).name||'?'} <span style="color:#7a9ab5;font-size:11px">${a.type}</span></span><span class="info-val">${b(a.status==='hadir'?'badge-green':'badge-yellow',a.status)}</span></div>`).join('')}
     </div>`,`
     <div class="card">
       <div class="card-title">🏥 Status Bed</div>
-      <div class="info-row"><span class="info-key">Kosong</span><span class="info-val">${b('badge-green',DB.beds.filter(b=>b.status==='kosong').length)}</span></div>
-      <div class="info-row"><span class="info-key">Terisi</span><span class="info-val">${b('badge-red',DB.beds.filter(b=>b.status==='terisi').length)}</span></div>
-      <div class="info-row"><span class="info-key">Maintenance</span><span class="info-val">${b('badge-yellow',DB.beds.filter(b=>b.status==='maintenance').length)}</span></div>
+      <div class="info-row"><span class="info-key">Kosong</span><span class="info-val">${b('badge-green',DB.beds.filter(bd=>bd.status==='kosong').length)}</span></div>
+      <div class="info-row"><span class="info-key">Terisi</span><span class="info-val">${b('badge-red',DB.beds.filter(bd=>bd.status==='terisi').length)}</span></div>
+      <div class="info-row"><span class="info-key">Maintenance</span><span class="info-val">${b('badge-yellow',DB.beds.filter(bd=>bd.status==='maintenance').length)}</span></div>
       <div style="margin-top:12px"><div class="progress"><div class="progress-fill" style="width:${DB.beds.filter(x=>x.status==='terisi').length/DB.beds.length*100}%;background:#f04f4f"></div></div></div>
     </div>`)}
   `);
@@ -792,7 +796,6 @@ function renderRegistration(){
     </tr>`).join('')
   )}`);
 }
-
 function openRegModal(){
   openModal('Daftarkan Pasien Baru',`
   <div class="form-grid">
@@ -813,7 +816,7 @@ function savePasien(){
   if(!name){showToast('error','Nama wajib diisi');return;}
   const id='P'+String(DB.patients.length+1).padStart(3,'0');
   DB.patients.push({id,name,dob:document.getElementById('rf-dob').value,gender:document.getElementById('rf-gender').value,nik:document.getElementById('rf-nik').value,phone:document.getElementById('rf-phone').value,blood_type:document.getElementById('rf-blood').value,address:document.getElementById('rf-addr').value,allergy:document.getElementById('rf-allergy').value,status:'active',registered:new Date().toISOString().slice(0,10)});
-  closeModal();renderRegistration();showToast('success',`✅ Pasien ${name} berhasil didaftarkan`);
+  saveDB(); closeModal();renderRegistration();showToast('success',`✅ Pasien ${name} berhasil didaftarkan`);
 }
 function openEditPasien(id){
   const p=P(id);
@@ -836,13 +839,13 @@ function updatePasien(id){
   p.gender=document.getElementById('ef-gender').value; p.phone=document.getElementById('ef-phone').value;
   p.blood_type=document.getElementById('ef-blood').value; p.address=document.getElementById('ef-addr').value;
   p.allergy=document.getElementById('ef-allergy').value;
-  closeModal();renderRegistration();showToast('success',`✅ Data ${p.name} diupdate`);
+  saveDB(); closeModal();renderRegistration();showToast('success',`✅ Data ${p.name} diupdate`);
 }
 function addToQueue(patientId){
   const p=P(patientId);
   if(DB.queue.find(q=>q.patient_id===patientId&&q.status==='menunggu')){showToast('warn','⚠️ Pasien sudah ada di antrian');return;}
   const nq={id:genId('Q',DB.queue),patient_id:patientId,number:DB.queue.length+1,location:'Poli Umum',priority:'normal',status:'menunggu',checked_in:new Date().toTimeString().slice(0,5),wait_min:0};
-  DB.queue.push(nq);updateBadges();showToast('success',`✅ ${p.name} ditambahkan ke antrian #${nq.number}`);
+  DB.queue.push(nq); saveDB(); updateBadges();showToast('success',`✅ ${p.name} ditambahkan ke antrian #${nq.number}`);
 }
 
 // ══════════════════════════════════════
@@ -856,7 +859,6 @@ function renderAppointments(){
   </div>
   <div class="tabs">
     <button class="tab-btn active" onclick="switchApptTab('all',this)">Semua</button>
-    <button class="tab-btn" onclick="switchApptTab('today',this)">Hari Ini</button>
     <button class="tab-btn" onclick="switchApptTab('terjadwal',this)">Terjadwal</button>
     <button class="tab-btn" onclick="switchApptTab('hadir',this)">Hadir</button>
   </div>
@@ -875,9 +877,9 @@ function renderApptRows(data){
       <button class="btn btn-danger btn-sm" onclick="batalAppt('${a.id}')">Batal</button>
     </div></td></tr>`).join('');
 }
-function switchApptTab(f,btn){ document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); let d=DB.appointments; if(f==='today') d=d.filter(a=>a.date==='2025-04-25'); else if(f!=='all') d=d.filter(a=>a.status===f); document.getElementById('appt-tbody').innerHTML=renderApptRows(d); }
-function markHadir(id){ const a=DB.appointments.find(x=>x.id===id); if(a){a.status='hadir';addToQueue(a.patient_id);renderAppointments();showToast('success','✅ Pasien hadir & ditambahkan ke antrian');} }
-function batalAppt(id){ const a=DB.appointments.find(x=>x.id===id); if(a){a.status='dibatalkan';renderAppointments();showToast('info','Appointment dibatalkan');} }
+function switchApptTab(f,btn){ document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); let d=DB.appointments; if(f!=='all') d=d.filter(a=>a.status===f); document.getElementById('appt-tbody').innerHTML=renderApptRows(d); }
+function markHadir(id){ const a=DB.appointments.find(x=>x.id===id); if(a){a.status='hadir'; saveDB(); addToQueue(a.patient_id);renderAppointments();showToast('success','✅ Pasien hadir & ditambahkan ke antrian');} }
+function batalAppt(id){ const a=DB.appointments.find(x=>x.id===id); if(a){a.status='dibatalkan'; saveDB(); renderAppointments();showToast('info','Appointment dibatalkan');} }
 function openApptModal(){
   openModal('Jadwal Appointment Baru',`
   <div class="form-grid">
@@ -891,7 +893,7 @@ function openApptModal(){
 }
 function saveAppt(){
   DB.appointments.push({id:genId('A',DB.appointments),patient_id:document.getElementById('af-patient').value,date:document.getElementById('af-date').value,time:document.getElementById('af-time').value,type:document.getElementById('af-type').value,doctor:document.getElementById('af-doctor').value,status:'terjadwal'});
-  updateBadges();closeModal();renderAppointments();showToast('success','✅ Appointment dijadwalkan');
+  saveDB(); updateBadges();closeModal();renderAppointments();showToast('success','✅ Appointment dijadwalkan');
 }
 
 // ══════════════════════════════════════
@@ -909,7 +911,7 @@ function renderQueue(){
     <div>
       <div style="font-size:12px;font-weight:700;color:#4a6b8a;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟡 Menunggu (${waiting.length})</div>
       ${waiting.map(q=>`<div class="queue-card">
-        <div style="width:36px;height:36px;border-radius:8px;background:#e8f0fd;border:1px solid #b8d0f8;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#3b9eff;flex-shrink:0">#${q.number}</div>
+        <div style="width:36px;height:36px;border-radius:8px;background:#e8f0fd;border:1px solid #b8d0f8;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#2563eb;flex-shrink:0">#${q.number}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:13px">${P(q.patient_id).name||'?'}</div>
           <div style="font-size:11px;color:#4a6b8a">${q.location} · ${q.checked_in}</div>
@@ -921,7 +923,7 @@ function renderQueue(){
     <div>
       <div style="font-size:12px;font-weight:700;color:#4a6b8a;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">🟢 Dipanggil (${called.length})</div>
       ${called.map(q=>`<div class="queue-card" style="border-color:rgba(22,163,74,.3);background:rgba(22,163,74,.03)">
-        <div style="width:36px;height:36px;border-radius:8px;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#27c97a;flex-shrink:0">#${q.number}</div>
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#16a34a;flex-shrink:0">#${q.number}</div>
         <div style="flex:1"><div style="font-weight:600;font-size:13px">${P(q.patient_id).name||'?'}</div><div style="font-size:11px;color:#4a6b8a">${q.location}</div></div>
         <button class="btn btn-success btn-sm" onclick="finishQ('${q.id}')">Selesai</button>
       </div>`).join('')}
@@ -934,8 +936,8 @@ function renderQueue(){
     </div>`)}
   `);
 }
-function callQueue(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='dipanggil';const p=P(q.patient_id);renderQueue();showToast('info',`📢 Memanggil: ${p.name} — #${q.number}`);} }
-function finishQ(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='selesai';updateBadges();renderQueue();showToast('success','✅ Pasien selesai ditangani');} }
+function callQueue(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='dipanggil'; saveDB(); const p=P(q.patient_id);renderQueue();showToast('info',`📢 Memanggil: ${p.name} — #${q.number}`);} }
+function finishQ(id){ const q=DB.queue.find(x=>x.id===id); if(q){q.status='selesai'; saveDB(); updateBadges();renderQueue();showToast('success','✅ Pasien selesai ditangani');} }
 function callNext(){ const n=DB.queue.find(q=>q.status==='menunggu'); if(n) callQueue(n.id); else showToast('info','Tidak ada antrian tersisa'); }
 
 // ══════════════════════════════════════
@@ -1021,13 +1023,13 @@ function renderVitals(){
   <div class="card" style="margin-bottom:16px">
     <div class="card-title">💓 ${p.name||v.patient_id} <span style="color:#7a9ab5;font-size:11px;font-weight:400">${fmt(v.date)} · ${v.nurse}</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px">
-      <div class="vital-box ${v.bp_systolic>=140?'crit':v.bp_systolic>=120?'warn':''}"><div class="vital-name">Tek. Darah</div><div class="vital-val" style="font-size:18px;color:${v.bp_systolic>=140?'#f04f4f':v.bp_systolic>=120?'#f5c542':'#1a2b3c'}">${v.bp_systolic}/${v.bp_diastolic}</div><div class="vital-unit">mmHg</div></div>
-      <div class="vital-box ${v.heart_rate<60||v.heart_rate>100?'warn':''}"><div class="vital-name">Nadi</div><div class="vital-val" style="color:${v.heart_rate<60||v.heart_rate>100?'#f5c542':'#1a2b3c'}">${v.heart_rate}</div><div class="vital-unit">bpm</div></div>
-      <div class="vital-box ${v.temperature>=38?'crit':v.temperature>=37.5?'warn':''}"><div class="vital-name">Suhu</div><div class="vital-val" style="color:${v.temperature>=38?'#f04f4f':v.temperature>=37.5?'#f5c542':'#1a2b3c'}">${v.temperature}</div><div class="vital-unit">°C</div></div>
-      <div class="vital-box ${v.spo2<95?'crit':v.spo2<97?'warn':''}"><div class="vital-name">SpO2</div><div class="vital-val" style="color:${v.spo2<95?'#f04f4f':v.spo2<97?'#f5c542':'#27c97a'}">${v.spo2}</div><div class="vital-unit">%</div></div>
+      <div class="vital-box ${v.bp_systolic>=140?'crit':v.bp_systolic>=120?'warn':''}"><div class="vital-name">Tek. Darah</div><div class="vital-val" style="font-size:18px;color:${v.bp_systolic>=140?'#b91c1c':v.bp_systolic>=120?'#92400e':'#1a2b3c'}">${v.bp_systolic}/${v.bp_diastolic}</div><div class="vital-unit">mmHg</div></div>
+      <div class="vital-box ${v.heart_rate<60||v.heart_rate>100?'warn':''}"><div class="vital-name">Nadi</div><div class="vital-val" style="color:${v.heart_rate<60||v.heart_rate>100?'#92400e':'#1a2b3c'}">${v.heart_rate}</div><div class="vital-unit">bpm</div></div>
+      <div class="vital-box ${v.temperature>=38?'crit':v.temperature>=37.5?'warn':''}"><div class="vital-name">Suhu</div><div class="vital-val" style="color:${v.temperature>=38?'#b91c1c':v.temperature>=37.5?'#92400e':'#1a2b3c'}">${v.temperature}</div><div class="vital-unit">°C</div></div>
+      <div class="vital-box ${v.spo2<95?'crit':v.spo2<97?'warn':''}"><div class="vital-name">SpO2</div><div class="vital-val" style="color:${v.spo2<95?'#b91c1c':v.spo2<97?'#92400e':'#15803d'}">${v.spo2}</div><div class="vital-unit">%</div></div>
       <div class="vital-box"><div class="vital-name">Berat</div><div class="vital-val">${v.weight}</div><div class="vital-unit">kg</div></div>
       <div class="vital-box"><div class="vital-name">Tinggi</div><div class="vital-val">${v.height}</div><div class="vital-unit">cm</div></div>
-      <div class="vital-box ${+bmi>=30?'crit':+bmi>=25?'warn':''}"><div class="vital-name">BMI</div><div class="vital-val" style="color:${+bmi>=30?'#f04f4f':+bmi>=25?'#f5c542':'#1a2b3c'}">${bmi}</div><div class="vital-unit">${bmi<18.5?'Kurus':bmi<25?'Normal':bmi<30?'Overweight':'Obesitas'}</div></div>
+      <div class="vital-box ${+bmi>=30?'crit':+bmi>=25?'warn':''}"><div class="vital-name">BMI</div><div class="vital-val" style="color:${+bmi>=30?'#b91c1c':+bmi>=25?'#92400e':'#1a2b3c'}">${bmi}</div><div class="vital-unit">${bmi<18.5?'Kurus':bmi<25?'Normal':bmi<30?'Overweight':'Obesitas'}</div></div>
       <div class="vital-box"><div class="vital-name">Resp. Rate</div><div class="vital-val">${v.respiratory_rate}</div><div class="vital-unit">x/mnt</div></div>
     </div>
   </div>`; }).join('')}`);
@@ -1049,7 +1051,7 @@ function openVitalModal(){
 }
 function saveVital(){
   DB.vitals.push({id:genId('VT',DB.vitals),patient_id:document.getElementById('vf-patient').value,date:new Date().toISOString().slice(0,10),bp_systolic:+document.getElementById('vf-sys').value,bp_diastolic:+document.getElementById('vf-dia').value,heart_rate:+document.getElementById('vf-hr').value,temperature:+document.getElementById('vf-temp').value,spo2:+document.getElementById('vf-spo2').value,weight:+document.getElementById('vf-weight').value,height:+document.getElementById('vf-height').value,respiratory_rate:+document.getElementById('vf-rr').value,nurse:currentUser.name});
-  closeModal();renderVitals();showToast('success','✅ Data vital disimpan');
+  saveDB(); closeModal();renderVitals();showToast('success','✅ Data vital disimpan');
 }
 
 // ══════════════════════════════════════
@@ -1087,7 +1089,7 @@ function openMedModal(){
 function saveMed(){
   const drug=document.getElementById('mf-drug').value; if(!drug){showToast('error','Nama obat wajib');return;}
   DB.medications.push({id:genId('M',DB.medications),patient_id:document.getElementById('mf-patient').value,drug,dose:document.getElementById('mf-dose').value,frequency:document.getElementById('mf-freq').value,route:document.getElementById('mf-route').value,doctor:currentUser.name,start:document.getElementById('mf-start').value,end:document.getElementById('mf-end').value,status:'aktif'});
-  closeModal();renderMedications();showToast('success',`✅ Resep ${drug} ditambahkan`);
+  saveDB(); closeModal();renderMedications();showToast('success',`✅ Resep ${drug} ditambahkan`);
 }
 
 // ══════════════════════════════════════
@@ -1109,7 +1111,7 @@ function renderOrders(){
     </tr>`).join('')
   )}`);
 }
-function processOrder(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses';renderOrders();showToast('info','🔬 Order diproses ke laboratorium');} }
+function processOrder(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses'; saveDB(); renderOrders();showToast('info','🔬 Order diproses ke laboratorium');} }
 function openLabOrderModal(){
   openModal('Lab Order Baru',`
   <div class="form-grid">
@@ -1122,7 +1124,7 @@ function openLabOrderModal(){
 function saveLabOrder(){
   const test=document.getElementById('lf-test').value; if(!test){showToast('error','Nama pemeriksaan wajib');return;}
   DB.lab_orders.push({id:genId('L',DB.lab_orders),patient_id:document.getElementById('lf-patient').value,test,ordered:new Date().toISOString().slice(0,10),doctor:document.getElementById('lf-doc').value,status:'pending',result:''});
-  updateBadges();closeModal();renderOrders();showToast('success','✅ Lab order dibuat');
+  saveDB(); updateBadges();closeModal();renderOrders();showToast('success','✅ Lab order dibuat');
 }
 
 // ══════════════════════════════════════
@@ -1154,54 +1156,54 @@ function renderLabRows(data){ return data.map(l=>`<tr>
   </div></td>
 </tr>`).join(''); }
 function switchLabTab(f,btn){ document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); document.getElementById('lab-tbody').innerHTML=renderLabRows(f==='all'?DB.lab_orders:DB.lab_orders.filter(l=>l.status===f)); }
-function startLab(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses';updateBadges();renderLaboratory();showToast('info','🔬 Pemeriksaan dimulai');} }
+function startLab(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.status='proses'; saveDB(); updateBadges();renderLaboratory();showToast('info','🔬 Pemeriksaan dimulai');} }
 function enterResult(id){
   openModal('Input Hasil Laboratorium',`<div class="field full"><label>Hasil Pemeriksaan</label><textarea id="res-txt" style="min-height:100px" placeholder="Masukkan hasil pemeriksaan…"></textarea></div>`,
   `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="saveResult('${id}')">💾 Simpan</button>`);
 }
-function saveResult(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.result=document.getElementById('res-txt').value;l.status='selesai';closeModal();renderLaboratory();showToast('success','✅ Hasil lab disimpan');} }
+function saveResult(id){ const l=DB.lab_orders.find(x=>x.id===id); if(l){l.result=document.getElementById('res-txt').value;l.status='selesai'; saveDB(); closeModal();renderLaboratory();showToast('success','✅ Hasil lab disimpan');} }
 
 // ══════════════════════════════════════
 //  WARD
 // ══════════════════════════════════════
 function renderWard(){
-  const rooms=[...new Set(DB.beds.map(b=>b.room))];
+  const rooms=[...new Set(DB.beds.map(bd=>bd.room))];
   setContent(`
   <div class="page-header">
-    <div><div class="page-title">Ward & Bed</div><div class="page-sub">${DB.beds.filter(b=>b.status==='terisi').length} terisi · ${DB.beds.filter(b=>b.status==='kosong').length} kosong</div></div>
+    <div><div class="page-title">Ward & Bed</div><div class="page-sub">${DB.beds.filter(bd=>bd.status==='terisi').length} terisi · ${DB.beds.filter(bd=>bd.status==='kosong').length} kosong</div></div>
     <div class="page-actions"><button class="btn btn-primary" onclick="openAdmitModal()">+ Admit Pasien</button></div>
   </div>
-  ${statGrid([statCard('Tersedia',DB.beds.filter(b=>b.status==='kosong').length,'#27c97a','Bed siap'),statCard('Terisi',DB.beds.filter(b=>b.status==='terisi').length,'#f04f4f','Pasien rawat inap')].join(''))}
-  ${rooms.map(room=>{ const beds=DB.beds.filter(b=>b.room===room); return `<div class="card" style="margin-bottom:16px">
+  ${statGrid([statCard('Tersedia',DB.beds.filter(bd=>bd.status==='kosong').length,'#15803d','Bed siap'),statCard('Terisi',DB.beds.filter(bd=>bd.status==='terisi').length,'#b91c1c','Pasien rawat inap')].join(''))}
+  ${rooms.map(room=>{ const beds=DB.beds.filter(bd=>bd.room===room); return `<div class="card" style="margin-bottom:16px">
     <div class="card-title">🏥 ${room} <span style="color:#7a9ab5;font-weight:400;font-size:11px">${beds.length} bed</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px">
-      ${beds.map(x=>{ const p=x.patient_id?P(x.patient_id):null; return `
+      ${beds.map(x=>{ const pt=x.patient_id?P(x.patient_id):null; return `
       <div class="bed-card ${x.status==='terisi'?'occupied':x.status==='maintenance'?'maintenance':''}">
         <div style="font-size:22px;margin-bottom:4px">${x.status==='kosong'?'🛏️':x.status==='terisi'?'🧑‍⚕️':'🔧'}</div>
         <div style="font-weight:700;font-size:13px">${x.number}</div>
         <div style="font-size:10px;color:#7a9ab5;margin-bottom:6px">${x.type}</div>
-        ${p?`<div style="font-size:11px;font-weight:600">${p.name}</div><div style="font-size:10px;color:#4a6b8a">${fmt(x.admitted)}</div>
+        ${pt?`<div style="font-size:11px;font-weight:600">${pt.name}</div><div style="font-size:10px;color:#4a6b8a">${fmt(x.admitted)}</div>
         <button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%" onclick="discharge('${x.id}')">Discharge</button>`:''}
       </div>`; }).join('')}
     </div>
   </div>`; }).join('')}`);
 }
 function openAdmitModal(){
-  const empty=DB.beds.filter(b=>b.status==='kosong');
+  const empty=DB.beds.filter(bd=>bd.status==='kosong');
   openModal('Admit Pasien',`
   <div class="form-grid">
     <div class="field full"><label>Pasien</label><select id="wf-patient">${DB.patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select></div>
-    <div class="field full"><label>Bed</label><select id="wf-bed">${empty.map(b=>`<option value="${b.id}">${b.number} — ${b.room} (${b.type})</option>`).join('')}</select></div>
+    <div class="field full"><label>Bed</label><select id="wf-bed">${empty.map(bd=>`<option value="${bd.id}">${bd.number} — ${bd.room} (${bd.type})</option>`).join('')}</select></div>
     <div class="field full"><label>Diagnosis Masuk</label><input id="wf-diag" placeholder="Diagnosis utama"></div>
   </div>`,
   `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="admitPasien()">✅ Admit</button>`);
 }
 function admitPasien(){
-  const pid=document.getElementById('wf-patient').value, bid=document.getElementById('wf-bed').value, bed=DB.beds.find(b=>b.id===bid);
-  if(bed){bed.patient_id=pid;bed.status='terisi';bed.admitted=new Date().toISOString().slice(0,10);bed.diagnosis=document.getElementById('wf-diag').value;closeModal();renderWard();showToast('success',`✅ ${P(pid).name} di-admit ke ${bed.number}`);}
+  const pid=document.getElementById('wf-patient').value, bid=document.getElementById('wf-bed').value, bed=DB.beds.find(bd=>bd.id===bid);
+  if(bed){bed.patient_id=pid;bed.status='terisi';bed.admitted=new Date().toISOString().slice(0,10);bed.diagnosis=document.getElementById('wf-diag').value; saveDB(); closeModal();renderWard();showToast('success',`✅ ${P(pid).name} di-admit ke ${bed.number}`);}
 }
 function discharge(bedId){
-  const bx=DB.beds.find(x=>x.id===bedId); if(bx){const n=P(bx.patient_id).name;bx.patient_id='';bx.status='kosong';bx.admitted='';bx.diagnosis='';renderWard();showToast('success',`✅ ${n} di-discharge`);}
+  const bx=DB.beds.find(x=>x.id===bedId); if(bx){const n=P(bx.patient_id).name;bx.patient_id='';bx.status='kosong';bx.admitted='';bx.diagnosis=''; saveDB(); renderWard();showToast('success',`✅ ${n} di-discharge`);}
 }
 
 // ══════════════════════════════════════
@@ -1229,15 +1231,15 @@ function renderCPPT(){
     <div style="background:#ffffff;border:1px solid #e2eaf4;border-radius:12px;padding:14px;margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px">
         <div>
-          <div style="font-weight:700;font-size:14px">${p.name||'—'}</div>
+          <div style="font-weight:700;font-size:14px;color:#0f1f35">${p.name||'—'}</div>
           <div style="font-size:11px;color:#4a6b8a;font-family:'JetBrains Mono',monospace">${c.tanggal} · ${c.jam}</div>
         </div>
         <div style="display:flex;gap:4px;flex-shrink:0">
           ${profBadge(c.profesi)}
         </div>
       </div>
-      ${[['S','#3b9eff','#eff6ff',c.subjektif],['A','#f5c542','#1e2009',c.asesmen],['P','#f04f4f','#1e0909',c.planning]].map(([l,col,bg,val])=>val?`
-      <div style="background:${bg};border-left:2px solid ${col};border-radius:0 6px 6px 0;padding:6px 10px;margin-bottom:6px;font-size:12px">
+      ${[['S','#2563eb','#eff6ff',c.subjektif],['A','#92400e','#fffbeb',c.asesmen],['P','#b91c1c','#fff1f1',c.planning]].map(([l,col,bg,val])=>val?`
+      <div style="background:${bg};border-left:3px solid ${col};border-radius:0 6px 6px 0;padding:7px 10px;margin-bottom:6px;font-size:12px;color:#1a2b3c">
         <span style="color:${col};font-weight:700;margin-right:6px">${l}</span>${val}
       </div>`:'')}
       <div style="display:flex;gap:6px;margin-top:10px">
@@ -1278,7 +1280,6 @@ function renderCPPT(){
     </div>
   </div>`);
 
-  // Responsive: show cards on mobile, table on desktop
   const cards = document.getElementById('cppt-cards');
   const tbl = document.getElementById('cppt-tbl-wrap');
   function adaptCPPT(){ if(window.innerWidth<=640){cards.style.display='block';tbl.style.display='none';}else{cards.style.display='none';tbl.style.display='block';} }
@@ -1297,9 +1298,9 @@ function openCPPTModal(editId){
   const now=new Date(), today=now.toISOString().slice(0,10), time=now.toTimeString().slice(0,5);
   const soapSection = (letter, color, title, sub, fieldId, val) => `
   <div class="soap-block" style="margin-bottom:10px">
-    <div class="soap-header" style="background:${color}15;border-bottom:1px solid ${color}30">
-      <span style="background:${color};color:${letter==='A'?'#000':'#fff'};width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${letter}</span>
-      <span style="font-weight:700;font-size:12.5px">${title}</span>
+    <div class="soap-header" style="background:${color}18;border-bottom:1px solid ${color}30">
+      <span style="background:${color};color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${letter}</span>
+      <span style="font-weight:700;font-size:12.5px;color:#1a2b3c">${title}</span>
       <span style="color:#4a6b8a;font-weight:400;font-size:11px">${sub}</span>
     </div>
     <div style="padding:12px">
@@ -1316,10 +1317,10 @@ function openCPPTModal(editId){
       <div class="field"><label>Jam</label><input type="time" id="cf-jam" value="${c?c.jam:time}"></div>
     </div>
   </div>
-  ${soapSection('S','#3b9eff','Subjektif','Keluhan pasien, anamnesis','cf-s',c?c.subjektif:'')}
-  ${soapSection('O','#27c97a','Objektif','Pemeriksaan fisik & penunjang','cf-o',c?c.objektif:'')}
-  ${soapSection('A','#f5c542','Asesmen','Diagnosis / masalah keperawatan','cf-a',c?c.asesmen:'')}
-  ${soapSection('P','#f04f4f','Planning','Rencana tindak lanjut, terapi, edukasi','cf-p',c?c.planning:'')}
+  ${soapSection('S','#2563eb','Subjektif','Keluhan pasien, anamnesis','cf-s',c?c.subjektif:'')}
+  ${soapSection('O','#15803d','Objektif','Pemeriksaan fisik & penunjang','cf-o',c?c.objektif:'')}
+  ${soapSection('A','#92400e','Asesmen','Diagnosis / masalah keperawatan','cf-a',c?c.asesmen:'')}
+  ${soapSection('P','#b91c1c','Planning','Rencana tindak lanjut, terapi, edukasi','cf-p',c?c.planning:'')}
   <div style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;padding:14px;margin-top:10px">
     <div class="form-grid">
       <div class="field full"><label>Instruksi Khusus</label><textarea id="cf-ins" rows="2" placeholder="Instruksi untuk shift berikutnya…" style="width:100%;background:#ffffff;border:1px solid #e2eaf4;border-radius:8px;color:#1a2b3c;font-size:13px;font-family:inherit;padding:8px 10px;resize:vertical;outline:none">${c?c.instruksi||'':''}</textarea></div>
@@ -1335,7 +1336,7 @@ function saveCPPT(editId){
   if(!d.subjektif&&!d.objektif&&!d.asesmen&&!d.planning){showToast('error','❌ Minimal isi satu field SOAP');return;}
   if(editId){ const c=DB.cppt.find(x=>x.id===editId); if(c) Object.assign(c,d); }
   else DB.cppt.push({id:'CPPT'+String(Date.now()).slice(-6),...d});
-  updateBadges();closeModal();renderCPPT();showToast('success',editId?'✅ Catatan diperbarui':'✅ Catatan CPPT tersimpan');
+  saveDB(); updateBadges();closeModal();renderCPPT();showToast('success',editId?'✅ Catatan diperbarui':'✅ Catatan CPPT tersimpan');
 }
 
 function openCPPTDetail(id){
@@ -1344,22 +1345,22 @@ function openCPPTDetail(id){
   const profBadge = pr => `<span class="badge ${pr==='Dokter'?'badge-blue':pr==='Perawat'?'badge-green':pr==='Bidan'?'badge-purple':'badge-orange'}">${pr}</span>`;
   openModal(`🔍 Detail CPPT — ${p.name}`,`
   <div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px 14px;background:#f8fafc;border:1px solid #e2eaf4;border-radius:10px;margin-bottom:14px">
-    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Pasien</div><div style="font-weight:700">${p.name}</div><div class="cell-id">${c.patient_id}</div></div>
+    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Pasien</div><div style="font-weight:700;color:#0f1f35">${p.name}</div><div class="cell-id">${c.patient_id}</div></div>
     <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Profesi</div>${profBadge(c.profesi)}</div>
-    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Tgl/Jam</div><div style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px">${c.tanggal} · ${c.jam}</div></div>
-    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Petugas</div><div style="font-weight:700">${c.ttd||'—'}</div></div>
+    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Tgl/Jam</div><div style="font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px;color:#0f1f35">${c.tanggal} · ${c.jam}</div></div>
+    <div><div style="font-size:10px;color:#7a9ab5;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px">Petugas</div><div style="font-weight:700;color:#0f1f35">${c.ttd||'—'}</div></div>
   </div>
-  ${[['S — Subjektif','#3b9eff',c.subjektif],['O — Objektif','#27c97a',c.objektif],['A — Asesmen','#f5c542',c.asesmen],['P — Planning','#f04f4f',c.planning]].map(([lbl,col,val])=>`
+  ${[['S — Subjektif','#2563eb',c.subjektif],['O — Objektif','#15803d',c.objektif],['A — Asesmen','#92400e',c.asesmen],['P — Planning','#b91c1c',c.planning]].map(([lbl,col,val])=>`
   <div class="soap-block" style="margin-bottom:8px">
-    <div class="soap-header" style="background:${col}22;border-bottom:1px solid ${col}44;color:${col}">${lbl}</div>
+    <div class="soap-header" style="background:${col}15;border-bottom:1px solid ${col}30;color:${col}">${lbl}</div>
     <div class="soap-body">${val||`<span style="color:#7a9ab5">—</span>`}</div>
   </div>`).join('')}
-  ${c.instruksi?`<div class="soap-block"><div class="soap-header" style="background:#22d3ee22;border-bottom:1px solid #22d3ee44;color:#22d3ee">📌 Instruksi Khusus</div><div class="soap-body">${c.instruksi}</div></div>`:''}`,
+  ${c.instruksi?`<div class="soap-block"><div class="soap-header" style="background:#0891b215;border-bottom:1px solid #0891b230;color:#0e7490">📌 Instruksi Khusus</div><div class="soap-body">${c.instruksi}</div></div>`:''}`,
   `<button class="btn btn-ghost" onclick="closeModal()">Tutup</button><button class="btn btn-primary" onclick="closeModal();openCPPTModal('${c.id}')">✏️ Edit</button>`);
 }
 function delCPPT(id){
   if(!confirm('Hapus catatan CPPT ini?')) return;
-  DB.cppt=DB.cppt.filter(x=>x.id!==id);updateBadges();renderCPPT();showToast('success','🗑 Catatan dihapus');
+  DB.cppt=DB.cppt.filter(x=>x.id!==id); saveDB(); updateBadges();renderCPPT();showToast('success','🗑 Catatan dihapus');
 }
 
 // ══════════════════════════════════════
@@ -1375,10 +1376,10 @@ function renderReports(){
     <div class="page-actions"><button class="btn btn-primary" onclick="exportJSON()">📥 Export JSON</button></div>
   </div>
   ${statGrid([
-    statCard('Total Pasien',DB.patients.length,'#3b9eff',`♂ ${byG['Laki-laki']} · ♀ ${byG['Perempuan']}`),
-    statCard('Total Kunjungan',DB.visits.length,'#27c97a'),
-    statCard('Lab Selesai',`${labDone}/${labTotal}`,'#a87eff',`${Math.round(labDone/Math.max(labTotal,1)*100)}% selesai`),
-    statCard('Obat Diresepkan',DB.medications.length,'#ff8c42'),
+    statCard('Total Pasien',DB.patients.length,'#2563eb',`♂ ${byG['Laki-laki']} · ♀ ${byG['Perempuan']}`),
+    statCard('Total Kunjungan',DB.visits.length,'#15803d'),
+    statCard('Lab Selesai',`${labDone}/${labTotal}`,'#6d28d9',`${Math.round(labDone/Math.max(labTotal,1)*100)}% selesai`),
+    statCard('Obat Diresepkan',DB.medications.length,'#c2410c'),
   ].join(''))}
   ${grid2(`
     <div class="card">
@@ -1390,8 +1391,8 @@ function renderReports(){
       ${[['Selesai','selesai','#27c97a'],['Proses','proses','#f5c542'],['Pending','pending','#7a9ab5']].map(([l,s,col])=>{ const n=DB.lab_orders.filter(x=>x.status===s).length; return `<div class="chart-bar-wrap"><div class="chart-bar-label"><span>${l}</span><span style="font-weight:700">${n}</span></div><div class="chart-bar"><div class="chart-bar-fill" style="width:${n/Math.max(labTotal,1)*100}%;background:${col}"></div></div></div>`; }).join('')}
       <div class="divider"></div>
       <div style="font-size:11px;color:#7a9ab5;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Kapasitas Rawat Inap</div>
-      <div class="progress" style="height:8px;margin-bottom:6px"><div class="progress-fill" style="width:${DB.beds.filter(b=>b.status==='terisi').length/DB.beds.length*100}%;background:#f04f4f"></div></div>
-      <div style="font-size:11px;color:#4a6b8a">${DB.beds.filter(b=>b.status==='terisi').length}/${DB.beds.length} bed terisi</div>
+      <div class="progress" style="height:8px;margin-bottom:6px"><div class="progress-fill" style="width:${DB.beds.filter(bd=>bd.status==='terisi').length/DB.beds.length*100}%;background:#f04f4f"></div></div>
+      <div style="font-size:11px;color:#4a6b8a">${DB.beds.filter(bd=>bd.status==='terisi').length}/${DB.beds.length} bed terisi</div>
     </div>`)}
   <div class="card">
     <div class="card-title">📋 Program Kesehatan</div>
@@ -1421,7 +1422,7 @@ function renderAdmin(){
 function openGlobalProps(){
   openModal('⚙️ Global Properties',`
   <div class="field"><label>Nama Fasilitas</label><input id="gp-facility" value="${DB.meta.facility}"></div>`,
-  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="DB.meta.facility=document.getElementById('gp-facility').value;closeModal();renderAdmin();showToast('success','✅ Diupdate')">💾 Simpan</button>`);
+  `<button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-primary" onclick="DB.meta.facility=document.getElementById('gp-facility').value;saveDB();closeModal();renderAdmin();showToast('success','✅ Diupdate')">💾 Simpan</button>`);
 }
 function openPrograms(){ showPage('reports'); }
 
@@ -1458,14 +1459,15 @@ function openAddUser(){
 function saveUser(){
   const name=document.getElementById('uf-name').value; if(!name){showToast('error','Nama wajib');return;}
   DB.users.push({id:genId('u',DB.users),name,username:document.getElementById('uf-user').value,role:document.getElementById('uf-role').value,department:document.getElementById('uf-dept').value,status:'active'});
-  closeModal();renderUsers();showToast('success',`✅ User ${name} ditambahkan`);
+  saveDB(); closeModal();renderUsers();showToast('success',`✅ User ${name} ditambahkan`);
 }
-function toggleUser(id){ const u=DB.users.find(x=>x.id===id); if(u){u.status=u.status==='active'?'inactive':'active';renderUsers();showToast('info',`User ${u.name}: ${u.status}`);} }
+function toggleUser(id){ const u=DB.users.find(x=>x.id===id); if(u){u.status=u.status==='active'?'inactive':'active'; saveDB(); renderUsers();showToast('info',`User ${u.name}: ${u.status}`);} }
 
 // ══════════════════════════════════════
 //  SETTINGS
 // ══════════════════════════════════════
 function renderSettings(){
+  const storageSize = (() => { try { const s = localStorage.getItem(STORAGE_KEY); return s ? (s.length/1024).toFixed(1)+'KB' : '0KB'; } catch(e){ return 'N/A'; } })();
   setContent(`
   <div class="page-header"><div><div class="page-title">Implementer Tools</div><div class="page-sub">Konfigurasi teknis</div></div></div>
   <div class="alert alert-yellow">⚠️ Halaman ini hanya untuk Administrator Teknis.</div>
@@ -1477,15 +1479,17 @@ function renderSettings(){
     <div class="card">
       <div class="card-title">📦 Database Info</div>
       ${[['Pasien',DB.patients.length],['Kunjungan',DB.visits.length],['Lab Orders',DB.lab_orders.length],['Medications',DB.medications.length],['Vitals',DB.vitals.length],['CPPT',DB.cppt.length],['Users',DB.users.length]].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v} records</span></div>`).join('')}
+      <div class="info-row"><span class="info-key">Storage (localStorage)</span><span class="info-val">${b('badge-blue',storageSize)}</span></div>
     </div>`)}
   <div class="card" style="margin-top:16px">
     <div class="card-title">💾 Data Management</div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
       <button class="btn btn-primary" onclick="exportJSON()">📥 Export JSON</button>
       <label class="btn btn-ghost" style="cursor:pointer">📂 Import JSON<input type="file" accept=".json" class="hidden" onchange="importJSON(this)"></label>
-      <button class="btn btn-danger" onclick="if(confirm('Reset semua data?'))location.reload()">🗑️ Reset</button>
+      <button class="btn btn-success" onclick="saveDB();showToast('success','✅ Data disimpan ke localStorage')">💾 Simpan Sekarang</button>
+      <button class="btn btn-danger" onclick="if(confirm('Reset semua data & hapus localStorage?')){localStorage.removeItem(STORAGE_KEY);location.reload()}">🗑️ Reset</button>
     </div>
-    <pre style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;padding:12px;font-size:10.5px;font-family:'JetBrains Mono',monospace;overflow:auto;max-height:180px;color:#4a6b8a">${JSON.stringify({meta:DB.meta,pasien:DB.patients.length,kunjungan:DB.visits.length,cppt:DB.cppt.length},null,2)}</pre>
+    <pre style="background:#f8fafc;border:1px solid #e2eaf4;border-radius:8px;padding:12px;font-size:10.5px;font-family:'JetBrains Mono',monospace;overflow:auto;max-height:180px;color:#4a6b8a">${JSON.stringify({meta:DB.meta,pasien:DB.patients.length,kunjungan:DB.visits.length,cppt:DB.cppt.length,storage:storageSize},null,2)}</pre>
   </div>`);
 }
 
