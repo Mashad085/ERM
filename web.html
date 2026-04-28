@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIVERSITAS MUHAMMADIYAH LAMONGAN X RS MUHAMMADIYAH LAMONGAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 16px;
+    color: #202124;
+    background: #fff;
+  }
+
+  /* ===== NAVBAR ===== */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    height: 64px;
+    gap: 12px;
+  }
+  .navbar-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  .navbar-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #202124;
+    text-decoration: none;
+    flex: 1;
+    line-height: 1.3;
+  }
+  .navbar-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+  .navbar-links a {
+    display: block;
+    padding: 0 12px;
+    height: 64px;
+    line-height: 64px;
+    font-size: 14px;
+    color: #202124;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .navbar-links a:hover { color: #1a73e8; border-bottom-color: #1a73e8; }
+  .navbar-links a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+
+  /* ===== PAGE HEADER (second logo bar) ===== */
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 32px 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .page-header img { width: 48px; height: 48px; object-fit: contain; }
+  .page-header span {
+    font-size: 22px;
+    font-weight: 500;
+    color: #202124;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .main-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px 64px;
+  }
+
+  /* Hero image */
+  .hero-img {
+    width: 100%;
+    margin: 32px 0 24px;
+    border-radius: 4px;
+    display: block;
+  }
+
+  /* Sections */
+  .section-title {
+    font-size: 26px;
+    font-weight: 400;
+    color: #202124;
+    margin: 32px 0 12px;
+    line-height: 1.3;
+  }
+  .section-text {
+    font-size: 16px;
+    color: #3c4043;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  /* Card images (clickable) */
+  .card-img-link {
+    display: block;
+    margin: 12px 0;
+  }
+  .card-img-link img {
+    width: 100%;
+    border-radius: 4px;
+    display: block;
+    transition: opacity 0.2s;
+  }
+  .card-img-link img:hover { opacity: 0.92; }
+
+  /* Three columns for orientasi, perawat, dokter */
+  .three-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 16px 0 32px;
+  }
+  .three-cards a img { border-radius: 8px; width: 100%; }
+
+  /* Edukasi section images */
+  .double-img {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0 32px;
+  }
+  .double-img img { width: 100%; border-radius: 4px; }
+
+  /* Link button */
+  .link-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    background: #1a73e8;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 8px 0 32px;
+    transition: background 0.2s;
+  }
+  .link-btn:hover { background: #1557b0; }
+
+  /* Section divider */
+  hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 40px 0;
+  }
+
+  /* Fasilitas grid */
+  .fasilitas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin: 24px 0;
+  }
+  .fasilitas-item img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .fasilitas-item h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .fasilitas-item p {
+    font-size: 15px;
+    color: #3c4043;
+    line-height: 1.6;
+  }
+
+  /* Full-width fasilitas items */
+  .fasilitas-full {
+    margin: 24px 0;
+  }
+  .fasilitas-full h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .fasilitas-full p {
+    font-size: 15px;
+    color: #3c4043;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .fasilitas-full img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* Tata tertib */
+  .tata-tertib { margin: 32px 0; }
+  .tata-tertib h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #202124;
+  }
+  .tata-tertib h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 20px 0 8px;
+  }
+  .jam-kunjung ol {
+    margin-left: 20px;
+    line-height: 2;
+    color: #3c4043;
+  }
+  .tata-tertib ul {
+    margin-left: 20px;
+    line-height: 2;
+    color: #3c4043;
+  }
+  .tata-tertib p { color: #3c4043; line-height: 1.7; margin-bottom: 8px; }
+
+  /* Dilarang section */
+  .dilarang-section { margin: 32px 0; }
+  .dilarang-section h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #202124;
+  }
+  .dilarang-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .dilarang-item img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .dilarang-item h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .dilarang-item p { font-size: 14px; color: #3c4043; line-height: 1.5; }
+
+  /* Denah */
+  .denah-section { margin: 40px 0; }
+  .denah-section h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .denah-section img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
+
+  /* Kuesioner / Survei */
+  .form-section {
+    margin: 32px 0;
+    padding: 24px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .form-section a {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a73e8;
+    text-decoration: none;
+  }
+  .form-section p {
+    margin-top: 8px;
+    color: #3c4043;
+    font-size: 15px;
+  }
+  .form-section img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 6px;
+    margin: 16px auto 0;
+    display: block;
+  }
+
+  /* Footer */
+  footer {
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    padding: 40px 32px;
+    text-align: center;
+    color: #3c4043;
+  }
+  footer h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  footer p { margin: 4px 0; font-size: 14px; }
+  footer .footer-divider {
+    margin: 20px auto;
+    max-width: 300px;
+    border-top: 1px solid #e0e0e0;
+  }
+  footer .google-sites-note {
+    font-size: 12px;
+    color: #80868b;
+    margin-top: 20px;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .navbar-links a { padding: 0 8px; font-size: 12px; }
+    .three-cards, .fasilitas-grid, .dilarang-grid { grid-template-columns: 1fr; }
+    .double-img { grid-template-columns: 1fr; }
+    .main-content { padding: 0 16px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <img class="navbar-logo"
+    src="https://lh3.googleusercontent.com/sitesv/AA5AbUBzlgYo2u5JyHgPNXTzP-aBM3ehqEWCNX6cL7oIKXyYJdTHAZah9SV5mwr5Y6toD8xX3Pp6WZ5G91jHvddAvPYzaKj_Xc1p12KaLdO1J-oKNBzfEy0ByWaRGyv9EtdS4Drem3Z3bRkloUoYGXneDBfWLn-_dmMwUYINqedxD0537ZG0AX-qfcEK=w64"
+    alt="Logo">
+  <a href="#" class="navbar-title">UNIVERSITAS MUHAMMADIYAH LAMONGAN X RS MUHAMMADIYAH LAMONGAN</a>
+  <ul class="navbar-links">
+    <li><a href="#" class="active">Beranda</a></li>
+    <li><a href="#">Orientasi Ruangan</a></li>
+    <li><a href="#">Daftar dokter IPI</a></li>
+    <li><a href="#">Daftar Perawat IPI</a></li>
+    <li><a href="#">Ruang Edukasi</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER (second logo bar) -->
+<div class="page-header">
+  <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUBzlgYo2u5JyHgPNXTzP-aBM3ehqEWCNX6cL7oIKXyYJdTHAZah9SV5mwr5Y6toD8xX3Pp6WZ5G91jHvddAvPYzaKj_Xc1p12KaLdO1J-oKNBzfEy0ByWaRGyv9EtdS4Drem3Z3bRkloUoYGXneDBfWLn-_dmMwUYINqedxD0537ZG0AX-qfcEK=w64" alt="Logo">
+  <span>UNIVERSITAS MUHAMMADIYAH LAMONGAN X RS MUHAMMADIYAH LAMONGAN</span>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- Hero image -->
+  <img class="hero-img"
+    src="https://lh3.googleusercontent.com/sitesv/AA5AbUAs6uaDN-AuJSs0OQUJAcXsr93brwT8QiP6NMvccnRa8CLQnhTeG5xHp_kFjXxnZxT2izWIS87yfvYXjpqftJIRCtWHzL_D7WHjH6Hgpxy7FBK9GmkNMARq0N4HAEUv4jOjdQmS6QjdVzcl8-7BYgavFyxYMXnwtOXe5ckWL863IS24j1tIEBllUxtNfG7sIGscU25dFZPEwenyqKGhxl6q2Xa04k_n_A=w1280"
+    alt="Instalasi Perawatan Intensif">
+
+  <!-- Judul & deskripsi -->
+  <h1 class="section-title">Instalasi Perawatan Intensive</h1>
+  <p class="section-text">
+    Adalah instalasi khusus untuk pasien rawat inap yang memerlukan pengawasan secara intensif. Sesuai dengan ketentuan instalasi ini dilayani oleh dokter-dokter yang sesuai dengan kompetensinya dan perawat yang sudah terlatih di bidang Intensif Care Unit.
+  </p>
+
+  <!-- 3 image cards: Orientasi, Perawat, Dokter -->
+  <div class="three-cards">
+    <a href="#" class="card-img-link">
+      <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUDy_upU3yQgN0Z686k4qIoVzlQ5rV56iyE84XdGPLAm9NJRg2pQcGmOe7o72A5Lw7EP9EF6Qe80qEc1cf3UTCNbtn1rjLm2xTppRPWHBQzcCldXxkJ5B0YJwakj9mmFTd6hEmPUANnyWmBgBCZcMlOJRl4lcQY_BFABlX4D4zbePzR_MvdkkSIV=w1280" alt="Orientasi Ruangan">
+    </a>
+    <a href="#" class="card-img-link">
+      <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUAJ4ajm1d-E-Ah6IZvxMDh9mQ8TrYvJAEGzVoF3zuj2uaHOpHZp0NQ2ChjEQuKw6tElFzQl-YRY6jBULdrX9U4mK0z2KbbR7VusLMS0fLmAMp6R4pz7ExgK_02b0Sge4mPCuT9YSm30VOou5GnIx5SY53NNB1ZhAt-_o6ew5rtfjtLJU_cKfvsgseo=w1280" alt="Daftar Perawat IPI">
+    </a>
+    <a href="#" class="card-img-link">
+      <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUA2a8buAyNKpGKG2F3Uncj1boTm75n49WmMHo7UpsK2HDewEwhx3VIH_aNT4OanKOAycJIGbP9mdrGhqjIMyT16zsv5Y9smKiGsUWk1-WgCCdHJ5U90lYPnBvbetaZGn3EAOxdMRNgc5HEw6rWG8j3VFCZP8hvmRQconi940o1agQu6oDUWJQ-LH48=w1280" alt="Daftar Dokter IPI">
+    </a>
+  </div>
+
+  <!-- Edukasi Keluarga -->
+  <h1 class="section-title">Edukasi Keluarga</h1>
+  <p class="section-text">
+    keluarga pasien yang berhak akan mendapatkan penjelasan tentang keadaan medis pasien dan perkembangan kesehatan atau perubahan kondisi pada waktu jam kunjungan atau setelah dokter melakukan visite (periksa) ke pasien dan sewaktu-waktu dibutuhkan jika kondisi pasien menurun.
+  </p>
+
+  <div class="double-img">
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUAyML5PZY7dgFI-dxubzJwqKxViSvddnAjLSXCdOmwmi8ogayk3MKOHySyXLqdflG6IIXGFXtRQNuQ71IxhSyrPVDAs5B20AoFCZB8uROGp01akSyI3BUngsKKFyQtwf_V4eIQgVqkfg8trW3gF3Qg7NJP4PlBZMOnZHxuO6HG4vnzD2xcqhqH69fPsJ_E7mMB-zKyH7IFbYwOL8nQulYLlLSypCH0nY9rJ=w1280" alt="Edukasi 1">
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUAToK2Nyrc40Wm57zR9ibc2wAW15Y8Z50dRz9lHSE7HxQ_xNoJy9kL5YDDcbTl-eUOlyVXcuNx45w4aLLXcFGh-lEhN2j-ePuMQDItdQg02nVvxSQ0aISidrSoIDRtlb-V56HvbJLBvUv_1m0pghGqicRnWhuZy_HfL5Znm7OPUaUH5kAIbYn0xl54uoOxmYwFGLv_rGk44EMAonfYcNS2dHW8u7IY0vZM2n-8=w1280" alt="Edukasi 2">
+  </div>
+
+  <!-- Kumpulan Pengetahuan -->
+  <h1 class="section-title">Kumpulan Pengetahuan</h1>
+  <p class="section-text">
+    Informasi seputar edukasi tentang penyakit/tindakan intensif yang sering ditemui di ruang IPI/ICU
+  </p>
+  <a href="#" class="link-btn">Klik disini</a>
+
+  <hr>
+
+  <!-- Layanan & Fasilitas -->
+  <h2 class="section-title">Layanan &amp; Fasilitas</h2>
+  <p class="section-text">
+    Ruang Instalasi Perawatan Intensif adalah ruangan khusus yang disediakan rumah sakit untuk merawat pasien kritis yang membutuhkan pengawasan ketat dan observasi berkelanjutan. Untuk membantu memulihkan kondisi pasien, ruang ICU dilengkapi dengan peralatan medis khusus guna menunjang pemulihan pasien.
+  </p>
+  <p class="section-text">
+    Selama berada di dalam ruang IPI, pasien akan dipantau selama 24 jam oleh dokter spesialis, dokter jaga, dan perawat yang sudah kompeten. Untuk memantau kondisi pasien secara lebih detail, pasien akan terhubung dengan berbagai peralatan medis.
+  </p>
+
+  <h2 class="section-title" style="font-size:20px;">Fasilitas</h2>
+
+  <!-- Monitor Pasien & Ventilator — 2 col -->
+  <div class="fasilitas-grid">
+    <div class="fasilitas-item">
+      <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUAWoDKyf-pZUZw-HDFEgOacHxw3eDQtFOxvndyK51ew8gDNC0vGF87KJ8epPWAed_LBbA4wgYx8yN4RYRqkZb8EB0RgrHyMLz6EpbLEm8sOi-9x9y0RHIStq-ZAJMLY2TnlzVptoKBHwiv6x-bw8nwmWl9ABFODJDw_9AiPXkk4d6t9J-34JFvE9Iug3A0wENRTQN79aI9mUqudLGzT2fkghJg1nIvghE-v=w1280" alt="Monitor Pasien">
+      <h3>Monitor Pasien</h3>
+      <p>Setiap bed pasien dilengkapi dengan Monitor yang terhubung pada monitor Central yang diawasi selama 24 jam</p>
+    </div>
+    <div class="fasilitas-item">
+      <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUDh0J9u1hk3Q-McT-6RmrHMVSbcPWhRzuD8aceY7Wla6ZXSD86yhOsq_0fTD5SwVnYED5xJZwS30cTLdMsBgZ0qdj_KbtdynljMw88zJEylAPfcP5PA8ev42mNnL8_DgStP2sWOoS4NgR0NNBodfDuUqV-UQXqVWsReZGZ-WJpZe3N7bHwLeF4yhd3skrwKdomqq3XJZkHc5JqNRhAzirO0FtRhxVH-AiRY=w1280" alt="Ventilator">
+      <h3>Ventilator Mekanik</h3>
+      <p>Tersedia alat bantu pernapasan (Ventilator) untuk pasien-pasien dengan gangguan sistem pernapasan</p>
+    </div>
+  </div>
+
+  <!-- Defibrilator -->
+  <div class="fasilitas-full">
+    <h2>Defibrilator &amp; Ultrasonografi</h2>
+    <p>Ultrasonografi untuk keperluan diagnostic jantung dan alat kejut jantung untuk mengatasi gangguan irama jantung (aritmia)</p>
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUAHJAwJvGH3-2pm1DyKO05Ri0Ns5XdbrUiU00Pbe-pDWvxLO1Z8HS5PwlwzSKft5gyK4M6JulN9bBsV684m_7w-S2rZR55UE0Cmn40qGAwoUDhBnRcxE26Vlu0Ezq5AAjT0BWT0w1UfhHXX4ueP5BthIsOFDAXJQW-iXPtO7eSHbphkJuaB3NlQxMvki6Ap1kjRrjw2FITCkEFg8pkQBx2R7zL4_5__7GX5JNI=w1280" alt="Defibrilator">
+  </div>
+
+  <!-- Syringe Pump -->
+  <div class="fasilitas-full">
+    <h2>Syring pump &amp; Infus pump</h2>
+    <p>Pemberian cairan dan obat-obatan dan nutri dengan dosis dan kecepatan yang tepat dan akurat</p>
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUC7uNOdpBAIdAgnNhcw3T1RB8mV0xDfKIOgwwGDsFIVKrtd-Z8N-6KJAyqDmZNKWqdhZCoBJSs2EJTtqDsE96H9t6p1-cpbShhADf3T2gqwfuL23f-Ww9I7cpqKLy1ylsJu-Ygpqi6frCbOovhsTEK_4q4Ov_ZgMat5rrb6pVA7tVDP5AXI5iKYo53pR4r2bRLrbtOR-Qqv8gOBJb35c3p11RgUHeZ7DQq-c2s=w1280" alt="Syring pump">
+  </div>
+
+  <!-- Ruang Penunggu -->
+  <div class="fasilitas-full">
+    <h2>Ruang Penunggu Pasien</h2>
+    <p>Tersedia ruang Istirahat untuk penunggu pasien</p>
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUDUS2y8UUnZbTWOEpXHTwbizkxEHcBSbDI8CL7-1a9CLxuZow57De6OV3uJl5AZO085VC7v-vou0_c2QzDSxgm85AWEGinaI2IigkROWaUhEtF-MC1xSNHTuVsGdm7vDq_esTe3GnUPYnRIILVA87Vv7DFovfEDuonH4yaj094v0jBS4DEbGIxrPeixenbJrMkIFkYyLen2fgvKVUJ8-ikGpjkK1aMjC_2z=w1280" alt="Ruang Penunggu">
+  </div>
+
+  <!-- Ruang Isolasi -->
+  <div class="fasilitas-full">
+    <h2 style="font-size:18px;">Ruang Isolasi bertekanan negatif</h2>
+    <p>Tersedia ruang Isolasi Khusus untuk pasien dengan gangguan infeksi saluran pernapasan bertekanan negatif</p>
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUDEzFrC1lI_AY3bYTEYWXG9UadA4MxQYESEjpOZwtcEwygqIJvEjkTZqbQ41lRXhEs_SjAkAdkc4wH9nPJmN0wgwe9QEzKmYcS8dWX9xUbg01mksbu6wIf1WP5cPVFhem4WSJiHKGYChX1ft52949zpuFo4OkqKIZRwfdXJpxa9UAmJHJ5yw6-NYRBOPGEU-95FQ_iM5u3jS9TxhAW8DKgMALLWU-_Lr9qonPQ=w1280" alt="Ruang Isolasi">
+  </div>
+
+  <!-- Hemodialisa -->
+  <div class="fasilitas-full">
+    <h2 style="font-size:18px;">Mesin Cuci Darah (Hemodialisa)</h2>
+    <p>Tersedia mesin Hemodialisa untuk pasien yang membutuhkan cuci darah dengan kondisi kritis.</p>
+  </div>
+
+  <hr>
+
+  <!-- Tata Tertib -->
+  <div class="tata-tertib">
+    <h2>Tata Tertib Di Ruang IPI</h2>
+    <p>Selama pasien di rawat di ruang Instalasi Perawatan Intensif (IPI). Keluarga pasien diharapkan mematuhi Tata Tertip yang berlaku sebagai berikut :</p>
+
+    <div class="jam-kunjung">
+      <h2>Jam Kunjung</h2>
+      <p>Pengunjung yang boleh masuk hanya Keluarga inti, dan dibatasi 1 orang secara bergantian.</p>
+      <ol>
+        <li>Pagi : 10:00 - 11:00 WIB</li>
+        <li>Sore : 16:00 - 17:00 WIB</li>
+      </ol>
+    </div>
+
+    <h2 style="margin-top:24px;">Penunggu &amp; Pengunjung</h2>
+
+    <h3>1. Penunggu</h3>
+    <ul>
+      <li>Khusus untuk anak-anak atau kondisi tertentu yang membutuhkan perhatian khusus, maka keluarga inti diperbolehkan menunggu di ruang IPI</li>
+      <li>Keluarga menunggu di ruang Tunggu yang sudah disediakan dan apabila dibutuhkan akan dipanggil melalui pengeras suara yang ada di ruang tunggu</li>
+      <li>Keluarga atau pengunjung dilarang mengambil gambar atau merekam vidio di dalam ruang IPI (UU ITE RI No 19 Tahun 2017)</li>
+    </ul>
+
+    <h3>2. Pengunjung</h3>
+    <ul>
+      <li>Anak-anak dibawah 12 tahun dilarang masuk ke dalam ruang perawatan IPI</li>
+      <li>Keluarga / pengunjung dilarang membawa makanan / minuman / obat-obatan dari luar untuk pasien tanpa sepengetahuan Perawat Jaga</li>
+    </ul>
+
+    <h3>3. Cuci Tangan &amp; Memakai Masker</h3>
+    <ul>
+      <li>Setiap masuk dan keluar ruang IPI diwajibkan untuk mencuci tangan dan memakai masker.</li>
+    </ul>
+  </div>
+
+  <!-- Dilarang -->
+  <div class="dilarang-section">
+    <h2>Dilarang!</h2>
+    <div class="dilarang-grid">
+      <div class="dilarang-item">
+        <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUDtoTfQxN7T2EH8T8lCoe_G2g3vjl9CTnNCFU4x1ev6cXgu3ruo5pY5VmJMqc7dPltPt1DXSKtyeW1bPKkXvIRL8iVHATSvtLx79eJHk8TBw8LOcH-8ERuRoG4gqNW0X6wNevjxVl0B2yBXoBYyAf7Tg_57CKYeKxlbaS4T0ad4brxDvGbv7ZL-L1I=w1280" alt="Makanan">
+        <h3>Makanan</h3>
+        <p>Dilarang membawa Makanan atau Minuman dari Luar Rumah Sakit untuk diberikan ke pada Pasien. Harus seijin petugas jaga.</p>
+      </div>
+      <div class="dilarang-item">
+        <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUC_bOg-_prs4Jzv7ltr9mSi88PLoaChhflth9zr179ES_VDV5k338TotsHMYqEMlzlx4DINU1wZNFNr6-T16JpaZKkEJly9-xUxRvXgtqrrenOr5C2BTYSwT94A2ubJ0WcPvVP3D19GETU1wuewsJLgbrGFuN_GLBPt4J0Qg3XwjWHeN03C6x45=w1280" alt="Foto/Video">
+        <h3>Foto/Video</h3>
+        <p>Dilarang mengambil Foto atau Vidio dalam bentuk apapun Tanpa seijin Petugas</p>
+      </div>
+      <div class="dilarang-item">
+        <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUDn2VeZ6ptLAWN0p4N_yWqVNr2MvEL8PTgV6n9lCLaTTcoMWm7Wqr_WWbzrh1KHXSARd5l118hf2-MJhbddEg7nevmVltwDpdk5Qh-g2LEOKCsFcY7NcBz6Wfjbqy8J5Jf_ExbyncJFvwPGcTjliPQR1Esg2VH1UDcPTYOV-IZdoeoVejEeUa49dHs=w1280" alt="Kunjungan">
+        <h3>Kunjungan</h3>
+        <p>Dilarang membawa atau mengajak anak kecil dibawah 12 tahun.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Denah -->
+  <div class="denah-section">
+    <h2>Denah Ruang IPI</h2>
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUBNo5NCWTcQzO8BAAsIe_lXYrqcsQxVJG_MylLIxeAsE1u4ENQrD-lw-YEEdpSZ4-cP_dpqwNlrwH0CNKVQIjRQ1_c80NRnyvAQovfjV1g8TTsXaWe2Wx0dniTxL09Hhowa13P5VmgXzBYAUvM-C6HJWkL4v9Hiv4KdPej48rafKBD-bM3WsnvWcpvadFuJCSVbPzuOUd-aSzjPV8jDGlbThaH3_G23vFp6PGM=w1280" alt="Denah 1">
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUB5G-0U0mAn4GyGAJpU9D0ufYTE-j6eTnPxRGm-thRlpZM_NCOKqj8uupl5YeETxvy-d0V_uEbR3-tfgRe7EAp3NknPKhBe1g25LwLOERZyZMOCGDxzwFjdCP6RdMfYX0g3cNfYfdjIsUMhAodZw4iMiurl65wVB0qkRijz_b2Unm2gh_01iz9_=w1280" alt="Denah 2">
+  </div>
+
+  <!-- Kuesioner -->
+  <div class="form-section">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0WIFMPMdaD429KyC1jMqHfyVEH_6X6q-1DdObWVSSQTL8OA/viewform" target="_blank">Kuesioner</a>
+    <p>Instrumen Evaluasi Persepsi Keluarga Pasien IPI Terhadap Mutu Asuhan Keperawatan Di Rumah Sakit Muhammadiyah Lamongan</p>
+    <img src="https://lh3.googleusercontent.com/sitesv/AA5AbUB34VK5Lry_vH6Dsff9IDNDurLoFf0asxpA6ENsGv5eqVYF6T8wIarlFYW5sJJBnw1od2vaaHwQPmCIyTDkeSGbWchNgxEH0FHgnFunZIAvjtmQPu43zWmozn6RJ__XNClL1W4aX81t1DBCdXD91P287vwAJGFXeTqLOY_NsSFAATyuAU15eOW6b9s=w1280" alt="Kuesioner QR">
+  </div>
+
+  <!-- Survei Kepuasan -->
+  <div class="form-section" style="margin-top:16px;">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSf5b-WnsvW1PbHK7jYMMw9LTwU1Q_cAxYxu9f4pW_IVkcsRNw/viewform" target="_blank">Survei Kepuasan</a>
+    <p>Survei Kepuasan Pasien Rawat Inap RS Muhammadiyah Lamongan</p>
+  </div>
+
+</div><!-- /main-content -->
+
+<!-- FOOTER -->
+<footer>
+  <h3>RS MUHAMMADIYAH LAMONGAN</h3>
+  <p>Jl. Jaksa Agung Suprapto 76 Lamongan 62215</p>
+  <p>0322-322834</p>
+  <p>082234288339</p>
+  <p>Gawat Darurat : 082245044331</p>
+  <p>✉️ rsmlamongan@gmail.com</p>
+  <div class="footer-divider"></div>
+  <p class="google-sites-note">Google Sites &nbsp;·&nbsp; Report abuse</p>
+</footer>
+
+</body>
+</html>
